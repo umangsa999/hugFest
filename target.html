@@ -5,26 +5,51 @@
 	<meta charset="utf-8" />
 	<title>HugFest App</title>
 	<style>
+		table{
+			border:1px solid black;
+			width:100%;
+		}
 	</style>
 </head>
 
 <body>
-	<button style="text-align: left">Quit</button>
-	<pre style="text-align: center">
-	Timer Left: [Time Here]
-	<h1 style="text-align: center">   Current Target</h1>
+	<div>
+		<button style="text-align: left">Quit</button>
+		<p style="text-align: center;font-size:20px">Timer Left: [Time Here]</p>
+		<h3 style="text-align: center">Current Target</h3>
+	</div>
 	
-	[Picture Here]
+	<div>
+		<p style="text-align: center">[Picture Here]</p>
+		<table style="margin-bottom: 10px;margin-top: 10pxs;text-align: center">
+			<thead>
+				<th colspan="2">Top Huggers</th>
+			</thead>
+			<tr>
+			<b>
+				<td>Ryan</td>
+				<td>6 Hugs</td>
+			</b>
+			</tr>
+			<tr>
+				<td>Andy</td>
+				<td>3 Hugs</td>
+			</tr>
+			<tr>
+				<td>Manjot</td>
+				<td>0 Hugs</td>
+			</tr>
+			<tr>
+				<td>Chris</td>
+				<td>4 Hugs</td>
+			</tr>
+		</table>
 	
-	Name: Andy
-	Reason: Being too awesome
+	</div>
+	<div style="text-align: center">
+		<p><button onclick='location.href="rules.html"'>Rules</button></p>
+		<p><button>End Game</button></p>
+	</div>
 	
-	Top Huggers
-	Mike	4 Hugs
-	Ryan 	3 Hugs
-	<b>Andy	8 Hugs</b>
-	<button onclick='location.href="rules.html"'>Rules</button>
-	<button>End Game</button>
-	</pre>
 </body>
 </html>

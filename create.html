@@ -6,7 +6,11 @@
 	<title>HugFest App</title>
 
 	<style>
-
+		table{
+			border:1px solid black;
+			position:relative;
+			width:100%;
+		}
 	</style>
 </head>
 
@@ -14,44 +18,49 @@
 	<header>
 		<h1 style="text-align: center">Create Game</h1>
 	</header>
+	<div>
+		<button>Save</button>
+		<Button>Load</Button>
+	</div>
 	
-	<button>Save</button>
-	<Button>Load</Button>
-	
-	<h3>Game Rules</h3>
-	<p>
-		<pre style="text-align: center">
-		Hours <input type="time" required="true" value="08:00:00" step= "30" min="02:00:00" max="48:00:00"/>
-		Hugs to Win <input type="number" min="5" max="20" value="10" step="1" required="true"/>
-		</pre>
-	No Indoors:
-	    <div class="onoffswitch">
-        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-        <label class="onoffswitch-label" for="myonoffswitch">
-            <span class="onoffswitch-inner"></span>
-            <span class="onoffswitch-switch"></span>
-        </label>
-    </div>
+	<div style="text-align: center">
+		<h3>Game Rules</h3>
+		<p>Hours <input type="time" required="required" value="08:00:00" step= "30" min="02:00:00" max="48:00:00"/></p>
+		<p>Hugs to Win <input type="number" min="5" max="20" value="10" step="1" required="required"/></p>
+		
+		<div class="onoffswitch">
+ 	 		<p>No Indoors:
+	 	 		<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="indoor" checked>
+	    	    	<label class="onoffswitch-label" for="myonoffswitch">
+	            		<span class="onoffswitch-inner"></span>
+	            		<span class="onoffswitch-switch"></span>
+	        	</label>
+        	</p>
+        </div>
 
-	No Running:
-	    <div class="onoffswitch">
-        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-        <label class="onoffswitch-label" for="myonoffswitch">
-            <span class="onoffswitch-inner"></span>
-            <span class="onoffswitch-switch"></span>
-        </label>
-    </div>
+		<div class="onoffswitch">
+			<p>No Running:
+	 	 		<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="running" checked>
+	    	    	<label class="onoffswitch-label" for="myonoffswitch">
+	            		<span class="onoffswitch-inner"></span>
+	            		<span class="onoffswitch-switch"></span>
+	        	</label>
+        	</p>
+        </div>
+	</div>
 
-	</p>
-	<h3>Friends</h3>
-	<button>Invite</button>
-	<pre>
-	[Table Here]
-	Ryan
-	Mike
-	</pre>
-	</p>
-	
+	<div>
+		<table style="margin-top: 10px;text-align: center">
+			<thead>
+				<th>Friends</th>
+			</thead>
+				<tr><td><button>Invite</button></td>
+				<tr><td>Ryan</td>
+				<tr><td>Mike</td>
+				<tr><td>Manjot</td>	
+		</table>
+	</div>
+
 	<button onclick='location.href="target.html"'>Start</button>
 	
 </body>
