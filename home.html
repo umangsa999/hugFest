@@ -15,21 +15,31 @@
 	table{
 		width:100%
 	}
+	.nav{
+		display:inline-block;
+		border-top-style: solid;
+		border-bottom-style: solid;
+	}
+	#selected{
+		background-color:green;
+		color:white;
+		border: solid green;
+	}
 </style>
 </head>
 
 <body>
 	<div style="text-align: center">
 		<nav style="font-size: 30px;">
-			<strong style="color:green">Home</strong> | 
-			<a href="friends.html">Friends</a> | 
-			<a href="profile.html">Profile</a> | 
-			<a href="settings.html">Settings</a>
+			<div id="selected" class="nav" onclick='location.href="home.html"'>Home</div> | 
+			<div class="nav" onclick='location.href="friends.html"'>Friends</div> | 
+			<div class="nav" onclick='location.href="profile.html"'>Profile</div> | 
+			<div class="nav" onclick='location.href="settings.html"'>Settings</div>
 		</nav>
 	</div>
 	
 	<div>
-		<h3 style="text-align: center">Games<button onclick="location.href='create.html'">+</button></h3> 
+		<h3 style="text-align: center">Games   <button onclick="location.href='create.html'">+</button></h3> 
 	</div>
 	
 	<div style="text-align: center">
