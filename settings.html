@@ -1,20 +1,45 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML>
+<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Settings</title>
+        <style>
+            p, h3, h1{
+                text-align: center;
+            }
+             .nav{
+				display:inline-block;
+				border-top-style: solid;
+				border-bottom-style: solid;
+			}
+			#selected{
+				background-color:green;
+				color:white;
+				border: solid green;
+			}
+			.hideable{
+				text-align: center;
+			}
+        </style>
     </head>
     <body>
-         <h1 style="text-align: center;"><input name="LogOut" type="button" value="Log Out" /></h1>
+        <div class="hideable">
+			<nav style="font-size: 30px;">
+				<div class="nav" onclick='location.href="home.html"'>Home</div> | 
+				<div class="nav" onclick='location.href="friends.html"'>Friends</div> | 
+				<div class="nav" onclick='location.href="profile.html"'>Profile</div> | 
+				<div id="selected" class="nav" onclick='location.href="settings.html"'>Settings</div>
+			</nav>
+		</div>
+        <h1><input name="LogOut" type="button" value="Log Out" onclick="location.href='Firstpage.html'"/></h1>
 
-<h3 style="text-align: center;"><input name="Notifications" type="checkbox" />Notifications</h3>
+<h3><input name="Notifications" type="checkbox" />Notifications</h3>
 
-<h3 style="text-align: center;"><input name="BackgroundLocation" type="checkbox" />Background Location</h3>
+<h3><input name="BackgroundLocation" type="checkbox" />Background Location</h3>
 
-<p style="text-align: center;">(Share your location while app is running in the background)</p>
+<p>(Share your location while app is running in the background)</p>
 
-<h3 style="text-align: center;"><input name="JoinGamesAuto" type="checkbox" />Join Games Automatically</h3>
+<h3><input name="JoinGamesAuto" type="checkbox" />Join Games Automatically</h3>
 
 <p>&nbsp;</p>
 
@@ -24,6 +49,6 @@
 
 <p>&nbsp;</p>
 
-<p style="text-align: center;"><input name="ResetStats" type="button" value="Reset Stats" /></p>
+<p><input name="ResetStats" type="button" value="Reset Stats" onclick="alert('RESET!')"/></p>
     </body>
 </html>

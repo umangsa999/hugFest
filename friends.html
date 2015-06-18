@@ -21,11 +21,46 @@ td{
 th {
     height: 50px; text-align:left;
 }
+
+.in{
+    color:green;
+}
+
+.off{
+    color:red;
+}
+
+.on{
+    color:black;
+}
+
+ .nav{
+				display:inline-block;
+				border-top-style: solid;
+				border-bottom-style: solid;
+			}
+			#selected{
+				background-color:green;
+				color:white;
+				border: solid green;
+			}
+			.hideable{
+				text-align: center;
+			}
+
 </style>
 
     </head>
     <body>
-        
+        <div class="hideable">
+			<nav style="font-size: 30px;">
+				<div class="nav" onclick='location.href="home.html"'>Home</div> | 
+				<div id="selected" class="nav" onclick='location.href="friends.html"'>Friends</div> | 
+				<div class="nav" onclick='location.href="profile.html"'>Profile</div> | 
+				<div class="nav" onclick='location.href="settings.html"'>Settings</div>
+			</nav>
+		</div>
+	
         <table>
   <tr>
     <th>Name</th>
@@ -34,22 +69,22 @@ th {
   </tr>
   <tr>
     <td>Mike</td>
-    <td>Online</td>
+    <td class="on">Online</td>
     <td>52 hugs/3 games</td>
   </tr>
   <tr>
     <td>Manjot</td>
-    <td>Offline</td>
+    <td class="off">Offline</td>
     <td>19 hugs/2 games</td>
   </tr>
   <tr>
     <td>Ryan</td>
-    <td>In-game</td>
+    <td class="in">In-game</td>
     <td>39 hugs/5 games</td>
   </tr>
   <tr>
     <td>Chris</td>
-    <td>In-game</td>
+    <td class="in">In-game</td>
     <td>0 hugs, forever alone/10 games</td>
 </tr>
 </table>

@@ -1,14 +1,37 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML>
+<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Profile</title>
+        <style>
+            .nav{
+				display:inline-block;
+				border-top-style: solid;
+				border-bottom-style: solid;
+			}
+			#selected{
+				background-color:green;
+				color:white;
+				border: solid green;
+			}
+			.hideable{
+				text-align: center;
+			}
+        </style>
     </head>
     <body>
+	    <div class="hideable">
+			<nav style="font-size: 30px;">
+				<div class="nav" onclick='location.href="home.html"'>Home</div> | 
+				<div class="nav" onclick='location.href="friends.html"'>Friends</div> | 
+				<div id="selected" class="nav" onclick='location.href="profile.html"'>Profile</div> | 
+				<div class="nav" onclick='location.href="settings.html"'>Settings</div>
+			</nav>
+		</div>
+    
         <h1 style="text-align: center;">Profile</h1>
 
-<p style="text-align: right;"><input name="Edit" type="button" value="Edit" /></p>
+<p style="text-align: right;"><input name="Edit" type="button" value="Edit"/></p>
 
 <h1 style="text-align: center;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<img alt="" src="http://i.stack.imgur.com/x8PhM.png" style="width: 200px; height: 155px; float: left;" /></h1>
 
@@ -26,7 +49,7 @@
 
 <h3 style="margin-left: 40px;">Phone: 123-456-7890</h3>
 
-<h3 style="margin-left: 40px;">Nickname: email@test.com</h3>
+<h3 style="margin-left: 40px;">Email: email@test.com</h3>
 
 <p>&nbsp;</p>
 
