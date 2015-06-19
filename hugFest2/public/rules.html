@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<title>HugFest App</title>
-	<script type="text/javascript" src="js/create.js"></script>
+	<script type="text/javascript" src="js/rules.js"></script>
 	<style>
 
 		.join{
@@ -29,7 +29,7 @@
 		<button>Edit</button>
 	</div>
 	<div>
-		<table style="margin-top: 10px">
+		<table id="ruleTable" style="margin-top: 10px">
 			<tr><td>Hugs in 2 Hours</td>
 			<tr><td>First to 10 Hugs to win</td></tr>
 			<tr><td>No Indoors</td></tr>
@@ -63,6 +63,6 @@
 		</table>
 	</div>
 	
-	<button onclick="location.href='target.html'">Back</button>
+	<button onclick="returnPage()">Back</button>
 </body>
 </html>
