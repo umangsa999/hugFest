@@ -2,8 +2,8 @@
 Parse.initialize("RNWZPB7mbzkA9YL7pWy2TW4GW5MzeLvfxjonPoEl", "t8uqZXplrRlSJ3qp5ILEJQPWjQFPM7zsCDvmw3qe");
 function login(){
 	var user = new Parse.User();
-	user.set("username", "my name");
-	user.set("password", "my pass");
+	user.set("username", document.getElementsByName("User")[0].value);
+	user.set("password", document.getElementsByName("Pass")[0].value);
 	  
 	user.signUp(null, {
 	  success: function(user) {
