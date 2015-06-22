@@ -3,6 +3,9 @@
 	
 <head>
 	<meta name="google-signin-client_id" content="287976314878-v908mfn9kft7im1tmktfs6j553kpimh0.apps.googleusercontent.com">
+
+	<script src="//www.parsecdn.com/js/parse-1.4.2.min.js"></script>
+	<script src="js/login.js"></script>
 	<title>HugFest App</title>
 
 <style>
@@ -20,7 +23,8 @@
 	<div class="field">
 		<p style="margin-right:50px">User: <input type="text" name="User"/>
 		<p style="margin-right:50px">Pass: <input type="text" name="Pass"/></p>	
-		<div style="margin-left:220px;margin-top:-70px;"><button style="position:relative;padding: 15px;" onclick="location.href='home.html'">Login</button>
+
+		<div style="margin-left:220px;margin-top:-70px;"><button style="position:relative;padding: 15px;" onclick= "login()" >Login</button>
 	</div>
 
 		<script>
@@ -89,6 +93,7 @@
 		  };
 
 		  // Load the SDK asynchronously
+
 		  (function(d, s, id) {
 		    var js, fjs = d.getElementsByTagName(s)[0];
 		    if (d.getElementById(id)) return;
