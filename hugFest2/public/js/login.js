@@ -14,4 +14,5 @@ function login(){
 	    alert("Error: " + error.code + " " + error.message);
 	  }
 	});
+	location.href='home.html';
 };
