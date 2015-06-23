@@ -1,22 +1,27 @@
 Parse.initialize("RNWZPB7mbzkA9YL7pWy2TW4GW5MzeLvfxjonPoEl", "t8uqZXplrRlSJ3qp5ILEJQPWjQFPM7zsCDvmw3qe");
 function login(){
+
+	//This code gets the entered text from the field of the login html page and signs the user up
+	//Parse will check if username is already taken and do an alert
+
+	//TO - DO: MANJO, please cover miscellaneous cases (blank username, no password, too short, basic, etc)
 	var user = new Parse.User();
 	user.set("username", document.getElementsByName("User")[0].value);
 	user.set("password", document.getElementsByName("Pass")[0].value);
 	  
 	user.signUp(null, {
 	  success: function(user) {
-	    // Hooray! Let them use the app now.
+	  	//navigate to the home page if the signup callback is a success
 	    location.href='home.html';
 	  },
 	  error: function(user, error) {
 	    // Show the error message somewhere and let the user try again.
-	    alert("signUp Error: " + error.code + " " + error.message);
+	    alert("Sign Up Error: " + error.code + " " + error.message);
 	  }
 	});
 };
 
-//Facebook code
+//Facebook code (no need to edit this for now)
 function statusChangeCallback(response) {
 	console.log('statusChangeCallback');
 	console.log(response);
@@ -68,7 +73,6 @@ function statusChangeCallback(response) {
 		 //      alert("Logged in!");
 		 //    }
 	  // });
-
 
 	  // Here we run a very simple test of the Graph API after login is
 	  // successful.  See statusChangeCallback() for when this call is made.
