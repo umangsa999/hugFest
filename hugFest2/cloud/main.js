@@ -24,7 +24,7 @@ Parse.Cloud.define("getAllFriendsWithStats", function(request, response){
 	query.get(request.userId,{
 		success: function(result){
 			//get all friends
-			//accumulate only name, status, skill (hugs / game)
+			//accumulate only id, name, status, skill (hugs / game)
 			response.success({/*the accumulated JSON*/});
 		},
 		error: function(error){
@@ -96,9 +96,22 @@ Parse.Cloud.define("setGameRules", function(request, response){
 });
 
 /****************************************************************\
-|* Functions below are for changing User
+|* Functions below are for changing/viewing User
 |*
 \****************************************************************/
+
+//call this to get a specific User
+Parse.Cloud.define("getUser", function(request, response){
+	var query = new Parse.Query(Parse.User);
+	query.get(request.userId, {
+		success: function(result){
+			response.success(result);
+		},
+		error: function(error){
+			response.error({err: error}){
+		}
+	});
+});
 
 //call this to update a player's profile outside a game
 Parse.Cloud.define("updatePlayerProfile", function(request, response){
