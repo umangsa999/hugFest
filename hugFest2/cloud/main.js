@@ -49,6 +49,52 @@ function getGame (request, response){
 });
 
 /****************************************************************\
+|* Functions below are for changing/viewing User
+|*
+\****************************************************************/
+
+//call this to update a player's profile outside a game
+//Param: {userId: current User objectId, name: new name, nickname: new nickname, status: new status, currentLocation: new location}
+//Note: inputs are optional, only add what needs to be changed
+Parse.Cloud.define("updatePlayerProfile", function(request, response){
+	getUser(request, {
+		sucess: function(result){
+			if (request.name)
+				result.set("name", request.name);
+			if (request.nickname)
+				result.set("nickname", request.nickname);
+			if (request.status)
+				result.set("status", request.status);
+			if (request.currentLocation)
+				result.set("currentLocation", request.currentLocation);
+			
+			response.success();
+		},
+		error: function(error){
+			response.error({err: error});
+		}
+	});
+});
+
+//call this to update a player's profile during/after a game
+//Param: {userId: current User objectId, currentHugs: hugs from game)
+Parse.Cloud.define("playerFinishGame", function(request, response){
+	getUser(request, {
+		success: function(result){
+			result.set("totalHugs", result.get("totalHugs") + request.currentHugs);
+			result.set("totalGames", result.get("totalGames") + 1);
+			result.set("currentHugs", 0);
+			//change game to none
+			//change target to none
+			response.success();
+		},
+		error: function(error){
+			response.error({err: error});
+		}
+	});
+});
+
+/****************************************************************\
 |* Functions below are for Friends
 |*
 \****************************************************************/
@@ -139,53 +185,7 @@ Parse.Cloud.define("setGameRules", function(request, response){
 });
 
 /****************************************************************\
-|* Functions below are for changing/viewing User
-|*
-\****************************************************************/
-
-//call this to update a player's profile outside a game
-//Param: {userId: current User objectId, name: new name, nickname: new nickname, status: new status, currentLocation: new location}
-//Note: inputs are optional, only add what needs to be changed
-Parse.Cloud.define("updatePlayerProfile", function(request, response){
-	getUser(request, {
-		sucess: function(result){
-			if (request.name)
-				result.set("name", request.name);
-			if (request.nickname)
-				result.set("nickname", request.nickname);
-			if (request.status)
-				result.set("status", request.status);
-			if (request.currentLocation)
-				result.set("currentLocation", request.currentLocation);
-			
-			response.success();
-		},
-		error: function(error){
-			response.error({err: error});
-		}
-	});
-});
-
-//call this to update a player's profile during/after a game
-//Param: {userId: current User objectId, currentHugs: hugs from game)
-Parse.Cloud.define("playerFinishGame", function(request, response){
-	getUser(request, {
-		success: function(result){
-			result.set("totalHugs", result.get("totalHugs") + request.currentHugs);
-			result.set("totalGames", result.get("totalGames") + 1);
-			result.set("currentHugs", 0);
-			//change game to none
-			//change target to none
-			response.success();
-		},
-		error: function(error){
-			response.error({err: error});
-		}
-	});
-});
-
-/****************************************************************\
-|* Functions below are for queries within a game
+|* Functions below are for queries within/about a game
 |*
 \****************************************************************/
 
