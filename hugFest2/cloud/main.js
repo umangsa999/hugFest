@@ -84,7 +84,7 @@ Parse.Cloud.define("updatePlayer", function(request, response){
 			response.success();
 		},
 		error: function(error){
-			response.error(err: error);
+			response.error({err: error});
 		}
 	});
 });
