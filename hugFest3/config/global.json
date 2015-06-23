@@ -1,0 +1,14 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "_default": {
+      "link": "hugFest2"
+    },
+    "hugFest2": {
+      "applicationId": "w1p0s3VxWIXQ18cfujCFceikzE5hJPqO9jbJoGk9",
+      "masterKey": "NqbtHedeOSRE4VUpiOePgVmqy71rxpM6tAIs2Enr"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<script src="https://www.parsecdn.com/js/parse-1.4.2.min.js"> </script>
+	<script type = "text/javascript">
+			function login(){
+				Parse.initialize("w1p0s3VxWIXQ18cfujCFceikzE5hJPqO9jbJoGk9", "KwSbWqJEKsF1pwMwRaCgZgsxhaCxTw4vqhcPSa1Z")
+
+				//comment out for now
+				//var user = new Parse.User();
+				//user.set("username", document.getElementsByName("User")[0].value);
+				//user.set("password", document.getElementsByName("Pass")[0].value);
+				// TO--DO CHECK FOR VALID USER INPUT
+
+				user.signUp(null, {
+				  success: function(user) {
+				    location.href='home.html'; //bring them to the home page
+				  },
+				  error: function(user, error) {
+				    // Show the error message somewhere and let the user try again.
+				    alert("signUp Error: " + error.code + " " + error.message);
+				  }
+				});
+			}
+	</script>
+	<title>HugFest App</title>
+</head>
+
+<body style="text-align: center">
+	<div>
+		<header>
+		<h1 style="text-align: center;clear:both">HugFest</h1>
+		</header>
+	</div>
+	
+	<div class="field">
+		<p style="margin-right:50px">User: <input type="text" name="User"/></p>
+		<p style="margin-right:50px">Pass: <input type="text" name="Pass"/></p>	
+		<div style="margin-left:220px;margin-top:-70px;"><button style="position:relative;padding: 15px;" onclick= "login()" >Login</button>
+	</div>
+
+		<p>Or</p>
+		
+	</div>
+	
+	
+</body>
+</html>
