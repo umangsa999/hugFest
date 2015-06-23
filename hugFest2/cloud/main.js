@@ -100,3 +100,43 @@ Parse.Cloud.define("playerFinishGame", function(request, response){
 	});
 });
 
+//call to get target for target screen
+Parse.Cloud.define("getCurrentTarget", function(request, response){
+	var query = Parse.Query(Parse.User);
+	query.get(request.userId, {
+		success: function(result){
+			//give target
+			response.success();
+		},
+		error: function(error){
+			response.error({err: error});
+		}
+});
+
+//call this to update the target page scoreboard
+Parse.Cloud.define("getTopHuggers", function(request, response){
+	var query = Parse.Query("hugGame");
+	query.get(request.gameId,{
+		success: function(result){
+			//get players in the game
+			//query the players for descending currentHugs
+			response.success({/*top 3 players*/});
+		},
+		error: function(error){
+			response.error({err: error});
+		}
+	});
+});
+
+//call this for the players inside the current game
+Parse.Cloud.define("getPlayersInGame", function(request, response){
+	var query = Parse.Query("hugGame");
+	query.get(request.gameId,{
+		success: function(result){
+			response.success({/*get all players from result*/});
+		},
+		error: function(error){
+			response.error({err: error});
+		}
+	});
+});
