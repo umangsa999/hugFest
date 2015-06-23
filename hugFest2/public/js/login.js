@@ -11,7 +11,7 @@ function login(){
 	  },
 	  error: function(user, error) {
 	    // Show the error message somewhere and let the user try again.
-	    alert("Error: " + error.code + " " + error.message);
+	    alert("signUp Error: " + error.code + " " + error.message);
 	  }
 	});
 };
