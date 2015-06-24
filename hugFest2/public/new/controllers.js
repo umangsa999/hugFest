@@ -16,4 +16,13 @@ hugFestControllers.controller('hugFestLoginCtrl', ['$scope', function($scope){
 hugFestControllers.controller('hugFestHomeCtrl', ['$scope', function($scope){
 	//do a call here for friends
 	$scope.columns = ["Name", "Number of Friends", "Status"];
+	$scope.friendGames = [
+		{owner: "Mike", mutual: "2", status: "Playing"},
+		{owner: "Andy", mutual: "14", status: "Playing"},
+		{owner: "Manjot", mutual: "5", status: "Started"},
+		{owner: "chris", mutual: "0", status: "Lobby"}
+	];
+	$scope.gameSortFunction = function(game){
+		return parseInt(game.mutual);
+	}
 }]);

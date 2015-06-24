@@ -1,5 +1,16 @@
 <div>
-	<div style="text-align: center">Games</div>
+	<div>
+		<div style="text-align: center">Games</div>
+		<input style="text-align: right" type="button" value="+"/>
+	</div>
+	<style>
+		table, th, td{
+	    	border: 1px solid black;
+		}
+		table{
+			width:100%
+		}
+	</style>
 	
 	<table>
 		<thead>
@@ -8,6 +19,11 @@
 			</tr>
 		</thead>
 		<tbody>
+			<tr ng-repeat="game in friendGames | orderBy: gameSortFunction: true" onclick="">
+				<td>{{game.owner}}</td>
+				<td>{{game.mutual}}</td>
+				<td>{{game.status}}</td>
+			</tr>
 		</tbody>
 	</table>
 </div>
