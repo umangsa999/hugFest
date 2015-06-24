@@ -1,0 +1,41 @@
+<div>
+
+	 <!-- <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '715839931872390',
+          xfbml      : true,
+          version    : 'v2.3'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script> -->
+
+   
+	<img src={{logo}}/>
+	
+	<div class="field">
+		<!--<p style="margin-right:50px">User: <input type="text" name="User"/></p>
+		<p style="margin-right:50px">Pass: <input type="text" name="Pass"/></p>	-->
+		<p style="margin-left:-100px" ng-repeat="in in inputs">{{in.text}} <input type="text" id={{in.id}}/></p>
+		<div style="margin-right:-270px;margin-top:-70px;"><button style="position:relative;padding: 15px;" onclick= "login()" >{{buttonLabel}}</button>
+		</div>
+
+		<p>
+			<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+			</fb:login-button>
+		</p>
+	
+		<p>Or</p>
+		
+		<!--<div style = "width: 100px; margin: 0 auto;" class="g-signin2" data-onsuccess="onSignIn"></div>-->
+		
+	</div>
+</div>
