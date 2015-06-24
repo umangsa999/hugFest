@@ -8,7 +8,12 @@ hugFestControllers.controller('hugFestStartCtrl', ['$scope', function($scope){
 }]);
 
 hugFestControllers.controller('hugFestLoginCtrl', ['$scope', function($scope){
-	$scope.logo == imageURL;
+	$scope.logo = imageURL;
 	$scope.inputs = [{text:"Username:", id: "user"}, {text:"Password:", id: "pass"}];
 	$scope.buttonLabel = "Sign up";
+}]);
+
+hugFestControllers.controller('hugFestHomeCtrl', ['$scope', function($scope){
+	//do a call here for friends
+	$scope.columns = ["Name", "Number of Friends", "Status"];
 }]);

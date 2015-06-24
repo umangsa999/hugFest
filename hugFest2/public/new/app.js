@@ -8,7 +8,11 @@ hugFestApp.config(['$routeProvider',
 	function($routeProvider){
 		//check cookies for user data. if no user data, use this call. if is, do another $routeProvider.when branch
 		$routeProvider.
-			when('/start',{
+			when('/home', {
+				templateUrl: 'partials/tabScreens/home.html',
+				controller: 'hugFestHomeCtrl'
+			}).
+			when('/start', {
 				templateUrl: 'partials/start_login/start.html',
 				controller: 'hugFestStartCtrl'
 			}).
@@ -17,6 +21,6 @@ hugFestApp.config(['$routeProvider',
 				controller: 'hugFestLoginCtrl'
 			}).
 			otherwise({
-				redirectTo: '/start'
+				redirectTo: '/home'
 			});
 }]);
