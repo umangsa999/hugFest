@@ -1,7 +1,9 @@
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
-Parse.Cloud.define("findFriend", function(request, response) {
+Parse.Cloud.define("addFriend", function(request, response) {
+	console.log(new Date());
 	var query = new Parse.Query(Parse.User);
+	console.log( "THis one!!" + Parse.User().current().id );
 	var queryPromise = query.find({ //This gets all the users
 	  success: function(results) {
 	  	response.success({message:"success"});
@@ -28,10 +30,10 @@ function getUser (request, response){
 			response.success(result);
 		},
 		error: function(error){
-			response.error(error){
+			response.error(error);
 		}
 	});
-});
+};
 
 //call this to get a specific hugGame
 //Param: {gameId: objectId of target hugGame}
@@ -43,10 +45,10 @@ function getGame (request, response){
 			response.success(result);
 		},
 		error: function(error){
-			response.error(error){
+			response.error(error);
 		}
 	});
-});
+};
 
 /****************************************************************\
 |* Functions below are for changing/viewing User
@@ -202,7 +204,7 @@ Parse.Cloud.define("getCurrentTarget", function(request, response){
 			response.error({err: error});
 		}
 	});
-);
+});
 
 //call this to update the target page scoreboard
 //Param: {gameId: objectId of currentGame, num: number of players wanted}
