@@ -1,0 +1,36 @@
+<div>
+	<style>
+		table, td, th {
+		    border: 1px solid black;
+		}
+		
+		table {
+		    width: 100%;
+		}
+		
+		td{
+			padding:15px;
+		}
+		
+		th {
+		    height: 50px; text-align:left;
+		}
+	</style>
+	<table>
+		<thead>
+			<tr>
+				<th ng-repeat="title in titles">{{title}}
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="friend in friends">
+				<td>{{friend.name}}</td>
+				<td>{{friend.status}}</td>
+				<td>{{friend.hugs}}</td>
+				<td>{{friend.games}}</td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="button" value="Add Friend" />
+</div>

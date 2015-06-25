@@ -14,7 +14,7 @@ hugFestControllers.controller('hugFestLoginCtrl', ['$scope', function($scope){
 }]);
 
 hugFestControllers.controller('hugFestHomeCtrl', ['$scope', function($scope){
-	//do a call here for friends
+	//do a call here for games here
 	$scope.columns = ["Name", "Number of Friends", "Status"];
 	$scope.friendGames = [
 		{owner: "Mike", mutual: "2", status: "Playing"},
@@ -25,4 +25,15 @@ hugFestControllers.controller('hugFestHomeCtrl', ['$scope', function($scope){
 	$scope.gameSortFunction = function(game){
 		return parseInt(game.mutual);
 	}
+}]);
+
+hugFestControllers.controller('hugFestFriendCtrl', ['$scope', function($scope){
+	$scope.titles = ["Name", "Status", "Hugs", "Games"];
+	//do a call here for friends
+	$scope.friends = [
+		{name: "Mike", status: "Online", hugs: "52", games: "3"},
+		{name: "Manjot", status: "Offline", hugs: "2", games: "1"},
+		{name: "Chris", status: "In Game", hugs: "0", games: "5"},
+		{name: "Ryan", status: "In Game", hugs: "5", games: "3"}
+	];
 }]);
