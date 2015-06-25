@@ -34,7 +34,7 @@ hugFestApp.config(['$routeProvider',
 			}).
 			when('/rules', {
 				templateUrl: 'partials/gameScreens/rules.html',
-				controller: 'hugFestRulesCtrl'
+				controller: 'hugFestCreateCtrl'
 			}).
 			when('/profile', {
 				templateUrl: 'partials/start_login/profile.html',
