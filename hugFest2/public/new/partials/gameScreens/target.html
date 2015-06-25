@@ -1,0 +1,46 @@
+<div>
+	<style>
+		table, td, th {
+		    border: 1px solid black;
+		}
+		
+		table {
+		    width: 100%;
+		}
+		
+		td{
+			padding:15px;
+		}
+		
+		th {
+		    height: 50px; text-align:left;
+		}
+	</style>
+	<button style="text-align=left">Quit</button>
+	<div class="timeLeft">
+		<h5>Time left: {{time}}</h5>
+	</div>
+	<div class="targetDisplay">
+		<h4>Current Target</h4>
+		<img ng-src="target.img">
+		<p class="name">Name: {{target.name}}</p>
+		<p class="reason">Reason: {{target.reason}}</p>
+	</div>
+	<div>
+		<table class="huggerTable">
+			<thead>
+				<tr>
+					<th>{{title}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="hugger in huggers">
+					<td>{{hugger.name}}</td>
+					<td>{{hugger.hugs}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<input type="button" value="View Rules" />
+	<input type="button" value="End Game"/>
+</div>

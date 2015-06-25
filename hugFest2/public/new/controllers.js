@@ -51,6 +51,76 @@ hugFestControllers.controller('hugFestSettingsCtrl', ['$scope', function($scope)
 	];
 }]);
 
+hugFestControllers.controller('hugFestTargetCtrl', ['$scope', function($scope){
+	$scope.title = "Top Huggers"
+	#scope.time = "8:00:00" //placeholder
+	//Container for player information
+	$scope.huggers = [
+		{name: "Mike",hugs: "4"},
+		{name: "Manjot",hugs: "2"},
+		{name: "Chris",hugs: "0"},
+		{name: "Ryan", hugs: "5"}
+	];
+	//Should be pulled from server side or something and the server determines target
+	//Place holder for now
+	$scope.target = [
+		{name: "Andy", reason: "Being too awesome", img:"Some image here"},
+		{name: "Ryan", reason: "Being too awesome", img:"Some image here"},
+		{name: "Chris", reason: "Being a loser", img:"Some image here"},
+	];
+}]);
+
+hugFestControllers.controller('hugFestCreateCtrl', ['$scope', function($scope){
+	//Read below
+	$scope.presetRules = [
+		{text: "Time", qty:"2 Hours"}
+		{text: "Hugs to win",qty:"10"}
+	];
+	$scope.additionalRules = [
+		{text: "No Indoors", remove:false}
+		{text: "No Running", remove:false}
+	];
+	$scope.buttons = [
+		{text: "Save"},
+		{text: "Load"}
+	];
+	$scope.friends = [
+		{name: "Mike"},
+		{name: "Manjot"},
+		{name: "Chris"},
+		{name: "Ryan"}
+	];
+	/* Due to all controllers being in same file, no idea how to create these functions
+	$scope.addRules = function(){
+		
+	};
+	$scope.removeRules = function(){
+		
+	};
+	*/
+}]);
+
+hugFestControllers.controller('hugFestProfileCtrl', ['$scope', function($scope){
+	$scope.huggers = [
+		{name: "Mike", status: "Online", hugs: "52", games: "3"},
+		{name: "Manjot", status: "Offline", hugs: "2", games: "1"},
+		{name: "Chris", status: "In Game", hugs: "0", games: "5"},
+		{name: "Ryan", status: "In Game", hugs: "5", games: "3"}
+	];
+}]);
+
+/*
+hugFestControllers.controller('hugFestRulesCtrl', ['$scope', function($scope){
+	$scope.titles = ["Name", "Status", "Hugs", "Games"];
+	//do a call here for friends
+	$scope.huggers = [
+		{name: "Mike", status: "Online", hugs: "52", games: "3"},
+		{name: "Manjot", status: "Offline", hugs: "2", games: "1"},
+		{name: "Chris", status: "In Game", hugs: "0", games: "5"},
+		{name: "Ryan", status: "In Game", hugs: "5", games: "3"}
+	];
+}]);
+*/
 
 
 

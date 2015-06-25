@@ -1,0 +1,40 @@
+<div>
+	<style>
+		table, td, th {
+		    border: 1px solid black;
+		}
+		
+		table {
+		    width: 100%;
+		}
+		
+		td{
+			padding:15px;
+		}
+		
+		th {
+		    height: 50px; text-align:left;
+		}
+	</style>
+	<div class="creation">
+		<h3>Create Game</h3>
+		<img ng-src="target.img">
+		<p class="name">Name: {{target.name}}</p>
+		<p class="reason">Reason: {{target.reason}}</p>
+	</div>
+	<div>
+		<table class="friendTable">
+			<thead>
+				<tr>
+					<th>Friends</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="friend in friends">
+					<td>{{friend.name}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<input type="button" value="Add Friend" />
+</div>

@@ -24,9 +24,21 @@ hugFestApp.config(['$routeProvider',
 				templateUrl: 'partials/start_login/start.html',
 				controller: 'hugFestStartCtrl'
 			}).
-			when('/signUp', {
-				templateUrl: 'partials/start_login/login.html',
-				controller: 'hugFestLoginCtrl'
+			when('/target', {
+				templateUrl: 'partials/gameScreens/target.html',
+				controller: 'hugFestTargetCtrl'
+			}).
+			when('/create', {
+				templateUrl: 'partials/gameScreens/create.html',
+				controller: 'hugFestCreateCtrl'
+			}).
+			when('/rules', {
+				templateUrl: 'partials/gameScreens/rules.html',
+				controller: 'hugFestRulesCtrl'
+			}).
+			when('/profile', {
+				templateUrl: 'partials/start_login/profile.html',
+				controller: 'hugFestProfileCtrl'
 			}).
 			otherwise({
 				redirectTo: '/home'

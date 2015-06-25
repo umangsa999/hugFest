@@ -1,0 +1,62 @@
+<div>
+	<style>
+		table, td, th {
+		    border: 1px solid black;
+		}
+		
+		table {
+		    width: 100%;
+		}
+		
+		td{
+			padding:15px;
+		}
+		
+		th {
+		    height: 50px; text-align:left;
+		}
+		.unstyled{
+			list-style-type:none;
+		}
+	</style>
+	<div class="header">
+		<h3>Create Game</h3>
+		<button ng-repeat="button in buttons" style="margin-left: 70px">{{button.text}}</button>
+	</div>
+	
+	<div class="rules">
+		<h4>Game Rules</h4>
+		[ <a href="" ng-click="removeRules()">Remove selected rules</a>]
+		<ul class="unstyled">
+			<li ng-repeat="preset in presetRules">{{preset.text}}: {{preset.qty}}</li>
+			<li ng-repeat="addition in additionalRules">{{addition.text}}</li>
+			<!--
+			<input type="number" min="0" ng-model="additional.done">
+			<span class="done-{{additional.done}}">{{additional.text}}</span>
+			<input type="checkbox" ng-model="additional.done">
+			<span class="done-{{additional.done}}">{{additional.text}}</span>
+			-->
+		</ul>
+		<form ng-submit="">
+			<input type="text" ng-model="" size="30" placeholder="add new rule here"/>
+			<input type="submit" value="add"/>
+		</form>
+	</div>
+	
+	<div>
+		<table class="friendTable">
+			<thead>
+				<tr>
+					<th>Friends</th>
+					<input type="button" value="Add Friend" />
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="friend in friends">
+					<td>{{friend.name}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<input type="button" value="Start" />
+</div>
