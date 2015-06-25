@@ -101,11 +101,15 @@ hugFestControllers.controller('hugFestCreateCtrl', ['$scope', function($scope){
 }]);
 
 hugFestControllers.controller('hugFestProfileCtrl', ['$scope', function($scope){
-	$scope.huggers = [
-		{name: "Mike", status: "Online", hugs: "52", games: "3"},
-		{name: "Manjot", status: "Offline", hugs: "2", games: "1"},
-		{name: "Chris", status: "In Game", hugs: "0", games: "5"},
-		{name: "Ryan", status: "In Game", hugs: "5", games: "3"}
+	$scope.profile = [
+		{name: "Andy", 
+		 email:"sample@test.com",
+		 phone:"123-456-7890", 
+		 nickname:"The Mastermind", 
+		 joinDate: new Date(2013,11,31,00,00,00,00),
+		 hugs: 32,
+		 img: "Something here"
+		},
 	];
 }]);
 

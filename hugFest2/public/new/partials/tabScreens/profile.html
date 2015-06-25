@@ -16,25 +16,18 @@
 		    height: 50px; text-align:left;
 		}
 	</style>
-	<div class="creation">
-		<h3>Create Game</h3>
-		<img ng-src="target.img">
-		<p class="name">Name: {{target.name}}</p>
-		<p class="reason">Reason: {{target.reason}}</p>
+	<div class="header">
+		<h3>Profile <button>Edit</button></h3>
 	</div>
-	<div>
-		<table class="friendTable">
-			<thead>
-				<tr>
-					<th>Friends</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="friend in friends">
-					<td>{{friend.name}}</td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="profileBody">
+		<img ng-src="{{profile.img}}">
+		<p class="name">Name: "{{profile.name}}</p>
+		<p class="date">Joined: {{profile.date|date}}</p>
+		<p>Lifetime Hugs: {{profile.hugs}}</p>
+		<p>Nickname: {{profile.nickname}}</p>
+		<p>Phone: {{profile.phone}}</p>
+		<p>Email: {{profile.email}}</p>
 	</div>
-	<input type="button" value="Add Friend" />
+	<br>
+	<input type="button" value="View on Facebook" />
 </div>
