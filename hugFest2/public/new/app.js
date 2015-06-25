@@ -8,6 +8,10 @@ hugFestApp.config(['$routeProvider',
 	function($routeProvider){
 		//check cookies for user data. if no user data, use this call. if is, do another $routeProvider.when branch
 		$routeProvider.
+			when('/settings', {
+				templateUrl: 'partials/tabScreens/settings.html',
+				controller: 'hugFestSettingsCtrl'
+			}).
 			when('/friends', {
 				templateUrl: 'partials/tabScreens/friends.html',
 				controller: 'hugFestFriendCtrl'

@@ -37,3 +37,29 @@ hugFestControllers.controller('hugFestFriendCtrl', ['$scope', function($scope){
 		{name: "Ryan", status: "In Game", hugs: "5", games: "3"}
 	];
 }]);
+
+hugFestControllers.controller('hugFestSettingsCtrl', ['$scope', function($scope){
+	$scope.settings = [
+	{name: "Notifications", description: "Allow notifications", isOn: false},
+	{name: "Join Automatically", description: "Skip confirmation when invited to a game", isOn: true},
+	{name: "Share Background Location", description: "Share your location while app is running in the background", isOn: true}
+	];
+	
+	$scope.buttons = [
+	{text: "Log Out"},
+	{text: "Reset Stats"} //make sure to use confirm()
+	];
+}]);
+
+
+
+
+
+
+
+
+
+
+
+
+
