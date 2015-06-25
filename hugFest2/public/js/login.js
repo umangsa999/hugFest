@@ -9,13 +9,11 @@ function login(){
 	user.set("username", document.getElementsByName("User")[0].value);
 	user.set("password", document.getElementsByName("Pass")[0].value);
 	
-
 	user.signUp(null, {
 	  success: function(user) {
-
 	    document.cookie="userId="+user.id +"; user:"+ user + ";";
 	   	location.href='home.html';
-	   	user.logOut();
+	   	Parse.User.logOut();
 	  },
 	  error: function(user, error) {
 	    // Show the error message somewhere and let the user try again.

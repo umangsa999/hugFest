@@ -1,18 +1,57 @@
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
 Parse.Cloud.define("addFriend", function(request, response) {
-	console.log(new Date());
+
+	//getting the current querying user
+
+	//console.log( request.user );
+
 	var query = new Parse.Query(Parse.User);
-	console.log( "THis one!!" + Parse.User().current().id );
-	var queryPromise = query.find({ //This gets all the users
-	  success: function(results) {
-	  	response.success({message:"success"});
-	  },
-	  error: function(error) {
-	    // error is an instance of Parse.Error.
-	    response.error({message:"Error in query"});
-	  }
-	})
+	query.get( request.user, {
+		success: function(result){
+			console.log("found self");
+			console.warn("found self");
+			console.error("found self");
+	// 		currentUserObject = result1;
+	// 		var query = new Parse.Query(Parse.User);
+	// 		query.get( "JWrXFZc0CV", {
+	// 			success: function(result2){
+	// 				//var relation = currentUserObject.relation("friends");
+	// 				//alert( relation );
+	// 				///relation.add( result2 );
+
+	// 				//var relation2 = result2.relation("friends");
+	// 				alert( "PIZZA" );
+	// 				//relation2.add(result1);
+
+	// 				//result2.save();
+	// 				//currentUserObject.save();
+	// 			},
+	// 			error: function(error){
+	// 				console.log( "get chris error: " + error );
+	// 			}
+	// 		})
+		},
+		error: function(error){
+			console.log( "get myself error: " + error );
+			response.error(error);
+	 	}
+	 });
+
+
+	//OLd code VV
+	// console.log(new Date());
+	// var query = new Parse.Query(Parse.User);
+	// console.log( "THis one!!" + Parse.User().current().id );
+	// var queryPromise = query.find({ //This gets all the users
+	//   success: function(results) {
+	//   	response.success({message:"success"});
+	//   },
+	//   error: function(error) {
+	//     // error is an instance of Parse.Error.
+	//     response.error({message:"Error in query"});
+	//   }
+	// })
 });
 
 /****************************************************************\
