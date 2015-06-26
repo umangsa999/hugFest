@@ -40,7 +40,7 @@
 			
 			-->
 		</ul>
-		<form ng-submit="addRules()">
+		<form ng-submit="addRules()" ng-hide="isMax()">
 			<input type="text" ng-model="newRule" size="30" placeholder="add new rule here"/>
 			<input type="submit" value="add"/>
 		</form>

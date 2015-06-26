@@ -71,6 +71,7 @@ hugFestControllers.controller('hugFestTargetCtrl', ['$scope', function($scope){
 
 hugFestControllers.controller('hugFestCreateCtrl', ['$scope', function($scope){
 	//Read below
+	
 	$scope.presetRules = [
 		{text: "Time", qty:"2 Hours"},
 		{text: "Hugs to win",qty:"10"}
@@ -91,6 +92,14 @@ hugFestControllers.controller('hugFestCreateCtrl', ['$scope', function($scope){
 		{name: "Ryan"}
 	];
 	//Due to all controllers being in same file, no idea how to create these functions
+	$scope.isMax = function(){
+		if($scope.additionalRules.length>=5){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 	$scope.addRules = function(){
 		$scope.additionalRules.push({text: $scope.newRule, remove: false});
 		$scope.newRule = '';
