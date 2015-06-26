@@ -1,4 +1,3 @@
-'use strict';
 var hugFestControllers = angular.module('hugFestControllers', []);
 
 var imageURL = "res/title.png";
@@ -52,8 +51,8 @@ hugFestControllers.controller('hugFestSettingsCtrl', ['$scope', function($scope)
 }]);
 
 hugFestControllers.controller('hugFestTargetCtrl', ['$scope', function($scope){
-	$scope.title = "Top Huggers"
-	#scope.time = "8:00:00" //placeholder
+	$scope.title = "Top Huggers";
+	$scope.time = "8:00:00"; //placeholder
 	//Container for player information
 	$scope.huggers = [
 		{name: "Mike",hugs: "4"},
@@ -73,11 +72,11 @@ hugFestControllers.controller('hugFestTargetCtrl', ['$scope', function($scope){
 hugFestControllers.controller('hugFestCreateCtrl', ['$scope', function($scope){
 	//Read below
 	$scope.presetRules = [
-		{text: "Time", qty:"2 Hours"}
+		{text: "Time", qty:"2 Hours"},
 		{text: "Hugs to win",qty:"10"}
 	];
 	$scope.additionalRules = [
-		{text: "No Indoors", remove:false}
+		{text: "No Indoors", remove:false},
 		{text: "No Running", remove:false}
 	];
 	$scope.buttons = [
@@ -106,7 +105,7 @@ hugFestControllers.controller('hugFestProfileCtrl', ['$scope', function($scope){
 		 email:"sample@test.com",
 		 phone:"123-456-7890", 
 		 nickname:"The Mastermind", 
-		 joinDate: new Date(2013,11,31,00,00,00,00),
+		 joinDate: new Date(2013, 11, 31, 00, 00, 00, 00),
 		 hugs: 32,
 		 img: "Something here"
 		},

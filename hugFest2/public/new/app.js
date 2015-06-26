@@ -37,7 +37,7 @@ hugFestApp.config(['$routeProvider',
 				controller: 'hugFestCreateCtrl'
 			}).
 			when('/profile', {
-				templateUrl: 'partials/start_login/profile.html',
+				templateUrl: 'partials/tabScreens/profile.html',
 				controller: 'hugFestProfileCtrl'
 			}).
 			otherwise({
