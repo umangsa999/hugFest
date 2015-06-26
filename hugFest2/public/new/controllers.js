@@ -75,6 +75,7 @@ hugFestControllers.controller('hugFestCreateCtrl', ['$scope', function($scope){
 		{text: "Time", qty:"2 Hours"},
 		{text: "Hugs to win",qty:"10"}
 	];
+	
 	$scope.additionalRules = [
 		{text: "No Indoors", remove:false},
 		{text: "No Running", remove:false}
@@ -89,14 +90,14 @@ hugFestControllers.controller('hugFestCreateCtrl', ['$scope', function($scope){
 		{name: "Chris"},
 		{name: "Ryan"}
 	];
-	/* Due to all controllers being in same file, no idea how to create these functions
+	//Due to all controllers being in same file, no idea how to create these functions
 	$scope.addRules = function(){
-		
+		$scope.additionalRules.push({text: $scope.newRule, remove: false});
+		$scope.newRule = '';
 	};
 	$scope.removeRules = function(){
 		
 	};
-	*/
 }]);
 
 hugFestControllers.controller('hugFestProfileCtrl', ['$scope', function($scope){

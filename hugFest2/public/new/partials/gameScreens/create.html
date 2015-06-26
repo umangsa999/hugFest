@@ -29,16 +29,19 @@
 		[ <a href="" ng-click="removeRules()">Remove selected rules</a>]
 		<ul class="unstyled">
 			<li ng-repeat="preset in presetRules">{{preset.text}}: {{preset.qty}}</li>
-			<li ng-repeat="addition in additionalRules">{{addition.text}}</li>
+			<li ng-repeat="addition in additionalRules">
+			<input type="checkbox" ng-model="additional.done">
+			<span class="done-{{additional.done}}">{{additional.text}}</span>
+			{{addition.text}}
+			</li>
 			<!--
 			<input type="number" min="0" ng-model="additional.done">
 			<span class="done-{{additional.done}}">{{additional.text}}</span>
-			<input type="checkbox" ng-model="additional.done">
-			<span class="done-{{additional.done}}">{{additional.text}}</span>
+			
 			-->
 		</ul>
-		<form ng-submit="">
-			<input type="text" ng-model="" size="30" placeholder="add new rule here"/>
+		<form ng-submit="addRules()">
+			<input type="text" ng-model="newRule" size="30" placeholder="add new rule here"/>
 			<input type="submit" value="add"/>
 		</form>
 	</div>
