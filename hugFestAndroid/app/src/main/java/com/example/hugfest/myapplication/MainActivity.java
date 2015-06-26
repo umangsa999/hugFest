@@ -1,34 +1,71 @@
 package com.example.hugfest.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.parse.Parse;
-import com.parse.ParseObject;
-
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class MainActivity extends ActionBarActivity {
 
+    public static String EXTRA_USEROBJECTID = "com.example.hugfest.myapplication.USEROBJECTID";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         // Enable Local Datastore.
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "roLFtR6aJgjdAWMguXbD52qaFEVT1xghkC7c3Nxh", "957CLgERcM1zdclQrzspb7KA6P32gI3RmiTYZeRY");
+        Parse.enableLocalDatastore( this );
+        Parse.initialize( this, "roLFtR6aJgjdAWMguXbD52qaFEVT1xghkC7c3Nxh", "957CLgERcM1zdclQrzspb7KA6P32gI3RmiTYZeRY");
+        setContentView(R.layout.activity_main);
 
-        final Button button = (Button) findViewById(R.id.buttonLogin);
-        button.setOnClickListener(new View.OnClickListener() {
+        ParseUser currentUser = null;
+        currentUser = ParseUser.getCurrentUser();
+        if (currentUser != null) {
+            // do stuff with the user
+            currentUser.logOut();
+        }
+
+        Button buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        final EditText editTextPass = (EditText) findViewById(R.id.fieldPassword);
+        final EditText editTextUsername = (EditText) findViewById(R.id.fieldUsername);
+
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //want to create new user and login
-                ParseObject testObject = new ParseObject("TestObject");
-                testObject.put("foo", "bar");
-                testObject.saveInBackground();
+
+                ParseUser user = new ParseUser();
+                String userString = editTextUsername.getText().toString();
+                String passString = "pass"; //= editTextPass.getText().toString();
+                user.setUsername(userString);
+                user.setPassword(passString);
+                user.signUpInBackground(new SignUpCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        //Toast.makeText(getApplicationContext(), "in done", Toast.LENGTH_LONG).show();
+                        if (e == null) {
+                            String userObjectIDString = ParseUser.getCurrentUser().getObjectId();
+                            //Toast.makeText(getApplicationContext(), ParseUser.getCurrentUser().getObjectId(), Toast.LENGTH_LONG).show();
+                            Log.e("MainActivity", userObjectIDString);
+                            //successful signup, let's go to the home activity
+                            Intent intent;
+                            intent = new Intent(getApplicationContext(), home.class);
+                            intent.putExtra(EXTRA_USEROBJECTID, userObjectIDString);
+                            startActivity(intent);
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
 
             }
         });
