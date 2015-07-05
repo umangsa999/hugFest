@@ -10,10 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
 import java.util.List;
 
 public class home extends ListActivity {
@@ -33,6 +35,7 @@ public class home extends ListActivity {
 
         editTextAddFriend = (EditText) findViewById(R.id.addFriendNameField);
         Button buttonAddFriend = (Button) findViewById(R.id.buttonAddFriend);
+
         ListView friendListView = (ListView) findViewById(R.id.listView);
 
         //Get the userobjectID

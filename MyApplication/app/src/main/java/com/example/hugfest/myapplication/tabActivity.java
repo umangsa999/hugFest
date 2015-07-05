@@ -53,8 +53,6 @@ public class tabActivity extends ActionBarActivity {
         linearLayoutTab = (LinearLayout) findViewById(R.id.LinearLayoutTab);
 
 
-
-
     }
 
 
