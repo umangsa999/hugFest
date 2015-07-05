@@ -4,14 +4,36 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 
 public class LoginActivity extends ActionBarActivity {
+
+    private EditText edtxUserName;
+    private EditText edtxPassWord;
+    private Button   btnSignUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //TODO check for sharedPreference user id is made
+
+        edtxPassWord = (EditText) findViewById(R.id.edtxPass);
+        edtxUserName = (EditText) findViewById(R.id.edtxUser);
+        btnSignUp    = (Button)   findViewById(R.id.btnSignUp);
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String user = edtxUserName.getText().toString();
+                String pass = edtxPassWord.getText().toString();
+                //TODO create a REST call to server and send data then transition screens
+            }
+        });
     }
 
     @Override
