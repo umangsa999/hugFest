@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -36,7 +35,7 @@ public class home extends ListActivity {
         editTextAddFriend = (EditText) findViewById(R.id.addFriendNameField);
         Button buttonAddFriend = (Button) findViewById(R.id.buttonAddFriend);
 
-        ListView friendListView = (ListView) findViewById(R.id.listView);
+        //ListView friendListView = (ListView) findViewById(R.id.listView);
 
         //Get the userobjectID
         Intent intent = getIntent();
