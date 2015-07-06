@@ -1,0 +1,33 @@
+<div>
+	<style>
+		table, td, th {
+		    border: 1px solid black;
+		}
+		
+		table {
+		    width: 100%;
+		}
+		
+		td{
+			padding:15px;
+		}
+		
+		th {
+		    height: 50px; text-align:left;
+		}
+	</style>
+	<div class="header">
+		<h3>Profile <button>Edit</button></h3>
+	</div>
+	<div class="profileBody">
+		<img ng-src="{{profile.img}}">
+		<p class="name">Name: "{{profile.name}}</p>
+		<p class="date">Joined: {{profile.date|date}}</p>
+		<p>Lifetime Hugs: {{profile.hugs}}</p>
+		<p>Nickname: {{profile.nickname}}</p>
+		<p>Phone: {{profile.phone}}</p>
+		<p>Email: {{profile.email}}</p>
+	</div>
+	<br>
+	<input type="button" value="View on Facebook" />
+</div>

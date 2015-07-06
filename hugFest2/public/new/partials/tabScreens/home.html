@@ -1,0 +1,31 @@
+<div>
+	<div>
+		<div style="margin-left:50px; text-align:center;">Games<input style="margin-left:50px;" type="button" value="+"/></div>
+	</div>
+	<style>
+		table, th, td{
+	    	border: 1px solid black;
+		}
+		table{
+			width:100%
+		}
+		td{
+			padding:15px;
+		}
+	</style>
+	
+	<table>
+		<thead>
+			<tr>
+				<th ng-repeat="col in columns">{{col}}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="game in friendGames | orderBy: gameSortFunction: true" onclick="">
+				<td>{{game.owner}}</td>
+				<td>{{game.mutual}}</td>
+				<td>{{game.status}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
