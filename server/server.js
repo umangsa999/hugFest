@@ -5,6 +5,7 @@ var http = require('http');
 var mongoose = require('mongoose');
 var bodyparser = require('body-parser');
 var noteRoutes = require('./api/routes/noteRoutes');
+var users = requre('./api/routes/userRoutes');
 
 var app = express();
 app.use(bodyparser.json());
@@ -26,3 +27,5 @@ server.listen(app.get('port'), function() {
 app.get('/', function(req, res){
   res.send('this test works');
 });
+
+app.get('user/name/:id', users.getName);
