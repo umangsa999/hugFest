@@ -1,5 +1,6 @@
 package com.usc.itp476.hugfest;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -31,7 +33,15 @@ public class LoginActivity extends ActionBarActivity {
             public void onClick(View v) {
                 String user = edtxUserName.getText().toString();
                 String pass = edtxPassWord.getText().toString();
-                //TODO create a REST call to server and send data then transition screens
+                if (user.length() == 0 || pass.length() == 0) {
+                    Toast.makeText(getApplicationContext(), "Please fill in a username and a password.", Toast.LENGTH_SHORT).show();
+                } else {
+                    //TODO create a REST call to server and send data then transition screens
+                    //Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    //TODO store the user id in shared preferences
+                    //startActivity(i);
+                    Toast.makeText(getApplicationContext(), "Logged in?", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
