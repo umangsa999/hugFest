@@ -1,28 +1,40 @@
 package com.usc.itp476.hugfest;
 
-import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+importandroid.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
+import android.os.SystemClock;
+import java.io.IOException;
+import java.io.InputStream;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.view.View.OnClickListener;
 
 public class LoginActivity extends ActionBarActivity {
 
     private EditText edtxUserName;
     private EditText edtxPassWord;
     private Button   btnSignUp;
+    private LongRunningIO mLongRunningIO = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //TODO check for sharedPreference user id is made
+        //TODO check for sharedPreference user id is mad
 
         edtxPassWord = (EditText) findViewById(R.id.edtxPass);
         edtxUserName = (EditText) findViewById(R.id.edtxUser);
@@ -33,15 +45,9 @@ public class LoginActivity extends ActionBarActivity {
             public void onClick(View v) {
                 String user = edtxUserName.getText().toString();
                 String pass = edtxPassWord.getText().toString();
-                if (user.length() == 0 || pass.length() == 0) {
-                    Toast.makeText(getApplicationContext(), "Please fill in a username and a password.", Toast.LENGTH_SHORT).show();
-                } else {
-                    //TODO create a REST call to server and send data then transition screens
-                    //Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                    //TODO store the user id in shared preferences
-                    //startActivity(i);
-                    Toast.makeText(getApplicationContext(), "Logged in?", Toast.LENGTH_SHORT).show();
-                }
+                //TODO create a REST call to server and send data then transition screens
+                new LongRunningGetIO().execute();
+
             }
         });
     }
@@ -66,5 +72,37 @@ public class LoginActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    //ASYNC CODE
+    static class LongRunningIO extends AsyncTask <Void, Integer, Void> {
+        private Activity mActivity = null;
+        private boolean mDone = false;
+        boolean isDone() { return mDone; }
+        @Override
+        protected Void doInBackground(Void... params) {
+            for (int i = 1; i<11; i++) {
+                SystemClock.sleep(1000);
+                if (mActivity!= null) {
+                    publishProgress(i);
+                }
+            }
+            mDone = true;
+            return null;
+        }
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            if (mActivity != null) {
+                TextView tv = (TextView)mActivity.findViewById(R.id.status_text);
+                tv.setText(Integer.toString(progress[0])+"/10");
+            }
+        }
+        void attach(Activity a) {
+            mActivity = a;
+        }
+        void detach() {
+            mActivity = null;
+        }
     }
 }
