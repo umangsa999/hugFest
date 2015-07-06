@@ -12,11 +12,11 @@ app.use(bodyparser.json());
 app.use(express.static( __dirname + '/dist'));
 app.set('port', process.env.PORT || 3000);
 
-app.get('/api/v1/notes', noteRoutes.collection);
+/*app.get('/api/v1/notes', noteRoutes.collection);
 app.post('/api/v1/notes',  noteRoutes.create);
 app.get('/api/v1/notes/:id', noteRoutes.findById);
 app.put('/api/v1/notes/:id', noteRoutes.update);
-app.delete('/api/v1/notes/:id', noteRoutes.destroy);
+app.delete('/api/v1/notes/:id', noteRoutes.destroy);*/
 mongoose.connect('mongodb://localhost/notes-development');
 
 var server = http.createServer(app);
@@ -28,4 +28,25 @@ app.get('/', function(req, res){
   res.send('this test works');
 });
 
+//GET
 app.get('/user/name/:id', users.getName);
+app.get('/user/status/:id', users.getStatus);
+app.get('/user/hugs/:id', users.getHugs);
+app.get('/user/image/:id', users.getImage);
+app.get('/user/games/:id', users.getGames);
+app.get('/user/:id', users.get);
+
+//POST
+app.post('/user/create', users.createUser);
+
+//PUT
+app.put('/user/status/:id', users.putStatus);
+app.put('/user/finish/:id', users.putFinish);
+app.put('/user/image/:id', users.putImage);
+app.put('/user/add/:id', users.putAddFriend);
+app.put('/user/remove/:id', users.putRemoveFriend);
+app.put('/user/fb/:id', users.putFacebook);
+app.put('/user/gl/:id', users.putGoogle);
+
+//DELETE
+app.delete('/user/delete/:id', users.deleteUser);
