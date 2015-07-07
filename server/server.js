@@ -5,8 +5,12 @@ var http = require('http');
 var mongoose = require('mongoose');
 var bodyparser = require('body-parser');
 //var noteRoutes = require('./api/routes/noteRoutes');
+
+//tell node where to look for delegates
 var users = require('./api/routes/userRoutes');
 var games = require('./api/routes/gameRoutes');
+
+
 
 var app = express();
 app.use(bodyparser.json());
@@ -24,6 +28,8 @@ var server = http.createServer(app);
 server.listen(app.get('port'), function() {
   console.log('Server running on ' + app.get('port'));
 });
+
+//Delegate calls to other code
 
 app.get('/', function(req, res){
   res.send('this test works');
