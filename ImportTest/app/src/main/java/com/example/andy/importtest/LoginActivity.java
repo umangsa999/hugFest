@@ -1,5 +1,6 @@
 package com.example.andy.importtest;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -21,6 +22,7 @@ public class LoginActivity extends ActionBarActivity {
     private Boolean successfulLogin = false;
     private SharedPreferences prefSettings;
     private SharedPreferences.Editor prefEditor;
+    private Button buttonNext;
 
     //need to make this static because we're using anonymous inner class for button listener
     private static Button buttonLogin;
@@ -36,11 +38,13 @@ public class LoginActivity extends ActionBarActivity {
         editTextUser = (EditText)findViewById(R.id.editTextUser);
         editTextPass = (EditText)findViewById(R.id.editTextPass);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        buttonNext = (Button) findViewById(R.id.buttonNextPage);
 
         //get saved settings
         prefSettings = getSharedPreferences(PREFS_FILE, MODE_PRIVATE);
 
-        //code for what happens when checkBox is clicked
+        /*code for what happens when checkBox is clicked
+        //Didn't place a checkbox so it crashes
         checkBoxRemember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,7 +61,7 @@ public class LoginActivity extends ActionBarActivity {
                     rememberInfo = false;
                 }
             }
-        });
+        });*/
 
         //set this code to execute when button is clicked
         buttonLogin.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +108,15 @@ public class LoginActivity extends ActionBarActivity {
 
 
             }
+        });
+
+        buttonNext.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent next = new Intent(LoginActivity.this, NewPageActivity.class);
+                startActivity(next);
+            }
+
         });
 
     }

@@ -16,6 +16,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" >
+        </activity>
+        <activity
+            android:name=".NewPageActivity"
+            android:label="@string/title_activity_new_page" >
+        </activity>
+        <activity
+            android:name=".LoopPageActivity"
+            android:label="@string/title_activity_loop_page" >
+        </activity>
     </application>
 
 </manifest>
