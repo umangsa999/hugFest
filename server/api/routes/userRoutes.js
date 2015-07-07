@@ -34,6 +34,26 @@ exports.get = function(req, res){
   res.send('Attempting to get user ' + id);
 };
 
+exports.login = function(req, res){
+	var text = req.body;
+	res.send("Attempting to login with " + text );
+};
+
+exports.getFriends = function(req, res){
+	var id = req.params.id;
+	res.send("Attempting to send friends of " + id);
+};
+
+exports.getFBFriends = function(req, res){
+	var id = req.params.id;
+	res.send("Attempting to send Facebook friends of " + id);
+};
+
+exports.getGLFriends = function(req, res){
+	var id = req.params.id;
+	res.send("Attempting to send Google Plus friends of " + id);
+};
+
 /**********************************************************\
 |POST                                                      |
 \**********************************************************/
