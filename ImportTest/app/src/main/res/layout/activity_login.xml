@@ -25,19 +25,19 @@
         android:text="Pass"
         android:id="@+id/textViewPass"
         android:layout_below="@+id/editTextUser"
-        android:layout_alignLeft="@+id/textViewUser"
-        android:layout_alignStart="@+id/textViewUser" />
+        android:layout_alignRight="@+id/textViewUser"
+        android:layout_alignEnd="@+id/textViewUser" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
         android:id="@+id/editTextUser"
-        android:layout_alignTop="@+id/textViewUser"
+        android:layout_alignBottom="@+id/textViewUser"
         android:layout_toRightOf="@+id/textViewPass"
-        android:layout_toEndOf="@+id/textViewPass" />
+        android:layout_toEndOf="@+id/textViewPass"
+        android:hint="userame" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -45,8 +45,19 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/editTextPass"
-        android:layout_alignTop="@+id/textViewPass"
+        android:layout_alignBottom="@+id/textViewPass"
         android:layout_alignLeft="@+id/editTextUser"
-        android:layout_alignStart="@+id/editTextUser" />
+        android:layout_alignStart="@+id/editTextUser"
+        android:hint="password" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonLogin"
+        android:layout_toRightOf="@+id/editTextUser"
+        android:layout_toEndOf="@+id/editTextUser"
+        android:layout_alignTop="@+id/editTextUser"
+        android:layout_alignBottom="@+id/editTextPass"
+        android:text="Sign Up" />
 
 </RelativeLayout>
