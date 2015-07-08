@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -24,9 +23,9 @@ import java.net.URL;
 
 public class LoginActivity extends ActionBarActivity {
 
+    final String loginStringQuery = "?user=%s&pass=%s";
     private EditText editTextUser;
     private EditText editTextPass;
-    private CheckBox checkBoxRemember;
     private Boolean rememberInfo = false;
     private Boolean successfulLogin = false;
     private SharedPreferences prefSettings;
@@ -52,31 +51,10 @@ public class LoginActivity extends ActionBarActivity {
         //get saved settings
         prefSettings = getSharedPreferences(PREFS_FILE, MODE_PRIVATE);
 
-        /*code for what happens when checkBox is clicked
-        //Didn't place a checkbox so it crashes
-        checkBoxRemember.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if( rememberInfo ){
-                    checkBoxRemember.setChecked(true);
-                    rememberInfo = true;
-
-                    //User wants password to be saved
-                    prefEditor.putBoolean( PREFS_FILE, true);
-
-                }
-                else{
-                    checkBoxRemember.setChecked(false);
-                    rememberInfo = false;
-                }
-            }
-        });*/
-
         //set this code to execute when button is clicked
         buttonSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
                 Log.wtf("LOGINACTIVITY", "Trying to connect");
                 new OpenURL().execute();
@@ -88,7 +66,6 @@ public class LoginActivity extends ActionBarActivity {
 
                     //set the user and pass
                     String user = prefSettings.getString("user", "");
-
                 }
 
                 //new user/never logged in before/didn't save
@@ -114,7 +91,7 @@ public class LoginActivity extends ActionBarActivity {
 
                         //Send info to the database & save in shared preferences
                         successfulLogin = true;
-                        prefEditor.putBoolean( PREFS_FILE ,successfulLogin);
+                        //prefEditor.putBoolean( PREFS_FILE ,successfulLogin);
 
                     }
                 }
@@ -142,19 +119,26 @@ public class LoginActivity extends ActionBarActivity {
                 return getIndex();
             }
             catch( Exception e){
-                Log.e("OPEN URL", "BAD");
+                Log.e("OPEN URL", e.getMessage());
             }
             return null;
         }
 
         public String getIndex() throws IOException {
-            URL url = new URL("http://52.8.44.124");
+
+            String user = editTextUser.getText().toString();
+            //user = user + "+";
+            String pass = editTextPass.getText().toString();
+            //user = user + pass;
+
+            Log.wtf("LOGIN ACTIVITY", user);
+            URL url = new URL("http://52.8.44.124/login"+ String.format(loginStringQuery, user, pass) );
+
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             try {
                 urlConnection.setReadTimeout(8000);
                 urlConnection.setConnectTimeout(10000);
-
                 urlConnection.connect();
                 Log.d("LOGINACTIVITY CLASS", "RESPONSE CODE ABOUT TO CALL ");
                 int response = urlConnection.getResponseCode();
@@ -170,7 +154,7 @@ public class LoginActivity extends ActionBarActivity {
 
             InputStream input = new BufferedInputStream(urlConnection.getInputStream());
 
-            final int LENGTH = 50;
+            final int LENGTH = 100;
             char[] array = new char[LENGTH];
 
             for (int i = 0; i < LENGTH; ++i) {
@@ -182,7 +166,7 @@ public class LoginActivity extends ActionBarActivity {
             int count = 0;
             while (array[count] != 0){
 
-                Log.wtf("LOGINACTIVITY CLASS", " " + count + ": " + array[count]);
+                //Log.wtf("LOGINACTIVITY CLASS", " " + count + ": " + array[count]);
                 count++;
             }
 
