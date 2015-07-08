@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Andy\AndroidStudioProjects\ImportTest\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\libs\internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="C:\Users\Andy\AndroidStudioProjects\ImportTest\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.0-b48f4454d5eda32591aaf855698da00d95279d08.jar" />
+    </item>
+    <item
+        jar="C:\Users\Andy\Documents\Aptana Studio 3 Workspace\hugFest\ImportTest\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\libs\internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="C:\Users\Andy\Documents\Aptana Studio 3 Workspace\hugFest\ImportTest\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.0-97ba552cdce5682d5f8374ef6c8cf316a142756d.jar" />
+    </item>
+    <item
+        jar="C:\Users\Andy\AppData\Local\Android\Sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.0\support-annotations-22.2.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="C:\Users\Andy\Documents\Aptana Studio 3 Workspace\hugFest\ImportTest\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.0-e6fa47b04cd713b1a178f4092c95ac5023880aa0.jar" />
+    </item>
+    <item
+        jar="C:\Users\Andy\Documents\Aptana Studio 3 Workspace\hugFest\ImportTest\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="C:\Users\Andy\Documents\Aptana Studio 3 Workspace\hugFest\ImportTest\app\build\intermediates\pre-dexed\debug\classes-e3ab1a07823c5e9582ac004d526f27e39a7cc844.jar" />
+    </item>
+    <item
+        jar="C:\Users\Andy\AndroidStudioProjects\ImportTest\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="C:\Users\Andy\AndroidStudioProjects\ImportTest\app\build\intermediates\pre-dexed\debug\classes-5916773346daef5e6974128858b000b8e9959e9b.jar" />
+    </item>
+    <item
+        jar="C:\Users\Andy\Documents\Aptana Studio 3 Workspace\hugFest\ImportTest\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="C:\Users\Andy\Documents\Aptana Studio 3 Workspace\hugFest\ImportTest\app\build\intermediates\pre-dexed\debug\classes-e09b526e7f4f5ba897c2c25a1db0f705ca91839a.jar" />
+    </item>
+    <item
+        jar="C:\Users\Andy\AndroidStudioProjects\ImportTest\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="C:\Users\Andy\AndroidStudioProjects\ImportTest\app\build\intermediates\pre-dexed\debug\classes-22f8de6b8edb136cfe0f3927a47552402723f889.jar" />
+    </item>
+
+</items>
