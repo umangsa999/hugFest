@@ -2,8 +2,10 @@ package com.example.andy.importtest;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +13,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -68,6 +77,8 @@ public class LoginActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
 
+
+                new OpenURL().execute();
                 rememberInfo = prefSettings.getBoolean("remember", false);
 
                 //first check if the user has logged in before & wanted info remembered
@@ -119,6 +130,71 @@ public class LoginActivity extends ActionBarActivity {
 
         });
 
+    }
+
+    public class OpenURL extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... strings) {
+
+            try {
+                return getIndex();
+            }
+            catch( Exception e){
+                Log.e("OPEN URL", "BAD");
+            }
+            return null;
+        }
+
+        public String getIndex() throws IOException{
+            URL url = new URL("http://52.8.44.124");
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            try {
+                urlConnection.setReadTimeout(8000);
+                urlConnection.setConnectTimeout(10000);
+
+                urlConnection.connect();
+                Log.d("LOGINACTIVITY CLASS", "RESPONSE CODE ABOUT TO CALL ");
+                int response = urlConnection.getResponseCode();
+                //Toast.makeText( getApplicationContext(), response, Toast.LENGTH_SHORT ).show();
+                Log.d("LOGINACTIVITY CLASS", "RESPONSE CODE-> " + response);
+
+                String responseMessage = urlConnection.getResponseMessage();
+                Log.d("LOGIN ACTIVITY CLASS", "RESPONSE MESSAGE <- " + responseMessage);
+            }
+            catch( Exception e){
+                Log.d("URL CONNECTION", e.getMessage());
+            }
+
+            InputStream input = new BufferedInputStream(urlConnection.getInputStream());
+
+            final int LENGTH = 50;
+            char[] array = new char[LENGTH];
+
+            for (int i = 0; i < LENGTH; ++i) {
+                array[i] = 0;
+            }
+            InputStreamReader reader = new InputStreamReader(input, "UTF-8");
+            reader.read(array);
+
+            int count = 0;
+            while (array[count] != 0){
+
+                Log.wtf("LOGINACTIVITY CLASS", " " + count + ": " + array[count]);
+                count++;
+            }
+
+            String result = new String(array, 0, count);
+            //Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+            Log.d("LOGINACTIVITY CLASS", "RESULT-> "+ result);
+            return result;
+            //JSONObject obj = new JSONObject(i);
+        }
+
+        @Override
+        protected void onPostExecute(String result){
+            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
