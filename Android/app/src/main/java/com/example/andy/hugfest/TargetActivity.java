@@ -1,18 +1,46 @@
 package com.example.andy.hugfest;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.andy.hugfest.R;
 
 public class TargetActivity extends ActionBarActivity {
 
+    private Button buttonEnd;
+    private Button buttonQuit;
+    private Button buttonRules;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_target);
+
+        buttonEnd = (Button) findViewById(R.id.buttonEnd);
+        buttonQuit = (Button) findViewById(R.id.buttonQuit);
+
+        buttonEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent next = new Intent(TargetActivity.this, HomeActivity.class);
+                startActivity(next);
+            }
+
+        });
+
+        buttonQuit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent next = new Intent(TargetActivity.this, HomeActivity.class);
+                startActivity(next);
+            }
+
+        });
     }
 
     @Override

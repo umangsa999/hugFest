@@ -1,18 +1,56 @@
 package com.example.andy.hugfest;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.andy.hugfest.R;
 
 public class SettingActivity extends ActionBarActivity {
 
+    private Button buttonHome;
+    private Button buttonProfile;
+    private Button buttonFriend;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+
+        buttonHome = (Button) findViewById(R.id.buttonHome);
+        buttonProfile = (Button) findViewById(R.id.buttonProfile);
+        buttonFriend = (Button) findViewById(R.id.buttonFriend);
+
+        buttonHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent next = new Intent(SettingActivity.this, HomeActivity.class);
+                startActivity(next);
+            }
+
+        });
+
+        buttonProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent next = new Intent(SettingActivity.this, ProfileActivity.class);
+                startActivity(next);
+            }
+
+        });
+
+        buttonFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent next = new Intent(SettingActivity.this, FriendActivity.class);
+                startActivity(next);
+            }
+
+        });
     }
 
     @Override

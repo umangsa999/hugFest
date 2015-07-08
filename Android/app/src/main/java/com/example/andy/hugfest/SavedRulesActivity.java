@@ -1,5 +1,6 @@
 package com.example.andy.hugfest;
 
+import android.app.ListActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,7 +8,7 @@ import android.view.MenuItem;
 
 import com.example.andy.hugfest.R;
 
-public class SavedRulesActivity extends ActionBarActivity {
+public class SavedRulesActivity extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
