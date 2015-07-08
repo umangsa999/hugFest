@@ -32,7 +32,7 @@ server.listen(app.get('port'), function() {
 //Delegate calls to other code
 
 app.get('/', function(req, res){
-  res.send('this test works');
+  res.json({response: "this works", sender: "server", recipient: "Android"});
 });
 
 /**********************************************************\
