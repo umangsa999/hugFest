@@ -2,7 +2,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
 
-
 var userSchema = mongoose.Schema({
         name: String,
         username: String,
@@ -20,30 +19,27 @@ var User = mongoose.model('User', userSchema);
 \**********************************************************/
 
 exports.createUser = function(req, res){
-        console.log("body contains: " + req.body);
-        var un = req.body.username;
-        var ps = req.body.password;
-        var nm = req.body.name;
+	var un = req.body.username;
+	var ps = req.body.password;
+	var nm = req.body.name;
 
-        User.find({username: un}, function(err, user){
-                if (err){ //none found so create allowed
-                        res.json({result:"find error"});
-                }
-                else{ //found so user already exists
-                        if (user){
-                                res.json({result:"user exist"});
-                        }else{
-                                var user = new User({name: nm, username: un, password: ps, status: 1});
-                                user.save(function(err, user){
-                                        if (err){
-                                                res.json({result: "create error"});
-                                        }else{
-                                            res.json({result: user._id});
-                                        }
-                                });
-                        }
-                }
-        });
+	User.find({username: un}, function(err, user){
+		if (err){ //error in attempting to find
+			res.json({result:"find error"});
+		}
+		else if (user.length > 0){ //found existing user
+			res.json({result: "exist error"});
+		}else{ //user not found
+			var user = new User({name: nm, username: un, password: ps, status: 1}); //create the user model following the User schema
+			user.save(function(err, user){
+				if (err){
+					res.json({result: "create error"});
+				}else{
+					res.json({result: user._id});
+				}
+			});
+		}
+	});
 };
 
 /**********************************************************\
