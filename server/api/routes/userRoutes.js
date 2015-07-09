@@ -2,14 +2,15 @@
 var express = require('express');
 var mongoose = require('mongoose');
 
+
 var userSchema = mongoose.Schema({
-	name: String,
-	username: String,
-	password: String,
-	status: Number, //0-offline, 1-online, 2-ingame
-	FaceBook: String,
-	Google: String,
-	friends: []
+        name: String,
+        username: String,
+        password: String,
+        status: Number, //0-offline, 1-online, 2-ingame
+        FaceBook: String,
+        Google: String,
+        friends: []
 });
 
 var User = mongoose.model('User', userSchema);
@@ -19,24 +20,30 @@ var User = mongoose.model('User', userSchema);
 \**********************************************************/
 
 exports.createUser = function(req, res){
-	var JSONbody = JSON.parse(req.body);
-	//var id = Math.floor(Math.random() * 10000 * Math.random());
-	//res.send('Attempting to create a user with\n\tusername and password: ' + values + "\n\tid: " + id);
-	User.find({username: JSONbody.username}, function(err, user){
-		if (err){ //none found so create allowed
-			var user = new User({name:JSONbody.name, username: JSONbody.username, password: JSONbody.password, status: 1});
-			user.save(function(err, user){
-				if (err){
-					res.JSON({result: "create error"});
-				}else{
-					res.JSON({result: user._id});
-				}
-			});
-		}
-		else{ //found so user already exists
-			res.JSON({result: "exist"});
-		}
-	});
+        console.log("body contains: " + req.body);
+        var un = req.body.username;
+        var ps = req.body.password;
+        var nm = req.body.name;
+
+        User.find({username: un}, function(err, user){
+                if (err){ //none found so create allowed
+                        res.json({result:"find error"});
+                }
+                else{ //found so user already exists
+                        if (user){
+                                res.json({result:"user exist"});
+                        }else{
+                                var user = new User({name: nm, username: un, password: ps, status: 1});
+                                user.save(function(err, user){
+                                        if (err){
+                                                res.json({result: "create error"});
+                                        }else{
+                                            res.json({result: user._id});
+                                        }
+                                });
+                        }
+                }
+        });
 };
 
 /**********************************************************\
@@ -73,30 +80,30 @@ exports.get = function(req, res){
     if (err){
         res.JSON({result: "find error"});
     }else{
-        res.JSON(JSON.stringify(user));
+            res.JSON(JSON.stringify(user));
     }
   });
 };
 
 exports.login = function(req, res){
-	var user = req.query.user;
-	var pass = req.query.pass
-	res.send("Attempting to login " + user + " with " + pass );
+        var user = req.query.user;
+        var pass = req.query.pass
+        res.send("Attempting to login " + user + " with " + pass );
 };
 
 exports.getFriends = function(req, res){
-	var id = req.query.id;
-	res.send("Attempting to send friends of " + id);
+        var id = req.query.id;
+        res.send("Attempting to send friends of " + id);
 };
 
 exports.getFBFriends = function(req, res){
-	var id = req.query.id;
-	res.send("Attempting to send Facebook friends of " + id);
+        var id = req.query.id;
+        res.send("Attempting to send Facebook friends of " + id);
 };
 
 exports.getGLFriends = function(req, res){
-	var id = req.query.id;
-	res.send("Attempting to send Google Plus friends of " + id);
+        var id = req.query.id;
+        res.send("Attempting to send Google Plus friends of " + id);
 };
 
 /**********************************************************\
@@ -148,6 +155,6 @@ exports.putGoogle = function(req, res){ //this one needs more work than rest
 \**********************************************************/
 
 exports.deleteUser = function(req, res){
-	var user = req.params.id;
-	res.send('Attempting to delete a user with username/userid: ' + user);
+        var user = req.params.id;
+        res.send('Attempting to delete a user with username/userid: ' + user);
 };
