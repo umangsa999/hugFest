@@ -1,57 +1,6 @@
 'use strict';
-
-//var Game = require('../models/Game');
-
-/**********************************************************\
-|GET                                                       |
-\**********************************************************/
-
-exports.get = function(req, res){
-	var game = req.params.gameID;
-	res.send("Attempting to give game that is " + game);
-};
-
-exports.getGameUser = function(req, res){
-	var id = req.params.id;
-	res.send("Attempting to give game that contains " + id);
-};
-
-exports.getFriends = function(req, res){
-	var id = req.params.id;
-	res.send("Attempting to give all games with friends of " + id + " in it");
-};
-
-exports.getTarget = function(req, res){
-	var game = req.params.gameID;
-	var id = req.body;
-	res.send("Attempting to get target of " + id + " in game " + game);
-};
-
-exports.getHugs = function(req, res){
-	var game = req.params.gameID;
-	var id = req.body;
-	res.send("Attempting to get current hugs of " + id + " in game " + game);
-};
-
-exports.getPlayers = function(req, res){
-	var game = req.params.gameID;
-	res.send("Attempting to get all players in game " + game);
-};
-
-exports.getRules = function(req, res){
-	var game = req.params.gameID;
-	res.send("Attempting to get rules in game " + game);
-};
-
-exports.getTime = function(req, res){
-	var game = req.params.gameID;
-	res.send("Attempting to get time left in game " + game);
-};
-
-exports.getTop = function(req, res){
-	var game = req.params.gameID;
-	res.send("Attempting to get top players in game " + game);
-};
+var express = require('express');
+var mongoose = require('mongoose');
 
 /**********************************************************\
 |POST                                                      |
@@ -61,6 +10,57 @@ exports.createGame = function(req, res){
 	var host = req.body;
 	var id = Math.floor(Math.random() * 10000 * Math.random());
 	res.send('Attempting to create a game with\n\tid: ' + id + "\n\thost: " + host);
+};
+
+/**********************************************************\
+|GET                                                       |
+\**********************************************************/
+
+exports.get = function(req, res){
+	var game = req.query.gameID;
+	res.send("Attempting to give game that is " + game);
+};
+
+exports.getGameUser = function(req, res){
+	var id = req.query.id;
+	res.send("Attempting to give game that contains " + id);
+};
+
+exports.getFriends = function(req, res){
+	var id = req.query.id;
+	res.send("Attempting to give all games with friends of " + id + " in it");
+};
+
+exports.getTarget = function(req, res){
+	var game = req.query.gameID;
+	var id = req.query.userID;
+	res.send("Attempting to get target of " + id + " in game " + game);
+};
+
+exports.getHugs = function(req, res){
+	var game = req.query.gameID;
+	var id = req.query.userID;
+	res.send("Attempting to get current hugs of " + id + " in game " + game);
+};
+
+exports.getPlayers = function(req, res){
+	var game = req.query.gameID;
+	res.send("Attempting to get all players in game " + game);
+};
+
+exports.getRules = function(req, res){
+	var game = req.query.gameID;
+	res.send("Attempting to get rules in game " + game);
+};
+
+exports.getTime = function(req, res){
+	var game = req.query.gameID;
+	res.send("Attempting to get time left in game " + game);
+};
+
+exports.getTop = function(req, res){
+	var game = req.query.gameID;
+	res.send("Attempting to get top players in game " + game);
 };
 
 /**********************************************************\

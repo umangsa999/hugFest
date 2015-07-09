@@ -1,67 +1,102 @@
 'use strict';
-//var User = require('../models/User');
+var express = require('express');
+var mongoose = require('mongoose');
 
-/**********************************************************\
-|GET                                                       |
-\**********************************************************/
-exports.getName = function(req, res){
-  var id = req.params.id;
-  res.send('The name of user ' + id + ' is Derp-Lord!');
-};
+var userSchema = mongoose.Schema({
+	name: String,
+	username: String,
+	password: String,
+	status: Number, //0-offline, 1-online, 2-ingame
+	FaceBook: String,
+	Google: String,
+	friends: []
+});
 
-exports.getStatus = function(req, res){
-  var id = req.params.id;
-  res.send('Attempting to find status of user ' + id);
-};
-
-exports.getHugs = function(req, res){
-  var id = req.params.id;
-  res.send('Attempting to find lifetime hugs of user ' + id);
-};
-
-exports.getImage = function(req, res){
-  var id = req.params.id;
-  res.send('Attempting to find local copy of image for user ' + id);
-};
-
-exports.getGames = function(req, res){
-  var id = req.params.id;
-  res.send('Attempting to find lifetime games user ' + id + ' has played.');
-};
-
-exports.get = function(req, res){
-  var id = req.params.id; //check for both id and username!
-  res.send('Attempting to get user ' + id);
-};
-
-exports.login = function(req, res){
-	var text = req.body;
-	res.send("Attempting to login with " + text );
-};
-
-exports.getFriends = function(req, res){
-	var id = req.params.id;
-	res.send("Attempting to send friends of " + id);
-};
-
-exports.getFBFriends = function(req, res){
-	var id = req.params.id;
-	res.send("Attempting to send Facebook friends of " + id);
-};
-
-exports.getGLFriends = function(req, res){
-	var id = req.params.id;
-	res.send("Attempting to send Google Plus friends of " + id);
-};
+var User = mongoose.model('User', userSchema);
 
 /**********************************************************\
 |POST                                                      |
 \**********************************************************/
 
 exports.createUser = function(req, res){
-	var values = req.body;
-	var id = Math.floor(Math.random() * 10000 * Math.random());
-	res.send('Attempting to create a user with\n\tusername and password: ' + values + "\n\tid: " + id);
+	var JSONbody = JSON.parse(req.body);
+	//var id = Math.floor(Math.random() * 10000 * Math.random());
+	//res.send('Attempting to create a user with\n\tusername and password: ' + values + "\n\tid: " + id);
+	User.find({username: JSONbody.username}, function(err, user){
+		if (err){ //none found so create allowed
+			var user = new User({name:JSONbody.name, username: JSONbody.username, password: JSONbody.password, status: 1});
+			user.save(function(err, user){
+				if (err){
+					res.JSON({result: "create error"});
+				}else{
+					res.JSON({result: user._id});
+				}
+			});
+		}
+		else{ //found so user already exists
+			res.JSON({result: "exist"});
+		}
+	});
+};
+
+/**********************************************************\
+|GET                                                       |
+\**********************************************************/
+exports.getName = function(req, res){
+  var id = req.query.id;
+  res.send('The name of user ' + id + ' is Derp-Lord!');
+};
+
+exports.getStatus = function(req, res){
+  var id = req.query.id;
+  res.send('Attempting to find status of user ' + id);
+};
+
+exports.getHugs = function(req, res){
+  var id = req.query.id;
+  res.send('Attempting to find lifetime hugs of user ' + id);
+};
+
+exports.getImage = function(req, res){
+  var id = req.query.id;
+  res.send('Attempting to find local copy of image for user ' + id);
+};
+
+exports.getGames = function(req, res){
+  var id = req.query.id;
+  res.send('Attempting to find lifetime games user ' + id + ' has played.');
+};
+
+exports.get = function(req, res){
+  var id = req.query.id; //check for both id and username!
+  User.findById(id).lean().exec(function(err, user){
+    if (err){
+        res.JSON({result: "find error"});
+    }else{
+        res.JSON(JSON.stringify(user));
+    }
+  });
+};
+
+exports.login = function(req, res){
+	var user = req.query.user;
+	var pass = req.query.pass
+	res.send("Attempting to login " + user + " with " + pass );
+};
+
+exports.getFriends = function(req, res){
+	var id = req.query.id;
+	res.send("Attempting to send friends of " + id);
+};
+
+exports.getFBFriends = function(req, res){
+	var id = req.query.id;
+	res.send("Attempting to send Facebook friends of " + id);
+};
+
+exports.getGLFriends = function(req, res){
+	var id = req.query.id;
+	res.send("Attempting to send Google Plus friends of " + id);
 };
 
 /**********************************************************\

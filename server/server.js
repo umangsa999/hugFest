@@ -10,8 +10,6 @@ var bodyparser = require('body-parser');
 var users = require('./api/routes/userRoutes');
 var games = require('./api/routes/gameRoutes');
 
-
-
 var app = express();
 app.use(bodyparser.json());
 app.use(express.static( __dirname + '/dist'));
@@ -22,7 +20,7 @@ app.post('/api/v1/notes',  noteRoutes.create);
 app.get('/api/v1/notes/:id', noteRoutes.findById);
 app.put('/api/v1/notes/:id', noteRoutes.update);
 app.delete('/api/v1/notes/:id', noteRoutes.destroy);*/
-mongoose.connect('mongodb://localhost/notes-development');
+mongoose.connect('mongodb://localhost/hugFest');
 
 var server = http.createServer(app);
 server.listen(app.get('port'), function() {
@@ -37,11 +35,15 @@ app.get('/', function(req, res){
 
 /**********************************************************\
 |REMEMBER REMEMBER THE WONDER OF                           |
-|CREATE       =      GET                                   |
-|RETRIEVE     =      POST                                  |
+|CREATE       =      POST                                  |
+|RETRIEVE     =      GET                                   |
 |UPDATE       =      PUT                                   |
 |DELETE       =      DELETE                                |
 \**********************************************************/
+
+//POST
+app.post('/user/create', users.createUser);
+app.post('/game/create', games.createGame);
 
 //GET
 app.get('/user/name/:id', users.getName);
@@ -64,10 +66,6 @@ app.get('/game/players/:gameID', games.getPlayers);
 app.get('/game/rules/:gameID', games.getRules);
 app.get('/game/time/:gameID', games.getTime);
 app.get('/game/top/:gameId', games.getTop);
-
-//POST
-app.post('/user/create', users.createUser);
-app.post('/game/create', games.createGame);
 
 //PUT
 app.put('/user/status/:id', users.putStatus);
