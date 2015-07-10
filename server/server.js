@@ -30,7 +30,7 @@ server.listen(app.get('port'), function() {
 //Delegate calls to other code
 
 app.get('/', function(req, res){
-  res.json({response: "this works", sender: "server", recipient: "Android"});
+  res.json({response: "this works", sender: "server", recipient: "Android", originalBody: req.body});
 });
 
 /**********************************************************\
@@ -46,41 +46,41 @@ app.post('/user/create', users.createUser);
 app.post('/game/create', games.createGame);
 
 //GET
-app.get('/user/name/:id', users.getName);
-app.get('/user/status/:id', users.getStatus);
-app.get('/user/hugs/:id', users.getHugs);
-app.get('/user/image/:id', users.getImage);
-app.get('/user/games/:id', users.getGames);
-app.get('/user/:id', users.get);
+app.get('/user/name', users.getName);
+app.get('/user/status', users.getStatus);
+app.get('/user/hugs', users.getHugs);
+app.get('/user/image', users.getImage);
+app.get('/user/games', users.getGames);
+app.get('/user', users.get);
 app.get('/login', users.login);
-app.get('/friends/:id', users.getFriends);
-app.get('/friends/fb/:id', users.getFBFriends);
-app.get('/friends/gl/:id', users.getGLFriends);
+app.get('/friends', users.getFriends);
+app.get('/friends/fb', users.getFBFriends);
+app.get('/friends/gl', users.getGLFriends);
 
-app.get('/game/:gameID', games.get);
-app.get('/game/user/:id', games.getGameUser);
-app.get('/game/friends/:id', games.getFriends);
-app.get('/game/target/:gameID', games.getTarget);
-app.get('/game/hugs/:gameID', games.getHugs);
-app.get('/game/players/:gameID', games.getPlayers);
-app.get('/game/rules/:gameID', games.getRules);
-app.get('/game/time/:gameID', games.getTime);
-app.get('/game/top/:gameId', games.getTop);
+app.get('/game', games.get);
+app.get('/game/user', games.getGameUser);
+app.get('/game/friends', games.getFriends);
+app.get('/game/target', games.getTarget);
+app.get('/game/hugs', games.getHugs);
+app.get('/game/players', games.getPlayers);
+app.get('/game/rules', games.getRules);
+app.get('/game/time', games.getTime);
+app.get('/game/top', games.getTop);
 
 //PUT
-app.put('/user/status/:id', users.putStatus);
-app.put('/user/finish/:id', users.putFinish);
-app.put('/user/image/:id', users.putImage);
-app.put('/user/add/:id', users.putAddFriend);
-app.put('/user/remove/:id', users.putRemoveFriend);
-app.put('/user/fb/:id', users.putFacebook);
-app.put('/user/gl/:id', users.putGoogle);
+app.put('/user/status', users.putStatus);
+app.put('/user/finish', users.putFinish);
+app.put('/user/image', users.putImage);
+app.put('/user/add', users.putAddFriend);
+app.put('/user/remove', users.putRemoveFriend);
+app.put('/user/fb', users.putFacebook);
+app.put('/user/gl', users.putGoogle);
 
-app.put('/game/include/:gameID', games.include);
-app.put('/game/exclude/:gameID', games.exclude);
-app.put('/game/next/:gameID', games.next);
-app.put('/game/start/:gameID', games.start);
+app.put('/game/include', games.include);
+app.put('/game/exclude', games.exclude);
+app.put('/game/next', games.next);
+app.put('/game/start', games.start);
 
 //DELETE
-app.delete('/user/delete/:id', users.deleteUser);
-app.delete('/game/delete/:gameID', games.deleteGame);
+app.delete('/user/delete', users.deleteUser);
+app.delete('/game/delete', games.deleteGame);

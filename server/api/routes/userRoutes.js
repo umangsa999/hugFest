@@ -47,103 +47,103 @@ exports.createUser = function(req, res){
 \**********************************************************/
 exports.getName = function(req, res){
   var id = req.query.id;
-  res.send('The name of user ' + id + ' is Derp-Lord!');
+  res.json({idIS: id});
 };
 
 exports.getStatus = function(req, res){
   var id = req.query.id;
-  res.send('Attempting to find status of user ' + id);
+  res.json({idIS: id});
 };
 
 exports.getHugs = function(req, res){
   var id = req.query.id;
-  res.send('Attempting to find lifetime hugs of user ' + id);
+  res.json({idIS: id});
 };
 
 exports.getImage = function(req, res){
   var id = req.query.id;
-  res.send('Attempting to find local copy of image for user ' + id);
+  res.json({idIS: id});
 };
 
 exports.getGames = function(req, res){
   var id = req.query.id;
-  res.send('Attempting to find lifetime games user ' + id + ' has played.');
+  res.json({idIS: id});
 };
 
 exports.get = function(req, res){
   var id = req.query.id; //check for both id and username!
   User.findById(id).lean().exec(function(err, user){
     if (err){
-        res.JSON({result: "find error"});
+        res.json({result: "find error"});
     }else{
-            res.JSON(JSON.stringify(user));
+            res.json(JSON.stringify(user));
     }
   });
 };
 
 exports.login = function(req, res){
-        var user = req.query.user;
-        var pass = req.query.pass
-        res.send("Attempting to login " + user + " with " + pass );
+	var user = req.body.user;
+	var pass = req.body.pass
+	res.json({userIs: user, passIs: pass});
 };
 
 exports.getFriends = function(req, res){
-        var id = req.query.id;
-        res.send("Attempting to send friends of " + id);
+	var id = req.query.id;
+  res.json({idIS: id});
 };
 
 exports.getFBFriends = function(req, res){
-        var id = req.query.id;
-        res.send("Attempting to send Facebook friends of " + id);
+	var id = req.query.id;
+  res.json({idIS: id});
 };
 
 exports.getGLFriends = function(req, res){
-        var id = req.query.id;
-        res.send("Attempting to send Google Plus friends of " + id);
+	var id = req.query.id;
+  res.json({idIS: id});
 };
 
 /**********************************************************\
 |PUT                                                       |
 \**********************************************************/
 exports.putStatus = function(req, res){
-  var id = req.params.id;
-  var status = req.body;
-  res.send('Attempting to change status of user ' + id + " to " + status);
+  var id = req.body.id;
+  var status = req.body.status;
+  res.json({statusIs: status, idIs: id});
 };
 
 exports.putFinish = function(req, res){
-  var id = req.params.id;
-  var text = req.body;
-  res.send('Attempting to increase lifetime stats of user ' + id + " by " + text);
+  var id = req.body.id;
+  var hugs = req.body.hugs;
+  res.json({idIS: id, hugsIs: hugs});
 };
 
 exports.putImage = function(req, res){ //this one needs more work than rest, get image
-  var id = req.params.id;
-  res.send('Attempting to change local copy of image for user ' + id);
+  var id = req.body.id;
+  res.json({idIS: id});
 };
 
 exports.putRemoveFriend = function(req, res){
-  var userID = req.params.id;
-  var friendID = req.body;
-  res.send('Removing ' + friendID + ' and ' + userID +' friendship');
+  var userID = req.body.userID;
+  var friendID = req.body.friendID;
+  res.json({userIDIS: userID, friendIDIS: friendID});
 };
 
 exports.putAddFriend = function(req, res){ //this one needs more work than rest
-  var userID = req.params.id;
-  var friendID = req.body;
-  res.send('Adding ' + friendID + ' and ' + userID +' friendship');
+  var userID = req.body.userID;
+  var friendID = req.body.friendID;
+  res.json({userIDIS: userID, friendIDIS: friendID});
 };
 
 exports.putFacebook = function(req, res){
-  var userID = req.params.userID;
-  var fbID = req.body;
-  res.send('Adding ' + fbID + ' as Facebook link to ' + userID);
+  var userID = req.body.userID;
+  var fbID = req.body.fbID;
+  res.json({userIDIS: userID, fbIDIS: fbID});
 };
 
 exports.putGoogle = function(req, res){ //this one needs more work than rest
-  var userID = req.params.userID;
-  var glID = req.body;
-  res.send('Adding ' + glID + ' as Google Plus link to ' + userID);
+  var userID = req.body.userID;
+  var glID = req.body.glID;
+  res.json({userIDIS: userID, glIDIS: glID});
 };
 
 /**********************************************************\
@@ -151,6 +151,6 @@ exports.putGoogle = function(req, res){ //this one needs more work than rest
 \**********************************************************/
 
 exports.deleteUser = function(req, res){
-        var user = req.params.id;
-        res.send('Attempting to delete a user with username/userid: ' + user);
+	var user = req.body.id;
+  res.json({userIDIS: user});
 };
