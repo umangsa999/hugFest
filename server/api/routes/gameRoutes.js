@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
 exports.createGame = function(req, res){
 	var host = req.body;
 	var id = Math.floor(Math.random() * 10000 * Math.random());
-	res.send('Attempting to create a game with\n\tid: ' + id + "\n\thost: " + host);
+	res.json({idIS:id, hostIS:host});
 };
 
 /**********************************************************\
@@ -18,49 +18,49 @@ exports.createGame = function(req, res){
 
 exports.get = function(req, res){
 	var game = req.query.gameID;
-	res.send("Attempting to give game that is " + game);
+	res.json({gameIS:game});
 };
 
 exports.getGameUser = function(req, res){
 	var id = req.query.id;
-	res.send("Attempting to give game that contains " + id);
+	res.json({idIS: id});
 };
 
 exports.getFriends = function(req, res){
 	var id = req.query.id;
-	res.send("Attempting to give all games with friends of " + id + " in it");
+	res.json({idIS: id});
 };
 
 exports.getTarget = function(req, res){
 	var game = req.query.gameID;
 	var id = req.query.userID;
-	res.send("Attempting to get target of " + id + " in game " + game);
+	res.json({idIS: id, gameIDIS: game});
 };
 
 exports.getHugs = function(req, res){
 	var game = req.query.gameID;
 	var id = req.query.userID;
-	res.send("Attempting to get current hugs of " + id + " in game " + game);
+	res.json({idIS: id, gameIDIS: game});
 };
 
 exports.getPlayers = function(req, res){
 	var game = req.query.gameID;
-	res.send("Attempting to get all players in game " + game);
+	res.json({gameIDIS: game});
 };
 
 exports.getRules = function(req, res){
 	var game = req.query.gameID;
-	res.send("Attempting to get rules in game " + game);
+	res.json({gameIDIS: game});
 };
 
 exports.getTime = function(req, res){
 	var game = req.query.gameID;
-	res.send("Attempting to get time left in game " + game);
+	res.json({gameIDIS: game});
 };
 
 exports.getTop = function(req, res){
 	var game = req.query.gameID;
-	res.send("Attempting to get top players in game " + game);
+	res.json({gameIDIS: game});
 };
 
 /**********************************************************\
@@ -68,27 +68,27 @@ exports.getTop = function(req, res){
 \**********************************************************/
 
 exports.include = function(req, res){
-	var id = req.params.gameID;
-	var un = req.body;
-	res.send("Adding " + un + " to game " + id );
+	var id = req.body.gameID;
+	var un = req.body.username;
+	res.json({idIS: id, unIS: un});
 };
 
 exports.exclude = function(req, res){
-	var id = req.params.gameID;
-	var un = req.body;
-	res.send("Removing " + un + " to game " + id );
+	var id = req.body.gameID;
+	var un = req.body.username;
+	res.json({idIS: id, unIS: un});
 };
 
 exports.next = function(req, res){
-	var id = req.params.gameID;
-	var un = req.body;
+	var id = req.body.gameID;
+	var un = req.body.username;
 	var newTarget = Math.floor(Math.random() * 20 + 1);
-	res.send("Noting hug of " + un + " to game " + id + ". New target is: " + newTarget);
+	res.json({idIS: id, unIS: un, targetIS: target});
 };
 
 exports.start = function(req, res){
-	var id = req.params.gameID;
-	res.send("Starting game " + id);
+	var id = req.body.gameID;
+	res.json({idIS: id});
 };
 
 /**********************************************************\
@@ -96,6 +96,6 @@ exports.start = function(req, res){
 \**********************************************************/
 
 exports.deleteGame = function(req, res){
-	var id = req.params.gameID;
-	res.send('Attempting to delete a game with id: ' + id);
+	var id = req.body.gameID;
+	res.json({idIS: id});
 };

@@ -2,7 +2,6 @@ package com.example.andy.hugfest;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -13,12 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -55,9 +52,23 @@ public class LoginActivity extends ActionBarActivity {
         buttonSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /* Follow this example for use
+                HTTPCaller h = null;
+                try {
 
-                Log.wtf("LOGINACTIVITY", "Trying to connect");
-                new OpenURL().execute();
+                    h = (new HTTPCallerBuilder()).method("GET").data("name", "Chris").data("says","hi").fURL("user").sURL("status").query("id","1234").executeHTTPCaller();
+                    Log.wtf("LOGINACTIVITY", "Response Code: " + h.getResponseCode() +
+                            "\nResponseMessage: " + h.getResponseMessage() +
+                            "\nResult: " + (h.getServerResult() == null ? "" : h.getServerResult().toString()));
+                    h = (new HTTPCallerBuilder()).method("PUT").data("id", "Chris").data("status","1").fURL("user").sURL("status").executeHTTPCaller();
+                    Log.wtf("LOGINACTIVITY", "Response Code: " + h.getResponseCode() +
+                            "\nResponseMessage: " + h.getResponseMessage() +
+                            "\nResult: " + (h.getServerResult() == null ? "" : h.getServerResult().toString()));
+
+                } catch (JSONException e) {
+                    Log.e(LoginActivity.class.getSimpleName(), "onClick");
+                }
+*/
                 Log.wtf("LOGINACTIVITY", "execute over");
                 rememberInfo = prefSettings.getBoolean("remember", false);
 
@@ -109,78 +120,6 @@ public class LoginActivity extends ActionBarActivity {
 
         });
 
-    }
-
-    public class OpenURL extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... strings) {
-
-            try {
-                return getIndex();
-            }
-            catch( Exception e){
-                Log.e("OPEN URL", e.getMessage());
-            }
-            return null;
-        }
-
-        public String getIndex() throws IOException {
-
-            String user = editTextUser.getText().toString();
-            //user = user + "+";
-            String pass = editTextPass.getText().toString();
-            //user = user + pass;
-
-            Log.wtf("LOGIN ACTIVITY", user);
-            URL url = new URL("http://52.8.44.124/login"+ String.format(loginStringQuery, user, pass) );
-
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            try {
-                urlConnection.setReadTimeout(8000);
-                urlConnection.setConnectTimeout(10000);
-                urlConnection.connect();
-                Log.d("LOGINACTIVITY CLASS", "RESPONSE CODE ABOUT TO CALL ");
-                int response = urlConnection.getResponseCode();
-                //Toast.makeText( getApplicationContext(), response, Toast.LENGTH_SHORT ).show();
-                Log.d("LOGINACTIVITY CLASS", "RESPONSE CODE-> " + response);
-
-                String responseMessage = urlConnection.getResponseMessage();
-                Log.d("LOGIN ACTIVITY CLASS", "RESPONSE MESSAGE <- " + responseMessage);
-            }
-            catch( Exception e){
-                Log.d("URL CONNECTION", e.getMessage());
-            }
-
-            InputStream input = new BufferedInputStream(urlConnection.getInputStream());
-
-            final int LENGTH = 100;
-            char[] array = new char[LENGTH];
-
-            for (int i = 0; i < LENGTH; ++i) {
-                array[i] = 0;
-            }
-            InputStreamReader reader = new InputStreamReader(input, "UTF-8");
-            reader.read(array);
-
-            int count = 0;
-            while (array[count] != 0){
-
-                //Log.wtf("LOGINACTIVITY CLASS", " " + count + ": " + array[count]);
-                count++;
-            }
-
-            String result = new String(array, 0, count);
-            //Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-            Log.d("LOGINACTIVITY CLASS", "RESULT-> "+ result);
-            return result;
-            //JSONObject obj = new JSONObject(i);
-        }
-
-        @Override
-        protected void onPostExecute(String result){
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
