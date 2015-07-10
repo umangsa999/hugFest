@@ -59,18 +59,18 @@ public class HTTPCaller extends AsyncTask<JSONObject, Void, Void> {
         return null;
     }
 
+    //take in any number of Strings into urlComponents
     private void createURL(String...urlComponents) throws MalformedURLException {
         String path = PROTOCOL + SERVERIP;
         for (String component : urlComponents){
             if (component.length() > 0) {
-                if (component.charAt(0) != '?') {
+                if (component.charAt(0) != '?') { //if it's not a query, add it in with /
                     path += "/" + component;
                 } else {
                     path += component;
                 }
             }
         }
-        Log.e(HTTPCaller.class.getSimpleName(), "url: " + path);
         url = new URL(path);
     }
 
@@ -78,7 +78,7 @@ public class HTTPCaller extends AsyncTask<JSONObject, Void, Void> {
         urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setReadTimeout(8000);
         urlConnection.setConnectTimeout(10000);
-        if (!type.equalsIgnoreCase("GET")) {
+        if (!type.equalsIgnoreCase("GET")) { //GET cannot send a body
             urlConnection.setRequestMethod(type);
         }
         urlConnection.setRequestProperty("Accept", "application/json");
@@ -113,7 +113,7 @@ public class HTTPCaller extends AsyncTask<JSONObject, Void, Void> {
                 count++;
             }
 
-            String resultString = new String(array, 0, count);
+            String resultString = new String(array, 0, count); //only take what is filled
             if ((resultString.length() > 0) && (!resultString.equalsIgnoreCase("null"))) {
                 serverResult = new JSONObject(resultString);
             }

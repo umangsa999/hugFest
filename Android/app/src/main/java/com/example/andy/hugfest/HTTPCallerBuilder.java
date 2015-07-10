@@ -13,16 +13,25 @@ public class HTTPCallerBuilder {
     }
 
     public HTTPCallerBuilder fURL(String f) throws JSONException{
+        if (!send.isNull("fURL")) {
+            send.remove("fURL");
+        }
         send.put("fURL", f);
         return this;
     }
 
     public HTTPCallerBuilder sURL(String s) throws JSONException{
+        if (!send.isNull("sURL")) {
+            send.remove("sURL");
+        }
         send.put("sURL", s);
         return this;
     }
 
     public HTTPCallerBuilder id(String id) throws JSONException{
+        if (!send.isNull("id")) {
+            send.remove("id");
+        }
         send.put("id", id);
         return this;
     }
@@ -30,7 +39,7 @@ public class HTTPCallerBuilder {
     public HTTPCallerBuilder query(String key, String value) throws JSONException{
         if (send.isNull("query")){
             send.put("query", "?" + key + "=" + value);
-        }else{
+        }else{ //append to the end of the last
             String que = send.getString("query");
             send.remove("query");
             que += "&" + key + "=" + value;
@@ -40,6 +49,9 @@ public class HTTPCallerBuilder {
     }
 
     public HTTPCallerBuilder method(String m) throws JSONException {
+        if (!send.isNull("method")) {
+            send.remove("method");
+        }
         send.put("method", m);
         return this;
     }
@@ -47,7 +59,7 @@ public class HTTPCallerBuilder {
     public HTTPCallerBuilder data(String key, String value) throws JSONException{
         if (send.isNull("data")){
             send.put("data", "{ " + key + " : " + value + " }");
-        }else{
+        }else{ //append to the end of the last
             String dat = send.getString("data");
             send.remove("data");
             dat = dat.substring(0, dat.length() - 1) +
@@ -57,14 +69,16 @@ public class HTTPCallerBuilder {
         return this;
     }
 
-    public HTTPCaller executeHTTPCaller(){
-        HTTPCaller h = new HTTPCaller();
-        h.execute(send);
+    public JSONObject executeHTTPCaller(){
+        JSONObject obj = null;
+        HTTPCaller h = new HTTPCaller(); //create the AsyncTask
+        h.execute(send); //send the call on send
         try {
-            h.get();
+            h.get(); //wait for reply
+            obj = h.getServerResult();
         }catch (Exception e) {
             Log.wtf("LOGINACTIVITY", e.getMessage());
         }
-        return h;
+        return obj;
     }
 }
