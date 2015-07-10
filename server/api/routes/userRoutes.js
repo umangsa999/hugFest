@@ -30,7 +30,8 @@ exports.createUser = function(req, res){
 		else if (user.length > 0){ //found existing user
 			res.json({result: "exist error"});
 		}else{ //user not found
-			var user = new User({name: nm, username: un, password: ps, status: 1}); //create the user model following the User schema
+			//create the user model following the User schema
+			var user = new User({name: nm, username: un, password: ps, status: 1});
 			user.save(function(err, user){
 				if (err){
 					res.json({result: "create error"});
@@ -47,6 +48,15 @@ exports.createUser = function(req, res){
 \**********************************************************/
 exports.getName = function(req, res){
   var id = req.query.id;
+  User.find({_id:id}, function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else if (user.length > 0){
+        res.json({result:user});
+    }else{
+        res.json({result:"user not found"});
+    }
+  });
   res.json({idIS: id});
 };
 

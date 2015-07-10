@@ -4,7 +4,6 @@ var express = require('express');
 var http = require('http');
 var mongoose = require('mongoose');
 var bodyparser = require('body-parser');
-//var noteRoutes = require('./api/routes/noteRoutes');
 
 //tell node where to look for delegates
 var users = require('./api/routes/userRoutes');
@@ -15,11 +14,6 @@ app.use(bodyparser.json());
 app.use(express.static( __dirname + '/dist'));
 app.set('port', process.env.PORT || 3000);
 
-/*app.get('/api/v1/notes', noteRoutes.collection);
-app.post('/api/v1/notes',  noteRoutes.create);
-app.get('/api/v1/notes/:id', noteRoutes.findById);
-app.put('/api/v1/notes/:id', noteRoutes.update);
-app.delete('/api/v1/notes/:id', noteRoutes.destroy);*/
 mongoose.connect('mongodb://localhost/hugFest');
 
 var server = http.createServer(app);
@@ -30,7 +24,7 @@ server.listen(app.get('port'), function() {
 //Delegate calls to other code
 
 app.get('/', function(req, res){
-  res.json({response: "this works", sender: "server", recipient: "Android", originalBody: req.body});
+  res.json({response: "this works", sender: "server", originalBody: req.body});
 });
 
 /**********************************************************\
