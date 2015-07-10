@@ -3,6 +3,7 @@
     package="com.example.andy.hugfest" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -49,6 +50,26 @@
             android:name=".SavedRulesActivity"
             android:label="@string/title_activity_saved_rules" >
         </activity>
+        <activity
+            android:name=".AllTabMainActivity"
+            android:label="@string/title_activity_all_tab_main" >
+        </activity>
+
+        <activity
+            android:name=".tabFriends"
+            android:label="TabFriends">
+        </activity>
+
+        <activity
+            android:name=".tabProfile"
+            android:label="TabFriends">
+        </activity>
+
+        <activity
+            android:name=".tabHome"
+            android:label="TabFriends">
+        </activity>
+
     </application>
 
 </manifest>

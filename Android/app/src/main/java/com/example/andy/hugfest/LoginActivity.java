@@ -103,7 +103,7 @@ public class LoginActivity extends ActionBarActivity {
         buttonNext.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent next = new Intent(LoginActivity.this, HomeActivity.class);
+                Intent next = new Intent(LoginActivity.this, AllTabMainActivity.class);
                 startActivity(next);
             }
 

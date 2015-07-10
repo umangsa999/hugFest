@@ -16,4 +16,11 @@
     <string name="title_activity_target">TargetActivity</string>
     <string name="title_activity_create">CreateActivity</string>
     <string name="title_activity_saved_rules">SavedRulesActivity</string>
+    <string name="title_activity_all_tabs_main">AllTabsMainActivity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_activity_home_main">HomeMainActivity</string>
+    <string name="title_activity_all_tab_main">AllTabMainActivity</string>
 </resources>
