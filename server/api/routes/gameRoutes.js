@@ -2,23 +2,53 @@
 var express = require('express');
 var mongoose = require('mongoose');
 
+var gameSchema = mongoose.Schema({
+	host: String,
+	players: [],
+	rules: String,
+	start: Date,
+	duration: Number,
+	hugLimit: Number,
+	winner: String
+});
+
+var Game = mongoose.model('Game', gameSchema);
+
 /**********************************************************\
 |POST                                                      |
 \**********************************************************/
 
 exports.createGame = function(req, res){
-	var host = req.body;
-	var id = Math.floor(Math.random() * 10000 * Math.random());
-	res.json({idIS:id, hostIS:host});
+	var h = req.body.host;
+	var r = req.body.rules;
+	var u = req.body.users;
+	
+	var game = new Game({host:h, players: u, rules: r, duration:r.duration, hugLimit: r.hugLimit});
+	
+	game.save(function(err, g){
+		if (err){
+			res.json({result:create error});
+		}else{
+			var cpp = require('child_process').spawn('java', 'game', host, g._id);
+			res.json({result:g._id});
+		}
+	});
 };
 
 /**********************************************************\
 |GET                                                       |
 \**********************************************************/
-
 exports.get = function(req, res){
 	var game = req.query.gameID;
-	res.json({gameIS:game});
+	Game.findById(game).lean().exec(function(err, g){
+		if (err){
+			res.json({result:"find error"});
+		}else if (g.length > 0){
+			res.json({result:g});
+		}else{
+			res.json({result:"game not found"});
+		}
+	});
 };
 
 exports.getGameUser = function(req, res){

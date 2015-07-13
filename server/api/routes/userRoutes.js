@@ -3,13 +3,14 @@ var express = require('express');
 var mongoose = require('mongoose');
 
 var userSchema = mongoose.Schema({
-        name: String,
-        username: String,
-        password: String,
-        status: Number, //0-offline, 1-online, 2-ingame
-        FaceBook: String,
-        Google: String,
-        friends: []
+	name: String,
+	username: String,
+	password: String,
+	status: Number, //0-offline, 1-online, 2-ingame
+	FaceBook: String,
+	Google: String,
+	friends: [],
+	target: String
 });
 
 var User = mongoose.model('User', userSchema);
@@ -46,6 +47,17 @@ exports.createUser = function(req, res){
 /**********************************************************\
 |GET                                                       |
 \**********************************************************/
+exports.get = function(req, res){
+  var id = req.query.id; //check for both id and username!
+  User.findById(id).lean().exec(function(err, user){
+    if (err){
+        res.json({result: "find error"});
+    }else{
+            res.json(JSON.stringify(user));
+    }
+  });
+};
+
 exports.getName = function(req, res){
   var id = req.query.id;
   User.find({_id:id}, function(err, user){
@@ -57,7 +69,6 @@ exports.getName = function(req, res){
         res.json({result:"user not found"});
     }
   });
-  res.json({idIS: id});
 };
 
 exports.getStatus = function(req, res){
@@ -78,17 +89,6 @@ exports.getImage = function(req, res){
 exports.getGames = function(req, res){
   var id = req.query.id;
   res.json({idIS: id});
-};
-
-exports.get = function(req, res){
-  var id = req.query.id; //check for both id and username!
-  User.findById(id).lean().exec(function(err, user){
-    if (err){
-        res.json({result: "find error"});
-    }else{
-            res.json(JSON.stringify(user));
-    }
-  });
 };
 
 exports.login = function(req, res){
