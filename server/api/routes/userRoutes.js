@@ -76,7 +76,12 @@ exports.getStatus = function(req, res){
   res.json({idIS: id});
 };
 
-exports.getHugs = function(req, res){
+exports.getTotHugs = function(req, res){
+  var id = req.query.id;
+  res.json({idIS: id});
+};
+
+exports.getCurrHugs = function(req, res){
   var id = req.query.id;
   res.json({idIS: id});
 };
@@ -87,6 +92,11 @@ exports.getImage = function(req, res){
 };
 
 exports.getGames = function(req, res){
+  var id = req.query.id;
+  res.json({idIS: id});
+};
+
+exports.getProfile = function(req, res){
   var id = req.query.id;
   res.json({idIS: id});
 };
@@ -121,15 +131,15 @@ exports.putStatus = function(req, res){
   res.json({statusIs: status, idIs: id});
 };
 
-exports.putFinish = function(req, res){
-  var id = req.body.id;
-  var hugs = req.body.hugs;
-  res.json({idIS: id, hugsIs: hugs});
-};
-
 exports.putImage = function(req, res){ //this one needs more work than rest, get image
   var id = req.body.id;
   res.json({idIS: id});
+};
+
+exports.putProfile = function(req, res){ //this one needs more work than rest, get image
+  var id = req.body.id;
+  var profile = req.body.profile;
+  res.json({idIS: id, profileIs: profile});
 };
 
 exports.putRemoveFriend = function(req, res){
