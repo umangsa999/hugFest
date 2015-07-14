@@ -92,8 +92,9 @@ app.delete('/game/delete', games.deleteGame);
 })();*/
 
 //console.log(process.env.PATH);
-var child = require('child_process').spawn('java',['Game']).on('error', function(err){
+/*var child = require('child_process').spawn('java',['Game']).on('error', function(err){
   throw err});
 child.stdout.on('data', function(data){
   console.log('stdout: ' + data);
 });
+*/
