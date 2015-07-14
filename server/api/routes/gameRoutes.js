@@ -29,7 +29,7 @@ exports.createGame = function(req, res){
 		if (err){
 			res.json({result:"create error"});
 		}else{
-			var cpp = require('child_process').spawn('java', ['Game', host, g._id]);
+			//var cpp = require('child_process').spawn('java', ['Game', host, g._id]);
 			res.json({result:g._id});
 		}
 	});
@@ -49,16 +49,6 @@ exports.get = function(req, res){
 			res.json({result:"game not found"});
 		}
 	});
-};
-
-exports.getGameUser = function(req, res){
-	var id = req.query.id;
-	res.json({idIS: id});
-};
-
-exports.getFriends = function(req, res){
-	var id = req.query.id;
-	res.json({idIS: id});
 };
 
 exports.getTarget = function(req, res){
@@ -110,22 +100,8 @@ exports.exclude = function(req, res){
 };
 
 exports.next = function(req, res){
-	var id = req.body.gameID;
-	var un = req.body.username;
+	var game = req.body.gameID;
+	var user = req.body.userID;
 	var newTarget = Math.floor(Math.random() * 20 + 1);
-	res.json({idIS: id, unIS: un, targetIS: target});
-};
-
-exports.start = function(req, res){
-	var id = req.body.gameID;
-	res.json({idIS: id});
-};
-
-/**********************************************************\
-|DELETE                                                    |
-\**********************************************************/
-
-exports.deleteGame = function(req, res){
-	var id = req.body.gameID;
-	res.json({idIS: id});
+	res.json({idIS: game, unIS: user, targetIS: target});
 };
