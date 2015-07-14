@@ -3,7 +3,7 @@
 function game( gameID, playerDB, action ){
 
 	//Get the gameID from DB, we always want to do this
-	Game.findById(gameID).exec(function(err, game)){
+	Game.findById(gameID).exec(function(err, game) {
 		if(err){
 			return {result:"find error"};
 		}else{
@@ -78,7 +78,7 @@ function game( gameID, playerDB, action ){
 											}else{
 												u2.hunter = currentPlayerObject.playerID;
 												u2.save( function(err, u){
-													return{ result: "save success!"}
+													return{ result: "save succcess"}
 												});
 											}
 										});
@@ -155,7 +155,7 @@ function game( gameID, playerDB, action ){
 				}
 			);
 		}
-	}
+	});
 }
 
 var Player = Class({
