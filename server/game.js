@@ -93,33 +93,47 @@ function game( gameID, playerDB, action ){
 
 					 //currentPlayerDB scored, find it via game and increase the numHug by 1;
 					var currentPlayerID = playerDB;
-					//var currentPlayerIndex = game.players.indexOf( currentPlayerDB );
-					//var currentPlayerCurrentHugs = game.players[currentPlayerIndex].numHugs;
-					//game.players[currentPlayerIndex].numHugs = currentPlayerCurrentHugs + 1;
-
 					user.findById( currentPlayerID ).exec(function(err, u){
 						if(err){
 							return {result: "find user in update case error"}
 						}else{
 							u.numHugs = u.numHugs + 1;
-							
+							//get the target that he hugged on
+							var currentPlayerTarget = u.target;
+							var currentPlayerTargetIndex = game.players.indexOf( currentPlayerTarget );
+							var currentPlayerIndex = game.players.indexOf( currentPlayerID );
+
+							//get all the players still in the game
+							var currentPlayersList = game.players;
+							currentPlayersList.splice( currentPlayerIndex , 1 );
+							currentPlayersList.splice(  currentPlayerTargetIndex , 1 );
+							//we've removed the current player & last target, now find a new target within this
+
+							var newTargetIndex = Math.random()*currentPlayersList.length;
+							var newTargetID = currentPlayersList[newTargetIndex];
+
+							//set the new target for the current player
+							u.target = newTargetID;
+							u.save({ function(err, u){
+									if(err){
+										return {result:"Save target and/or update point error in switch case"}
+									}else{
+										//now we need to set another person hunting the target, get the target
+										user.findById( newTargetID ).exec(function(err, u2){
+											if(err){
+												return { result: "finding target error" }
+											}else{
+												//get the array of hunters hunting target and add this current player to it
+												//u2.hunter = currentPlayerTarget;
+											}
+										});
+										//return {result:"success save target and/or update point in switch case"};
+									}
+
+								}
+							});
 						}
 					});
-
-					//get the target that he hugged on
-					var currentPlayerTarget = game.players[currentPlayerIndex].target;
-					var currentPlayerTargetIndex = game.players.indexOf( currentPlayerTarget );
-
-					//get all the players still in the game
-					var currentPlayersList = game.players;
-					currentPlayersList.splice( currentPlayerIndex , 1 );
-					currentPlayersList.splice(  currentPlayerTarget , 1 );
-					//we've removed the current player & last target, now find a new target within this
-					var newTargetIndex = Math.random()*currentPlayersList.length;
-					var newTargetID = currentPlayersList[newTargetIndex];
-
-					//set the new target for the current player
-					game.players[currentPlayerIndex].target = newTargetID;
 					break;
 
 				case "leave": //someone leaves the game, call him LARRY (larry leaves)
