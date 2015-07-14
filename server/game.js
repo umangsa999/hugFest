@@ -45,7 +45,7 @@ function game( gameID, playerDB, action ){
 						
 						//now we set the target in the DB
 						//we need to get the user, from the game array from players (need callback)
-						user.findById( currentPlayerObject.playerListID ).exec(function(err, u)){
+						user.findById( currentPlayerObject.playerListID ).exec(function(err, u) {
 							if(err){
 								return {result: "finding player by ID error for setting target"}
 							}else{
@@ -72,7 +72,7 @@ function game( gameID, playerDB, action ){
 										}
 
 										//Finally, set the playTargetObject as hunted by currentPlayerobject
-										user.findById( playerTargetObject.playerListID ).exec(function(err, u2)){
+										user.findById( playerTargetObject.playerListID ).exec(function(err, u2) {
 											if(err){
 												return {result: "finding player by ID error for setting hunter"}
 											}else{
@@ -97,7 +97,7 @@ function game( gameID, playerDB, action ){
 					//var currentPlayerCurrentHugs = game.players[currentPlayerIndex].numHugs;
 					//game.players[currentPlayerIndex].numHugs = currentPlayerCurrentHugs + 1;
 
-					user.findById( currentPlayerID ).exec(function(err, u)){
+					user.findById( currentPlayerID ).exec(function(err, u){
 						if(err){
 							return {result: "find user in update case error"}
 						}else{
@@ -158,17 +158,7 @@ function game( gameID, playerDB, action ){
 	});
 }
 
-var Player = Class({
-	//array of players that the current player can target
-	initialize: function( playerListIDs, playerID ){
-		this.canTarget = playerListIDs;
-		this.playerID = playerID;
-	}
-
-});
-
-
-function setHunter( target, hunter ){
-
-
-}
+function Player( playerListIDs, playerID ){
+	this.playerListIDs = playerListIDs;
+	this.playerID = playerID;
+};
