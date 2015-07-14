@@ -1,9 +1,9 @@
 //TODO chris please put some shit here if needed
 
-function game( gameID, player, action ){
+function game( gameID, playerDB, action ){
 
 	//Get the gameID from DB, we always want to do this
-	Game.findById(gameID).lean().exec(function(err, game)){
+	Game.findById(gameID).exec(function(err, game)){
 		if(err){
 			return {result:"find error"};
 		}else{
@@ -16,7 +16,7 @@ function game( gameID, player, action ){
 					
 					//put player IDS into the playerListID
 					for( var playerIndex = 0; playerIndex<playerList.length; playerIndex++){
-						var playerID = game.players[playerIndex]._id;
+						var playerID = game.players[playerIndex];
 						playerListIDs.push( playerID ); //push to the end of the array
 					}
 					
@@ -44,40 +44,116 @@ function game( gameID, player, action ){
 						var playerTargetObject = currentPlayerObject.playerListObjects[ targetIndex ]; //call this y
 						
 						//now we set the target in the DB
-						game.players[playerIndex].target = playerTargetObject.playerID;
+						//we need to get the user, from the game array from players (need callback)
+						user.findById( currentPlayerObject.playerListID ).exec(function(err, u)){
+							if(err){
+								return {result: "finding player by ID error for setting target"}
+							}else{
+								u.target = playerTargetObject.playerID;
+								u.save( function(err, u) {
+									if(err){
+										return {result: "save user's target error"};
+									}else{
+										//get the playerTargetObject and say he can't target currentPlayerObject
+										var removeIndex = playerTargetObject.canTarget.indexOf( currentPlayerObject.playerID );
+										if( removeIndex > -1){
+											playerTargetObject.canTarget.splice( removeIndex, 1 );
+										}
 
-						//get the playerTargetObject and say he can't target currentPlayerObject
-						var removeIndex = playerTargetObject.canTarget.indexOf( currentPlayerObject.playerID );
-						if( removeIndex > -1){
-							playerTargetObject.canTarget.splice( removeIndex, 1 );
-						}
+										//now remove y as a potential target in all users
+										for( var playerIndex2 = 0; playerIndex2 < playerList.length; playerIndex2++ ){
 
-						//now remove y as a potential target in all users
-						for( var playerIndex2 = 0; playerIndex2 < playerList.length; playerIndex2++ ){
+											//get the current person
+											var currentPlayerObject2 = playerListObjects[ playerIndex2 ];
+											var removeIndex2 = currentPlayerObject2.canTarget.indexOf( playerTargetObject );
+											if( removeIndex2 > -1 ){
+												currentPlayerObject2.canTarget.splice( removeIndex2 , 1 );
+											}
+										}
 
-							//get the current person
-							var currentPlayerObject2 = playerListObjects[ playerIndex2 ];
-							var removeIndex2 = currentPlayerObject2.canTarget.indexOf( playerTargetObject );
-							if( removeIndex2 > -1 ){
-								currentPlayerObject2.canTarget.splice( removeIndex2 , 1 );
+										//Finally, set the playTargetObject as hunted by currentPlayerobject
+										user.findById( playerTargetObject.playerListID ).exec(function(err, u2)){
+											if(err){
+												return {result: "finding player by ID error for setting hunter"}
+											}else{
+												u2.hunter = currentPlayerObject.playerID;
+												u2.save( function(err, u){
+													return{ result: "save success!"}
+												});
+											}
+										});
+									}
+								});
 							}
-						}
+						});
 					}
 					break;
 
 				case "update": //someone scores
+
+					 //currentPlayerDB scored, find it via game and increase the numHug by 1;
+					var currentPlayerID = playerDB;
+					//var currentPlayerIndex = game.players.indexOf( currentPlayerDB );
+					//var currentPlayerCurrentHugs = game.players[currentPlayerIndex].numHugs;
+					//game.players[currentPlayerIndex].numHugs = currentPlayerCurrentHugs + 1;
+
+					user.findById( currentPlayerID ).exec(function(err, u)){
+						if(err){
+							return {result: "find user in update case error"}
+						}else{
+							u.numHugs = u.numHugs + 1;
+							
+						}
+					});
+
+					//get the target that he hugged on
+					var currentPlayerTarget = game.players[currentPlayerIndex].target;
+					var currentPlayerTargetIndex = game.players.indexOf( currentPlayerTarget );
+
+					//get all the players still in the game
+					var currentPlayersList = game.players;
+					currentPlayersList.splice( currentPlayerIndex , 1 );
+					currentPlayersList.splice(  currentPlayerTarget , 1 );
+					//we've removed the current player & last target, now find a new target within this
+					var newTargetIndex = Math.random()*currentPlayersList.length;
+					var newTargetID = currentPlayersList[newTargetIndex];
+
+					//set the new target for the current player
+					game.players[currentPlayerIndex].target = newTargetID;
 					break;
 
+				case "leave": //someone leaves the game, call him LARRY (larry leaves)
 
-				case "leave": //someone leaves the game
+					//1a. Check if there are only two players now, if so end the game & set winner
+		
+					//There are at least still 3 players in the game (go to 1b-4)
+
+					//1b. Remove LARRY from game.players
+					//2. Get whoever LARRY was targeting (TOM the target)
+					//3. Get whoever was hunting LARRY, (HENRY the hunter)
+					//4. Set HENRY to hunt TOM 
+
 					break;
 
-				case "join": //someone joins the game 
+				case "join": //someone joins the game
+
+					//
+
 					break;
 
 				default:
 					return {result:"Player action error"};
 			}
+
+			//SAVE THE CHANGES, 
+			game.save( function (err, g){
+					if( err){
+						return {result:"save gave error"};
+					}else{
+						return {result: "save success!"};
+					}
+				}
+			);
 		}
 	}
 }
@@ -90,3 +166,9 @@ var Player = Class({
 	}
 
 });
+
+
+function setHunter( target, hunter ){
+
+
+}
