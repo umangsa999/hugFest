@@ -27,9 +27,9 @@ exports.createGame = function(req, res){
 	
 	game.save(function(err, g){
 		if (err){
-			res.json({result:create error});
+			res.json({result:"create error"});
 		}else{
-			var cpp = require('child_process').spawn('java', 'game', host, g._id);
+			var cpp = require('child_process').spawn('java', ['Game', host, g._id]);
 			res.json({result:g._id});
 		}
 	});

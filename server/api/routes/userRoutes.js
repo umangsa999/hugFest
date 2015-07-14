@@ -48,7 +48,7 @@ exports.createUser = function(req, res){
 |GET                                                       |
 \**********************************************************/
 exports.get = function(req, res){
-  var id = req.query.id; //check for both id and username!
+  var id = req.query.id;
   User.findById(id).lean().exec(function(err, user){
     if (err){
         res.json({result: "find error"});
@@ -64,7 +64,7 @@ exports.getName = function(req, res){
     if (err){
         res.json({result:"find error"});
     }else if (user.length > 0){
-        res.json({result:user});
+        res.json({result:user.name});
     }else{
         res.json({result:"user not found"});
     }

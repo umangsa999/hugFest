@@ -78,3 +78,22 @@ app.put('/game/start', games.start);
 //DELETE
 app.delete('/user/delete', users.deleteUser);
 app.delete('/game/delete', games.deleteGame);
+
+/*(function(){
+  var childProcess = require("child_process");
+  var oldSpawn = childProcess.spawn;
+  function mySpawn(){
+    console.log('spawn called');
+    console.log(arguments);
+    var result = oldSpawn.apply(this, arguments);
+    return result;
+  }
+  childProcess.spawn = mySpawn;
+})();*/
+
+//console.log(process.env.PATH);
+var child = require('child_process').spawn('java',['Game']).on('error', function(err){
+  throw err});
+child.stdout.on('data', function(data){
+  console.log('stdout: ' + data);
+});
