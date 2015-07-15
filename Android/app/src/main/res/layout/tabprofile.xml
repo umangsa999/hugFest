@@ -29,29 +29,55 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Name: Android"
+        android:text="Name:"
         android:id="@+id/textView13"
         android:layout_below="@+id/textView12"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Status: Online"
+        android:text="Status:"
         android:id="@+id/textView14"
         android:layout_below="@+id/textView13"
         android:layout_centerHorizontal="true"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:layout_margin="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="View on Facebook"
         android:id="@+id/button"
+        android:layout_alignTop="@+id/buttonEdit"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonEdit"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:background="@mipmap/ic_launcher_edit"
+        android:layout_margin="10dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Johnny"
+        android:ems="10"
+        android:id="@+id/editTextName"
+        android:layout_above="@+id/textView14"
+        android:layout_toRightOf="@+id/textView13"
+        android:layout_below="@+id/textView12"
+        android:layout_alignRight="@+id/buttonEdit"
+        android:layout_alignEnd="@+id/buttonEdit"
+        android:editable="false" />
+
 </RelativeLayout>

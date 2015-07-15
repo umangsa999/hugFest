@@ -13,9 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.concurrent.ExecutionException;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -52,6 +49,19 @@ public class LoginActivity extends ActionBarActivity {
         buttonSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //Follow this example for use
+                HTTPCaller h = null;
+                try {
+                    h = (new HTTPCallerBuilder()).method("PUT").data("userID", "559efd6f25b7daf82691a703").data("friendID", "559f24ad769e77512764d449").fURL("user").sURL("add").executeHTTPCaller();
+                    Log.wtf("LOGINACTIVITY", "Response Code: " + h.getResponseCode() +
+                            "\nResponseMessage: " + h.getResponseMessage() +
+                            "\nResult: " + (h.getServerResult() == null ? "" : h.getServerResult().toString()));
+
+                } catch (JSONException e) {
+                    Log.e(LoginActivity.class.getSimpleName(), "onClick");
+                }
+
                 /* Follow this example for use
                 HTTPCaller h = null;
                 try {
@@ -67,8 +77,8 @@ public class LoginActivity extends ActionBarActivity {
 
                 } catch (JSONException e) {
                     Log.e(LoginActivity.class.getSimpleName(), "onClick");
-                }
-*/
+                }*/
+
                 Log.wtf("LOGINACTIVITY", "execute over");
                 rememberInfo = prefSettings.getBoolean("remember", false);
 
