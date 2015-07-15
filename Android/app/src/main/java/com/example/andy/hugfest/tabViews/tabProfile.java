@@ -1,8 +1,4 @@
-package com.example.andy.hugfest;
-
-/**
- * Created by ryanzhou on 7/9/15.
- */
+package com.example.andy.hugfest.tabViews;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +9,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.example.andy.hugfest.R;
 
 public class tabProfile extends Activity {
     private ImageView profilePic;

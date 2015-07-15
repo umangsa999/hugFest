@@ -1,4 +1,4 @@
-package com.example.andy.hugfest;
+package com.example.andy.hugfest.listAdapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,14 +9,13 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * Created by ryanzhou on 7/9/15.
- */
-public class gameCustomAdapter extends BaseAdapter {
+import com.example.andy.hugfest.R;
+
+public class GamesListAdapter extends BaseAdapter {
     private Holder holder;
     private static LayoutInflater inflater=null;
     Activity mContext;
-    public gameCustomAdapter(Activity context ) {
+    public GamesListAdapter(Activity context) {
         mContext = context;
         inflater = ( LayoutInflater )context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);

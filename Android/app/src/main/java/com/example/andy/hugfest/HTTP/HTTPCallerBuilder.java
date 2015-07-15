@@ -1,4 +1,4 @@
-package com.example.andy.hugfest;
+package com.example.andy.hugfest.HTTP;
 
 import android.util.Log;
 
@@ -72,6 +72,7 @@ public class HTTPCallerBuilder {
     public HTTPCaller executeHTTPCaller(){
         HTTPCaller h = new HTTPCaller(); //create the AsyncTask
         h.execute(send); //send the call on send
+        Log.wtf(this.getClass().getSimpleName(), "send is: " + send);
         try {
             h.get(); //wait for reply
         }catch (Exception e) {
