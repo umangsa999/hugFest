@@ -56,6 +56,8 @@ public class customAdapter extends BaseAdapter {
         holder.img = (ImageView) rowView.findViewById(R.id.imageView1);
         holder.img.setImageResource( R.drawable.ic_profile );
 
+
+
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
