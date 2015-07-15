@@ -56,22 +56,22 @@
             android:name=".AllTabMainActivity"
             android:label="@string/title_activity_all_tab_main" >
         </activity>
-
         <activity
             android:name=".tabViews.tabFriends"
             android:label="TabFriends">
         </activity>
-
         <activity
             android:name=".tabViews.tabProfile"
             android:label="TabFriends">
         </activity>
-
         <activity
             android:name=".tabViews.tabHome"
             android:label="TabFriends">
         </activity>
-
+        <activity
+            android:name=".addFriendActivity"
+            android:label="@string/title_activity_add_friend" >
+        </activity>
     </application>
 
 </manifest>
