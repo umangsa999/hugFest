@@ -69,16 +69,15 @@ public class HTTPCallerBuilder {
         return this;
     }
 
-    public JSONObject executeHTTPCaller(){
-        JSONObject obj = null;
+    public HTTPCaller executeHTTPCaller(){
         HTTPCaller h = new HTTPCaller(); //create the AsyncTask
         h.execute(send); //send the call on send
+        Log.wtf(this.getClass().getSimpleName(), "send is: " + send);
         try {
             h.get(); //wait for reply
-            obj = h.getServerResult();
         }catch (Exception e) {
             Log.wtf("LOGINACTIVITY", e.getMessage());
         }
-        return obj;
+        return h;
     }
 }
