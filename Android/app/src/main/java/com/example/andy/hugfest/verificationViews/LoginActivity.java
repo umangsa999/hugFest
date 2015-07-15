@@ -1,4 +1,4 @@
-package com.example.andy.hugfest;
+package com.example.andy.hugfest.verificationViews;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.andy.hugfest.AllTabMainActivity;
+import com.example.andy.hugfest.HTTP.HTTPCaller;
+import com.example.andy.hugfest.HTTP.HTTPCallerBuilder;
+import com.example.andy.hugfest.R;
 
 import org.json.JSONException;
 

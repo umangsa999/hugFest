@@ -1,4 +1,4 @@
-package com.example.andy.hugfest;
+package com.example.andy.hugfest.HTTP;
 
 import android.util.Log;
 

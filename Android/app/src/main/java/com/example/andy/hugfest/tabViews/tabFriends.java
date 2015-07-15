@@ -1,4 +1,4 @@
-package com.example.andy.hugfest.friendlist;
+package com.example.andy.hugfest.tabViews;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.example.andy.hugfest.HTTPCaller;
-import com.example.andy.hugfest.HTTPCallerBuilder;
+import com.example.andy.hugfest.HTTP.HTTPCaller;
+import com.example.andy.hugfest.HTTP.HTTPCallerBuilder;
 import com.example.andy.hugfest.R;
+import com.example.andy.hugfest.listAdapters.FriendsListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;

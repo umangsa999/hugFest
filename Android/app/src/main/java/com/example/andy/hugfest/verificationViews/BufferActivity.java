@@ -1,4 +1,4 @@
-package com.example.andy.hugfest;
+package com.example.andy.hugfest.verificationViews;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.andy.hugfest.HomeActivity;
 import com.example.andy.hugfest.R;
 
 

@@ -1,4 +1,4 @@
-package com.example.andy.hugfest.friendlist;
+package com.example.andy.hugfest.listAdapters;
 
 import android.app.Activity;
 import android.content.Context;

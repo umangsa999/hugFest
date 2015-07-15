@@ -9,6 +9,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TabHost;
 
+import com.example.andy.hugfest.tabViews.tabFriends;
+import com.example.andy.hugfest.tabViews.tabHome;
+import com.example.andy.hugfest.tabViews.tabProfile;
+
 public class AllTabMainActivity extends TabActivity{
 
     @Override
