@@ -10,8 +10,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".BufferActivity"
-            android:label="@string/app_name" >
+            android:name=".verificationViews.BufferActivity"
+            android:label="@string/app_name"
+            android:noHistory = "true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,8 +20,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:name=".verificationViews.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:noHistory = "true" >
         </activity>
         <activity
             android:name=".HomeActivity"
@@ -56,17 +58,17 @@
         </activity>
 
         <activity
-            android:name=".tabFriends"
+            android:name=".tabViews.tabFriends"
             android:label="TabFriends">
         </activity>
 
         <activity
-            android:name=".tabProfile"
+            android:name=".tabViews.tabProfile"
             android:label="TabFriends">
         </activity>
 
         <activity
-            android:name=".tabHome"
+            android:name=".tabViews.tabHome"
             android:label="TabFriends">
         </activity>
 
