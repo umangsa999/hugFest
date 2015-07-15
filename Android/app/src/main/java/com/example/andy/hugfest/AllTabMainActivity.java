@@ -1,6 +1,5 @@
 package com.example.andy.hugfest;
 
-import android.app.ActionBar;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,17 +9,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TabHost;
 
-public class AllTabMainActivity extends TabActivity {
-
+public class AllTabMainActivity extends TabActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tab_main);
 
-        ActionBar actionBar = getActionBar();
-        actionBar.show();
-        
+        //ActionBar a = getParent().getActionBar();
+        //a.show();
+
         TabHost tabHost = getTabHost();
         TabHost.TabSpec homeSpec = tabHost.newTabSpec("Home");
 

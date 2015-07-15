@@ -25,7 +25,7 @@ public class customAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 12;
     }
 
     @Override
@@ -55,8 +55,6 @@ public class customAdapter extends BaseAdapter {
         holder.hugData =(TextView) rowView.findViewById(R.id.textView3);
         holder.img = (ImageView) rowView.findViewById(R.id.imageView1);
         holder.img.setImageResource( R.drawable.ic_profile );
-
-
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
