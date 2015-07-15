@@ -191,6 +191,7 @@ exports.putStatus = function(req, res){
 
 exports.putImage = function(req, res){ //this one needs more work than rest, get image
   var id = req.body.id;
+  console.log(id);
   res.json({idIS: id});
 };
 
@@ -265,29 +266,33 @@ exports.putAddFriend = function(req, res){ //this one needs more work than rest
 		    if (err){
 		        res.json({result:"find error Tom"});
 		    }else{
-		        hostHelen.friends.push(targetTom._id);
-		        hostHelen.save(function(err, h){
-		            if (err){
-		                res.json({result:"save error Helen"});
-		            }else{
-		                targetTom.friends.push(h._id);
-		                targetTom.save(function(err, h){
-		                    if (err){
-		                        var indexTom = hostHelen.friends.indexOf(targetTom._id);
-		                        hostHelen.friends.splice(indexTom, 1);
-		                        hostHelen.save(function(err, hH){
-		                            if (err){
-		                                res.json({result:"worse error"});
-		                            }else{
-		                                res.json({result:"remove error Helen"});
-		                            }
-		                        });
-		                    }else{
-		                        res.json({result:"success"});
-		                    }
-		                });
-		            }
-		        });
+		        if (hostHelen.friends.indexOf(targetTom._id) == -1){
+		            hostHelen.friends.push(targetTom._id);
+			        hostHelen.save(function(err, h){
+			            if (err){
+			                res.json({result:"save error Helen"});
+			            }else{
+			                targetTom.friends.push(h._id);
+			                targetTom.save(function(err, h){
+			                    if (err){
+			                        var indexTom = hostHelen.friends.indexOf(targetTom._id);
+			                        hostHelen.friends.splice(indexTom, 1);
+			                        hostHelen.save(function(err, hH){
+			                            if (err){
+			                                res.json({result:"worse error"});
+			                            }else{
+			                                res.json({result:"remove error Helen"});
+			                            }
+			                        });
+			                    }else{
+			                        res.json({result:"success"});
+			                    }
+			                });
+			            }
+			        });
+				}else{
+			        res.json({result:"already friend"});
+			    }
 		    }
 	    });
     }
