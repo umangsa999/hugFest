@@ -113,6 +113,11 @@ exports.getCurrHugs = function(req, res){
   });
 };
 
+exports.getTarget = function(req, res){
+	var id = req.query.userID;
+	res.json({idIS: id, gameIDIS: game});
+};
+
 exports.getImage = function(req, res){
   var id = req.query.id;
   res.json({idIS: id});

@@ -15,6 +15,24 @@ var gameSchema = mongoose.Schema({
 
 var Game = mongoose.model('Game', gameSchema);
 
+var userSchema = mongoose.Schema({
+	name: String,
+	username: String,
+	password: String,
+	status: Number, //0-offline, 1-online, 2-ingame
+	FaceBook: String,
+	Google: String,
+	friends: [],
+	target: String,
+	hunter: [],
+	currentHugs: Number,
+	totalHugs: Number,
+	games: Number,
+	profile: String
+});
+
+var User = mongoose.model('User', userSchema);
+
 /**********************************************************\
 |POST                                                      |
 \**********************************************************/
@@ -51,18 +69,6 @@ exports.get = function(req, res){
 			res.json({result:"game not found"});
 		}
 	});
-};
-
-exports.getTarget = function(req, res){
-	var game = req.query.gameID;
-	var id = req.query.userID;
-	res.json({idIS: id, gameIDIS: game});
-};
-
-exports.getHugs = function(req, res){
-	var game = req.query.gameID;
-	var id = req.query.userID;
-	res.json({idIS: id, gameIDIS: game});
 };
 
 exports.getPlayers = function(req, res){
