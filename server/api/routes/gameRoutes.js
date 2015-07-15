@@ -15,6 +15,24 @@ var gameSchema = mongoose.Schema({
 
 var Game = mongoose.model('Game', gameSchema);
 
+var userSchema = mongoose.Schema({
+	name: String,
+	username: String,
+	password: String,
+	status: Number, //0-offline, 1-online, 2-ingame
+	FaceBook: String,
+	Google: String,
+	friends: [],
+	target: String,
+	hunter: [],
+	currentHugs: Number,
+	totalHugs: Number,
+	games: Number,
+	profile: String
+});
+
+var User = mongoose.model('User', userSchema);
+
 /**********************************************************\
 |POST                                                      |
 \**********************************************************/
@@ -53,31 +71,43 @@ exports.get = function(req, res){
 	});
 };
 
-exports.getTarget = function(req, res){
-	var game = req.query.gameID;
-	var id = req.query.userID;
-	res.json({idIS: id, gameIDIS: game});
-};
-
-exports.getHugs = function(req, res){
-	var game = req.query.gameID;
-	var id = req.query.userID;
-	res.json({idIS: id, gameIDIS: game});
-};
-
 exports.getPlayers = function(req, res){
 	var game = req.query.gameID;
-	res.json({gameIDIS: game});
+	Game.findById(game).exec(function(err, g){
+		if (err){
+			res.json({result:"find error"});
+		}else if (g.length > 0){
+			res.json({result:g.players});
+		}else{
+			res.json({result:"game not found"});
+		}
+	});
 };
 
 exports.getRules = function(req, res){
 	var game = req.query.gameID;
-	res.json({gameIDIS: game});
+	Game.findById(game).exec(function(err, g){
+		if (err){
+			res.json({result:"find error"});
+		}else if (g.length > 0){
+			res.json({result:g.rules});
+		}else{
+			res.json({result:"game not found"});
+		}
+	});
 };
 
 exports.getTime = function(req, res){
 	var game = req.query.gameID;
-	res.json({gameIDIS: game});
+	Game.findById(game).exec(function(err, g){
+		if (err){
+			res.json({result:"find error"});
+		}else if (g.length > 0){
+			res.json({result:g.start});
+		}else{
+			res.json({result:"game not found"});
+		}
+	});
 };
 
 exports.getTop = function(req, res){

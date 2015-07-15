@@ -47,6 +47,7 @@ app.get('/user/name', users.getName);
 app.get('/user/status', users.getStatus);
 app.get('/user/hugs/total', users.getTotHugs);
 app.get('/user/hugs/current', users.getCurrHugs);
+app.get('/user/target', users.getTarget);
 app.get('/user/image', users.getImage);
 app.get('/user/games', users.getGames);
 app.get('/user/profile', users.getProfile);
@@ -56,8 +57,6 @@ app.get('/friends/fb', users.getFBFriends);
 app.get('/friends/gl', users.getGLFriends);
 
 app.get('/game', games.get);
-app.get('/game/target', games.getTarget);
-app.get('/game/hugs', games.getHugs);
 app.get('/game/players', games.getPlayers);
 app.get('/game/rules', games.getRules);
 app.get('/game/time', games.getTime);

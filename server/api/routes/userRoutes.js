@@ -113,6 +113,17 @@ exports.getCurrHugs = function(req, res){
   });
 };
 
+exports.getTarget = function(req, res){
+	var id = req.query.id;
+	User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        res.json({result:user.target});
+    }
+  });
+};
+
 exports.getImage = function(req, res){
   var id = req.query.id;
   res.json({idIS: id});
@@ -143,6 +154,15 @@ exports.getProfile = function(req, res){
 exports.login = function(req, res){
 	var user = req.body.user;
 	var pass = req.body.pass
+	User.find({username:user, password:pass}).exec(function(err, user){
+		if (err){
+			res.json({result:"find error"});
+		}else if (user.length == 0){
+			res.json({result:"matching user not found"});
+		}else{
+			res.json({result:user._id});
+		}
+	});
 	res.json({userIs: user, passIs: pass});
 };
 
@@ -191,6 +211,7 @@ exports.putStatus = function(req, res){
 
 exports.putImage = function(req, res){ //this one needs more work than rest, get image
   var id = req.body.id;
+  console.log(id);
   res.json({idIS: id});
 };
 
@@ -265,29 +286,33 @@ exports.putAddFriend = function(req, res){ //this one needs more work than rest
 		    if (err){
 		        res.json({result:"find error Tom"});
 		    }else{
-		        hostHelen.friends.push(targetTom._id);
-		        hostHelen.save(function(err, h){
-		            if (err){
-		                res.json({result:"save error Helen"});
-		            }else{
-		                targetTom.friends.push(h._id);
-		                targetTom.save(function(err, h){
-		                    if (err){
-		                        var indexTom = hostHelen.friends.indexOf(targetTom._id);
-		                        hostHelen.friends.splice(indexTom, 1);
-		                        hostHelen.save(function(err, hH){
-		                            if (err){
-		                                res.json({result:"worse error"});
-		                            }else{
-		                                res.json({result:"remove error Helen"});
-		                            }
-		                        });
-		                    }else{
-		                        res.json({result:"success"});
-		                    }
-		                });
-		            }
-		        });
+		        if (hostHelen.friends.indexOf(targetTom._id) == -1){
+		            hostHelen.friends.push(targetTom._id);
+			        hostHelen.save(function(err, h){
+			            if (err){
+			                res.json({result:"save error Helen"});
+			            }else{
+			                targetTom.friends.push(h._id);
+			                targetTom.save(function(err, h){
+			                    if (err){
+			                        var indexTom = hostHelen.friends.indexOf(targetTom._id);
+			                        hostHelen.friends.splice(indexTom, 1);
+			                        hostHelen.save(function(err, hH){
+			                            if (err){
+			                                res.json({result:"worse error"});
+			                            }else{
+			                                res.json({result:"remove error Helen"});
+			                            }
+			                        });
+			                    }else{
+			                        res.json({result:"success"});
+			                    }
+			                });
+			            }
+			        });
+				}else{
+			        res.json({result:"already friend"});
+			    }
 		    }
 	    });
     }
