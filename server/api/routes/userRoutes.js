@@ -10,7 +10,12 @@ var userSchema = mongoose.Schema({
 	FaceBook: String,
 	Google: String,
 	friends: [],
-	target: String
+	target: String,
+	hunter: [],
+	currentHugs: Number,
+	totalHugs: Number,
+	games: Number,
+	profile: String
 });
 
 var User = mongoose.model('User', userSchema);
@@ -47,43 +52,65 @@ exports.createUser = function(req, res){
 /**********************************************************\
 |GET                                                       |
 \**********************************************************/
+exports.getTest = function(req, res){
+	User.find().exec(function(err, users){
+		res.json({result:users});
+	});
+}
+
 exports.get = function(req, res){
   var id = req.query.id;
   User.findById(id).lean().exec(function(err, user){
     if (err){
         res.json({result: "find error"});
     }else{
-            res.json(JSON.stringify(user));
+        res.json(user);
     }
   });
 };
 
 exports.getName = function(req, res){
   var id = req.query.id;
-  User.find({_id:id}, function(err, user){
+  User.findById(id).exec(function(err, user){
     if (err){
         res.json({result:"find error"});
-    }else if (user.length > 0){
-        res.json({result:user.name});
     }else{
-        res.json({result:"user not found"});
+        res.json({result:user.name});
     }
   });
 };
 
 exports.getStatus = function(req, res){
   var id = req.query.id;
-  res.json({idIS: id});
+  User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        res.json({result:user.status});
+    }
+  });
 };
 
 exports.getTotHugs = function(req, res){
   var id = req.query.id;
-  res.json({idIS: id});
+  User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        res.json({result:user.totalHugs});
+    }
+  });
 };
 
 exports.getCurrHugs = function(req, res){
   var id = req.query.id;
-  res.json({idIS: id});
+  User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        res.json({result:user.currentHugs});
+    }
+  });
 };
 
 exports.getImage = function(req, res){
@@ -93,12 +120,24 @@ exports.getImage = function(req, res){
 
 exports.getGames = function(req, res){
   var id = req.query.id;
-  res.json({idIS: id});
+  User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        res.json({result:user.games});
+    }
+  });
 };
 
 exports.getProfile = function(req, res){
   var id = req.query.id;
-  res.json({idIS: id});
+  User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        res.json({result:user.profile});
+    }
+  });
 };
 
 exports.login = function(req, res){
@@ -109,7 +148,13 @@ exports.login = function(req, res){
 
 exports.getFriends = function(req, res){
 	var id = req.query.id;
-  res.json({idIS: id});
+	User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        res.json({result:user.friends});
+    }
+  });
 };
 
 exports.getFBFriends = function(req, res){
@@ -128,7 +173,20 @@ exports.getGLFriends = function(req, res){
 exports.putStatus = function(req, res){
   var id = req.body.id;
   var status = req.body.status;
-  res.json({statusIs: status, idIs: id});
+  User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        user.status = status;
+        user.save(function(err, u){
+            if (err){
+				res.json({result:"save error"});
+            }else{
+                res.json({result:"success"});
+            }
+        });
+    }
+  });
 };
 
 exports.putImage = function(req, res){ //this one needs more work than rest, get image
@@ -139,19 +197,101 @@ exports.putImage = function(req, res){ //this one needs more work than rest, get
 exports.putProfile = function(req, res){ //this one needs more work than rest, get image
   var id = req.body.id;
   var profile = req.body.profile;
-  res.json({idIS: id, profileIs: profile});
+  User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        user.profile = profile;
+        user.save(function(err, u){
+            if (err){
+				res.json({result:"save error"});
+            }else{
+                res.json({result:"success"});
+            }
+        });
+    }
+  });
 };
 
 exports.putRemoveFriend = function(req, res){
   var userID = req.body.userID;
   var friendID = req.body.friendID;
-  res.json({userIDIS: userID, friendIDIS: friendID});
+  User.findById(userID).exec(function(err, hostHelen){
+    if (err){
+        res.json({result:"find error Helen"});
+    }else{
+        User.findById(friendID).exec(function(err, targetTom){
+		    if (err){
+		        res.json({result:"find error Tom"});
+		    }else{
+		        var indexTom = hostHelen.friends.indexOf(targetTom._id);
+		        hostHelen.friends.splice(indexTom, 1);
+		        hostHelen.save(function(err, h){
+		            if (err){
+		                res.json({result:"remove error Helen"});
+		            }else{
+		                var indexHelen = targetTom.friends.indexOf(h._id);
+		                targetTom.friends.splice(indexHelen, 1);
+		                targetTom.save(function(err, h){
+		                    if (err){
+		                        hostHelen.friends.push(targetTom._id);
+		                        hostHelen.save(function(err,hH){
+		                            if (err){
+		                                res.json({result:"save error Helen"});
+		                            }else{
+		                                res.json({result:"worst error"});
+		                            }
+		                        });
+		                    }else{
+		                        res.json({result:"success"});
+		                    }
+		                });
+		            }
+		        });
+		    }
+	    });
+    }
+  });
 };
 
 exports.putAddFriend = function(req, res){ //this one needs more work than rest
   var userID = req.body.userID;
   var friendID = req.body.friendID;
-  res.json({userIDIS: userID, friendIDIS: friendID});
+  User.findById(userID).exec(function(err, hostHelen){
+    if (err){
+        res.json({result:"find error Helen"});
+    }else{
+        User.findById(friendID).exec(function(err, targetTom){
+		    if (err){
+		        res.json({result:"find error Tom"});
+		    }else{
+		        hostHelen.friends.push(targetTom._id);
+		        hostHelen.save(function(err, h){
+		            if (err){
+		                res.json({result:"save error Helen"});
+		            }else{
+		                targetTom.friends.push(h._id);
+		                targetTom.save(function(err, h){
+		                    if (err){
+		                        var indexTom = hostHelen.friends.indexOf(targetTom._id);
+		                        hostHelen.friends.splice(indexTom, 1);
+		                        hostHelen.save(function(err, hH){
+		                            if (err){
+		                                res.json({result:"worse error"});
+		                            }else{
+		                                res.json({result:"remove error Helen"});
+		                            }
+		                        });
+		                    }else{
+		                        res.json({result:"success"});
+		                    }
+		                });
+		            }
+		        });
+		    }
+	    });
+    }
+  });
 };
 
 exports.putFacebook = function(req, res){
@@ -172,5 +312,19 @@ exports.putGoogle = function(req, res){ //this one needs more work than rest
 
 exports.deleteUser = function(req, res){
 	var user = req.body.id;
-  res.json({userIDIS: user});
+	users.findById(user).exec(function(err, u){
+		if (err){
+			res.json({result:"find error"});
+		}else{
+			u.remove(function(err, doc){
+				if (err){
+					res.json({result:"remove error"});
+				}else if (doc){
+					res.json({result:doc});
+				}else{
+					res.json({result:"success"});
+				}
+			}); 
+		}
+	});
 };

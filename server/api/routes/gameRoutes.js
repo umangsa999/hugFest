@@ -1,6 +1,7 @@
 'use strict';
 var express = require('express');
 var mongoose = require('mongoose');
+var gameCode = require('../../game.js');
 
 var gameSchema = mongoose.Schema({
 	host: String,
@@ -30,6 +31,7 @@ exports.createGame = function(req, res){
 			res.json({result:"create error"});
 		}else{
 			//var cpp = require('child_process').spawn('java', ['Game', host, g._id]);
+			gameCode.game(g._id, h, "create");
 			res.json({result:g._id});
 		}
 	});

@@ -24,8 +24,10 @@ server.listen(app.get('port'), function() {
 //Delegate calls to other code
 
 app.get('/', function(req, res){
-  res.json({response: "this works", originalBody: req.body});
+  res.json({response: "this works"});
 });
+
+app.get('/test', users.getTest);
 
 /**********************************************************\
 |REMEMBER REMEMBER THE WONDER OF                           |
