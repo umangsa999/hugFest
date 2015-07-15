@@ -28,6 +28,8 @@ public class tabProfile extends Activity {
         editTextName.setTag(editTextName.getKeyListener());
         editTextName.setKeyListener(null);
 
+        //TODO pull data to get the user's name
+
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,6 +49,9 @@ public class tabProfile extends Activity {
                     editMode = false;
                     editTextName.setKeyListener(null);
                     buttonEdit.setBackgroundResource(R.mipmap.ic_launcher_edit);
+
+                    String name = editTextName.getText().toString();
+                    //if(  )
 
                     //TODO server call to save
                 }
