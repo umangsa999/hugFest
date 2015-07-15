@@ -15,7 +15,7 @@ import java.net.URL;
 public class HTTPCaller extends AsyncTask<JSONObject, Void, Void> {
     private final String SERVERIP = "52.8.44.124";
     private final String PROTOCOL = "http://";
-    private final int READBUFFER = 100;
+    private final int READBUFFER = 200;
     private URL url = null;
     private HttpURLConnection urlConnection = null;
     private JSONObject serverResult = null;
@@ -71,6 +71,7 @@ public class HTTPCaller extends AsyncTask<JSONObject, Void, Void> {
                 }
             }
         }
+        Log.wtf(this.getClass().getSimpleName(), "path is: " + path);
         url = new URL(path);
     }
 
