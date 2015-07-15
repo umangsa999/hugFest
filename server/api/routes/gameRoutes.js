@@ -1,7 +1,7 @@
 'use strict';
 var express = require('express');
 var mongoose = require('mongoose');
-var gameCode = require('../../game.js');
+//var gameCode = require('../../game.js');
 
 var gameSchema = mongoose.Schema({
 	host: String,
@@ -14,24 +14,7 @@ var gameSchema = mongoose.Schema({
 });
 
 var Game = mongoose.model('Game', gameSchema);
-
-var userSchema = mongoose.Schema({
-	name: String,
-	username: String,
-	password: String,
-	status: Number, //0-offline, 1-online, 2-ingame
-	FaceBook: String,
-	Google: String,
-	friends: [],
-	target: String,
-	hunter: [],
-	currentHugs: Number,
-	totalHugs: Number,
-	games: Number,
-	profile: String
-});
-
-var User = mongoose.model('User', userSchema);
+exports.Game = Game;
 
 /**********************************************************\
 |POST                                                      |

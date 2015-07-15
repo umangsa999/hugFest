@@ -120,7 +120,7 @@ function game( gameID, playerDB, action ){
 
 							//set the new target for the current player
 							u.target = newTargetID;
-							u.save({ function(err, u){
+							u.save( function(err, u){
 									if(err){
 										return {result:"Save target and/or update point error in switch case"}
 									}else{
@@ -134,7 +134,7 @@ function game( gameID, playerDB, action ){
 												arrayHunters.push(currentPlayerID);
 												u2.hunter = arrayHunters;
 												//get the array of hunters hunting target and add this current player to it
-												u2.save({ function(err, u3)
+												u2.save( function(err, u3){
 													if(err){
 														return{result:"error adding another hunter"}
 													}else{
@@ -148,7 +148,7 @@ function game( gameID, playerDB, action ){
 									}
 
 								}
-							});
+							);
 						}
 					});
 					break;
