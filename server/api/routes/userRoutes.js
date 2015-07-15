@@ -114,8 +114,14 @@ exports.getCurrHugs = function(req, res){
 };
 
 exports.getTarget = function(req, res){
-	var id = req.query.userID;
-	res.json({idIS: id, gameIDIS: game});
+	var id = req.query.id;
+	User.findById(id).exec(function(err, user){
+    if (err){
+        res.json({result:"find error"});
+    }else{
+        res.json({result:user.target});
+    }
+  });
 };
 
 exports.getImage = function(req, res){
@@ -148,6 +154,15 @@ exports.getProfile = function(req, res){
 exports.login = function(req, res){
 	var user = req.body.user;
 	var pass = req.body.pass
+	User.find({username:user, password:pass}).exec(function(err, user){
+		if (err){
+			res.json({result:"find error"});
+		}else if (user.length == 0){
+			res.json({result:"matching user not found"});
+		}else{
+			res.json({result:user._id});
+		}
+	});
 	res.json({userIs: user, passIs: pass});
 };
 

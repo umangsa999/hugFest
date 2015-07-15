@@ -73,17 +73,41 @@ exports.get = function(req, res){
 
 exports.getPlayers = function(req, res){
 	var game = req.query.gameID;
-	res.json({gameIDIS: game});
+	Game.findById(game).exec(function(err, g){
+		if (err){
+			res.json({result:"find error"});
+		}else if (g.length > 0){
+			res.json({result:g.players});
+		}else{
+			res.json({result:"game not found"});
+		}
+	});
 };
 
 exports.getRules = function(req, res){
 	var game = req.query.gameID;
-	res.json({gameIDIS: game});
+	Game.findById(game).exec(function(err, g){
+		if (err){
+			res.json({result:"find error"});
+		}else if (g.length > 0){
+			res.json({result:g.rules});
+		}else{
+			res.json({result:"game not found"});
+		}
+	});
 };
 
 exports.getTime = function(req, res){
 	var game = req.query.gameID;
-	res.json({gameIDIS: game});
+	Game.findById(game).exec(function(err, g){
+		if (err){
+			res.json({result:"find error"});
+		}else if (g.length > 0){
+			res.json({result:g.start});
+		}else{
+			res.json({result:"game not found"});
+		}
+	});
 };
 
 exports.getTop = function(req, res){
