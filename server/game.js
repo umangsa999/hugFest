@@ -76,9 +76,15 @@ function game( gameID, playerDB, action ){
 											if(err){
 												return {result: "finding player by ID error for setting hunter"}
 											}else{
-												u2.hunter = currentPlayerObject.playerID;
-												u2.save( function(err, u){
-													return{ result: "save succcess"}
+												var arrayHunters = u2.hunter;
+												arrayHunters.push( currentPlayerObject );
+												u2.hunter = arrayHunters;
+												u2.save( function(err, u2){
+													if(err){
+														return{ result: "save error"}
+													}else{
+														return{ result: "success save!"} 
+													}
 												});
 											}
 										});
@@ -123,8 +129,19 @@ function game( gameID, playerDB, action ){
 											if(err){
 												return { result: "finding target error" }
 											}else{
+
+												var arrayHunters = u2.hunter;
+												arrayHunters.push(currentPlayerID);
+												u2.hunter = arrayHunters;
 												//get the array of hunters hunting target and add this current player to it
-												//u2.hunter = currentPlayerTarget;
+												u2.save({ function(err, u3)
+													if(err){
+														return{result:"error adding another hunter"}
+													}else{
+														return{result:"success!!"}
+													}
+												});
+												
 											}
 										});
 										//return {result:"success save target and/or update point in switch case"};
