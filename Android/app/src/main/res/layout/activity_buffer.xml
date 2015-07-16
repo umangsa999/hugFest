@@ -17,16 +17,15 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="HugFest"
         android:id="@+id/title"
-        android:textSize="50dp"
-        android:layout_below="@+id/title"
+        android:textSize="50sp"
         android:layout_centerHorizontal="true"
         android:textStyle="bold" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play"
-        android:id="@+id/buttonPlay"
+        android:text="Sign Up"
+        android:id="@+id/buttonSignUp"
         android:layout_marginTop="50dp"
         android:layout_below="@+id/title"
         android:layout_centerHorizontal="true"
@@ -41,11 +40,35 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign In"
+        android:text="Login"
         android:id="@+id/buttonLogin"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:textColor="@color/white"
-        android:background="@color/black" />
+        android:background="@color/black"
+        android:layout_alignRight="@+id/buttonSignUp"
+        android:layout_alignEnd="@+id/buttonSignUp"
+        android:layout_alignLeft="@+id/buttonSignUp"
+        android:layout_alignStart="@+id/buttonSignUp" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/buttonLogin"
+        android:layout_alignLeft="@+id/buttonLogin"
+        android:layout_alignStart="@+id/buttonLogin"
+        android:layout_alignRight="@+id/buttonLogin"
+        android:layout_alignEnd="@+id/buttonLogin" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="39dp"
+        android:layout_below="@+id/login_button"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
