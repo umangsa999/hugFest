@@ -25,34 +25,6 @@
             android:noHistory = "true" >
         </activity>
         <activity
-            android:name=".HomeActivity"
-            android:label="@string/title_activity_home" >
-        </activity>
-        <activity
-            android:name=".FriendActivity"
-            android:label="@string/title_activity_friend" >
-        </activity>
-        <activity
-            android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile" >
-        </activity>
-        <activity
-            android:name=".SettingActivity"
-            android:label="@string/title_activity_setting" >
-        </activity>
-        <activity
-            android:name=".TargetActivity"
-            android:label="@string/title_activity_target" >
-        </activity>
-        <activity
-            android:name=".CreateActivity"
-            android:label="@string/title_activity_create" >
-        </activity>
-        <activity
-            android:name=".SavedRulesActivity"
-            android:label="@string/title_activity_saved_rules" >
-        </activity>
-        <activity
             android:name=".AllTabMainActivity"
             android:label="@string/title_activity_all_tab_main" >
         </activity>
@@ -67,10 +39,6 @@
         <activity
             android:name=".tabViews.tabHome"
             android:label="TabFriends">
-        </activity>
-        <activity
-            android:name=".addFriendActivity"
-            android:label="@string/title_activity_add_friend" >
         </activity>
     </application>
 
