@@ -1,19 +1,23 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.usc.itp476.contact.contactproject.R;
 
@@ -22,38 +26,36 @@ public class HomeActivity extends Fragment implements OnMapReadyCallback{
     private boolean gameClicked = false;
     private ImageButton btnCreate;
     private LatLng myLoc;
-    private MapFragment mapFragment;
+    private SupportMapFragment mapFragment;
+    private View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //if (savedInstanceState == null) {
-            View rootView = (View) inflater.inflate(
+        rootView = (View) inflater.inflate(
                     R.layout.activity_home, container, false);
-            btnCreate = (ImageButton) rootView.findViewById(R.id.btnCreate);
-            mapFragment = (MapFragment) getActivity().getFragmentManager()
-                    .findFragmentById(R.id.mapFrag);
-            mapFragment.getMapAsync(this);
-            assignListeners();
-            return rootView;
-        /*} else {
-            return null;
-        }*/
+        Log.wtf(this.getClass().getSimpleName(), "onCreateView container's children count: " + container.getChildCount());
+        //if (savedInstanceState == null) {
+        btnCreate = (ImageButton) rootView.findViewById(R.id.btnCreate);
+        mapFragment = SupportMapFragment.newInstance();
+        FragmentTransaction fragmentTransaction =
+                getChildFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.mapHolder, mapFragment);
+        fragmentTransaction.commit();
+
+        mapFragment.getMapAsync(this);
+        assignListeners();
+        return rootView;
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapFragment.onDestroy();
-
+    public void onResume() {
+        super.onResume();
+        if (map == null) {
+            map = mapFragment.getMap();
+        }
     }
 
     @Override
@@ -67,6 +69,10 @@ public class HomeActivity extends Fragment implements OnMapReadyCallback{
         Location loc = LocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         LatLng temp = new LatLng(loc.getLatitude(), loc.getLongitude());
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(temp, 16));
+
+        btnCreate.bringToFront();
+        rootView.requestLayout();
+        rootView.invalidate();
     }
 
     private void assignListeners(){

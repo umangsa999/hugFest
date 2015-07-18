@@ -1,10 +1,12 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -33,25 +35,32 @@ public class ProfileActivity extends Fragment {
         txvwTotal = (TextView) rootView.findViewById(R.id.txvwTotal);
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
 
-        imbnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isEditing = !isEditing;
-                if (isEditing){
-                    imbnEdit.setBackgroundResource(R.mipmap.ic_done);
-                    edtxName.setVisibility(View.VISIBLE);
-                    txvwName.setVisibility(View.GONE);
-                    edtxName.setText(txvwName.getText());//TODO make the check also end editing
-                }else{
-                    imbnEdit.setBackgroundResource(R.mipmap.ic_edit);
-                    txvwName.setVisibility(View.VISIBLE);
-                    edtxName.setVisibility(View.GONE);
-                    txvwName.setText(edtxName.getText());
-                }
-            }
-        });
+        setListeners();
 
         return rootView;
     }
 
+    private void setListeners(){
+        imbnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchIcon();
+            }
+        });
+    }
+
+    private void switchIcon(){
+        isEditing = !isEditing;
+        if (isEditing){
+            imbnEdit.setBackgroundResource(R.mipmap.ic_done);
+            edtxName.setVisibility(View.VISIBLE);
+            txvwName.setVisibility(View.GONE);
+            edtxName.setText(txvwName.getText());//TODO make the check also end editing
+        }else{
+            imbnEdit.setBackgroundResource(R.mipmap.ic_edit);
+            txvwName.setVisibility(View.VISIBLE);
+            edtxName.setVisibility(View.GONE);
+            txvwName.setText(edtxName.getText());
+        }
+    }
 }

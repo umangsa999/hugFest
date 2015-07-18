@@ -25,6 +25,7 @@
             android:visibility="gone"
             android:id="@+id/edtxName"
             android:textSize="32dp"
+            android:singleLine="true"
             android:layout_marginLeft="16dp"
             android:layout_alignParentLeft="true" />
 

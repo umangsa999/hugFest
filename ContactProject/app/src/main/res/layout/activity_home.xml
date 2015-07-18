@@ -4,11 +4,11 @@
     tools:context="com.usc.itp476.contact.contactproject.slidetab.fragments.HomeActivity"
     android:id="@+id/mapHolder">
 
-    <fragment
+    <!--<fragment
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:name="com.google.android.gms.maps.MapFragment"
-        android:id="@+id/mapFrag"/>
+        android:id="@+id/mapFrag" />-->
 
     <ImageButton
         android:layout_width="wrap_content"

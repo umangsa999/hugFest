@@ -32,6 +32,8 @@ public class AllTabActivity extends FragmentActivity {
 
         tabs = new ArrayList<>();
         titles = new ArrayList<>();
+
+
         titles.add( "Home" );
         titles.add( "Friends" );
         titles.add( "Profile" );
@@ -40,16 +42,15 @@ public class AllTabActivity extends FragmentActivity {
         tabs.add( new FriendsActivity() );
         tabs.add( new ProfileActivity() );
 
-        //tabs.add( new HomeActivity() );
-
         // Instantiate a ViewPager and a PagerAdapter.
 
         mPager = (ViewPager) findViewById(R.id.viewPager);
+        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);
+
         mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
 
         mPager.setAdapter(mPagerAdapter);
 
-        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
 
