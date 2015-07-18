@@ -36,7 +36,9 @@ public class CreateGameActivity extends Activity {
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Move to Ingame", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(CreateGameActivity.this.getApplicationContext(), InGameActivity.class);
+                i.putExtra(InGameActivity.MAXPOINTS, maxPoints);
+                startActivity(i);
             }
         });
 

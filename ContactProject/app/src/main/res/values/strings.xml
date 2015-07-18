@@ -12,4 +12,5 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_create_game">CreateGameActivity</string>
+    <string name="title_activity_in_game">InGameActivity</string>
 </resources>
