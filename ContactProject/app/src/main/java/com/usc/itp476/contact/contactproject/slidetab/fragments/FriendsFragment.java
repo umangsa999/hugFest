@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.usc.itp476.contact.contactproject.R;
 
-public class FriendsActivity extends Fragment {
+public class FriendsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

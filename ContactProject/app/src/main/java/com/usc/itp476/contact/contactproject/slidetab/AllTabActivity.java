@@ -8,9 +8,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
-import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsActivity;
-import com.usc.itp476.contact.contactproject.slidetab.fragments.HomeActivity;
-import com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileActivity;
+import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
+import com.usc.itp476.contact.contactproject.slidetab.fragments.GameFragment;
+import com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileFragment;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.helper.SlidingTabLayout;
 
@@ -34,13 +34,13 @@ public class AllTabActivity extends FragmentActivity {
         titles = new ArrayList<>();
 
 
-        titles.add( "Home" );
+        titles.add( "Games" );
         titles.add( "Friends" );
         titles.add( "Profile" );
 
-        tabs.add( new HomeActivity() );
-        tabs.add( new FriendsActivity() );
-        tabs.add( new ProfileActivity() );
+        tabs.add( new GameFragment() );
+        tabs.add( new FriendsFragment() );
+        tabs.add( new ProfileFragment() );
 
         // Instantiate a ViewPager and a PagerAdapter.
 

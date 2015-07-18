@@ -1,5 +1,6 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.location.Location;
@@ -18,16 +19,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.usc.itp476.contact.contactproject.R;
 
-public class HomeActivity extends Fragment implements OnMapReadyCallback{
+public class GameFragment extends Fragment implements OnMapReadyCallback{
     private GoogleMap map;
     private boolean gameClicked = false;
     private ImageButton btnCreate;
     private LatLng myLoc;
     private SupportMapFragment mapFragment;
     private View rootView;
+    private Circle radiusCircle;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -68,7 +72,13 @@ public class HomeActivity extends Fragment implements OnMapReadyCallback{
                 (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location loc = LocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         LatLng temp = new LatLng(loc.getLatitude(), loc.getLongitude());
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(temp, 16));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(temp, 15));
+
+        CircleOptions circleOptions = new CircleOptions()
+                .center(new LatLng(loc.getLatitude(), loc.getLongitude()))
+                .radius(700).fillColor(Color.argb(128, 0, 128, 128))
+                .strokeWidth(5).strokeColor(Color.argb(128, 0, 128, 128));
+        radiusCircle = map.addCircle(circleOptions);
 
         btnCreate.bringToFront();
         rootView.requestLayout();

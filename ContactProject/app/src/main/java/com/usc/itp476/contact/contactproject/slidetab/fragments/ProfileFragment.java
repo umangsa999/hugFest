@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.usc.itp476.contact.contactproject.R;
 
-public class ProfileActivity extends Fragment {
+public class ProfileFragment extends Fragment {
 
     private ImageButton imbnEdit;
     private TextView txvwName;
