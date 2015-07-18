@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -22,23 +21,33 @@ public class HomeActivity extends Fragment implements OnMapReadyCallback{
     private boolean gameClicked = false;
     private ImageButton btnCreate;
     private LatLng myLoc;
+    private MapFragment mapFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.activity_home, container, false);
+        if( savedInstanceState== null ) {
+            View rootView = (View) inflater.inflate(
+                    R.layout.activity_home, container, false);
+            btnCreate = (ImageButton) rootView.findViewById(R.id.btnCreate);
+            mapFragment = (MapFragment) getActivity().getFragmentManager()
+                    .findFragmentById(R.id.mapFrag);
+            mapFragment.getMapAsync(this);
+            assignListeners();
+            return rootView;
+        }else{
+            return null;
+        }
 
-        btnCreate = (ImageButton) rootView.findViewById(R.id.btnCreate);
-        MapFragment mapFragment = (MapFragment) getActivity().getFragmentManager()
-                .findFragmentById(R.id.mapFrag);
-        mapFragment.getMapAsync(this);
+    }
 
-        assignListeners();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapFragment.onDestroy();
 
-        return rootView;
     }
 
     @Override
