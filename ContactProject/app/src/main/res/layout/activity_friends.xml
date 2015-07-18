@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:gravity="center"-->
+    <!--android:orientation="vertical"-->
+    <!-->-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    >
+    tools:context=".MainActivity" >
+
+    <GridView
+        android:id="@+id/grid_view"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="6dp"
+        android:layout_height="match_parent"
+        android:numColumns="auto_fit"
+        android:gravity="center"
+        android:stretchMode="columnWidth">
+    </GridView>
 
 
-    <GridLayout
-        android:id="@+id/gridArtistWall"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill_horizontal"
-        android:columnCount="2"
-        android:rowCount="3"
-        android:useDefaultMargins="true" >
-
-
-        <!--<com.usc.itp476.contact.contactproject.GridTile>-->
-
-            <!--&lt;!&ndash;custom:artist_image="drawable/calvin"&ndash;&gt;-->
-            <!--&lt;!&ndash;custom:artist_name="@string/Calvin" &ndash;&gt;-->
-
-        <!--</com.usc.itp476.contact.contactproject.GridTile>-->
-
-    </GridLayout>
-
-
-</ScrollView>
+</RelativeLayout>
