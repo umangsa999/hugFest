@@ -25,10 +25,14 @@ public class AllTabActivity extends FragmentActivity {
         setContentView(R.layout.activity_all_tab);
 
         ArrayList<Fragment> tabs = new ArrayList<Fragment>();
+        ArrayList<String> titles = new ArrayList<String>();
+        titles.add( "Profile" );
+        titles.add( "Profile2" );
+        titles.add( "Profile3" );
 
         //add tabs here
         ProfileActivity p = new ProfileActivity();
-        p.setTitle("Profile");
+        //p.setTitle("Profile");
         tabs.add( p );
 
 
@@ -37,10 +41,12 @@ public class AllTabActivity extends FragmentActivity {
         // Instantiate a ViewPager and a PagerAdapter.
 
         mPager = (ViewPager) findViewById(R.id.viewPager);
-        mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs );
+        mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
+
         mPager.setAdapter(mPagerAdapter);
 
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);
+        mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
 
     }
@@ -59,10 +65,18 @@ public class AllTabActivity extends FragmentActivity {
 
     class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
-        List<Fragment> mTabs;
-        public ScreenSlidePagerAdapter(FragmentManager fm, ArrayList<Fragment> tabs) {
+        protected CharSequence[] mTitles;
+        private List<Fragment> mTabs;
+        public ScreenSlidePagerAdapter(FragmentManager fm, ArrayList<Fragment> tabs, List<String>titles) {
             super(fm);
             mTabs = tabs;
+            mTitles = titles.toArray(new CharSequence[titles.size()]);
+        }
+
+        // This method return the titles for the Tabs in the Tab Strip
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mTitles[position];
         }
 
         @Override
