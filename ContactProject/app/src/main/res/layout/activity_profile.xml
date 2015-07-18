@@ -1,8 +1,64 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.usc.itp476.contact.contactproject.ProfileActivity">
+    tools:context="com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileActivity">
 
-</LinearLayout>
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ryan Zhou"
+            android:id="@+id/txvwName"
+            android:textSize="32dp"
+            android:layout_marginLeft="16dp"
+            android:layout_alignParentLeft="true" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ryan Zhou"
+            android:visibility="gone"
+            android:id="@+id/edtxName"
+            android:textSize="32dp"
+            android:layout_marginLeft="16dp"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="42"
+            android:textSize="32dp"
+            android:id="@+id/txvwTotal"
+            android:layout_marginRight="16dp"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imvwPhoto"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="User image"
+        android:layout_below="@+id/relativeLayout"
+        android:src="@mipmap/large" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/btnEdit"
+        android:contentDescription="Edit"
+        android:minHeight="20dp"
+        android:alpha="255"
+        android:minWidth="20dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@mipmap/ic_edit" />
+</RelativeLayout>

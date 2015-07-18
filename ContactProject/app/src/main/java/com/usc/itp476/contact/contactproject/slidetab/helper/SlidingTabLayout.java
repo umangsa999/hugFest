@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject;
+package com.usc.itp476.contact.contactproject.slidetab.helper;
 
 /*
  * Copyright 2014 Google Inc. All rights reserved.

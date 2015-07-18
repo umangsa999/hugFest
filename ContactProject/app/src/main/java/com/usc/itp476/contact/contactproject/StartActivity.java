@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+
 public class StartActivity extends Activity {
     private Button btnStart;
     private EditText edtxFirst;

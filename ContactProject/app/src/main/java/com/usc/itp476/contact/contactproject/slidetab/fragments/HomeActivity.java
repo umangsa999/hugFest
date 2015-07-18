@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject;
+package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.content.Context;
 import android.location.Location;
@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.usc.itp476.contact.contactproject.R;
 
 public class HomeActivity extends Fragment implements OnMapReadyCallback{
     private GoogleMap map;
@@ -28,7 +29,7 @@ public class HomeActivity extends Fragment implements OnMapReadyCallback{
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if( savedInstanceState== null ) {
+        //if (savedInstanceState == null) {
             View rootView = (View) inflater.inflate(
                     R.layout.activity_home, container, false);
             btnCreate = (ImageButton) rootView.findViewById(R.id.btnCreate);
@@ -37,9 +38,14 @@ public class HomeActivity extends Fragment implements OnMapReadyCallback{
             mapFragment.getMapAsync(this);
             assignListeners();
             return rootView;
-        }else{
+        /*} else {
             return null;
-        }
+        }*/
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
     }
 

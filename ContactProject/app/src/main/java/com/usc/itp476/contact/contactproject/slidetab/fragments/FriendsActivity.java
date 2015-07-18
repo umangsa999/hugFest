@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject;
+package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,9 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by ryanzhou on 7/17/15.
- */
+import com.usc.itp476.contact.contactproject.R;
+
 public class FriendsActivity extends Fragment {
 
     @Override

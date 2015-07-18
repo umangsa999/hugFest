@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject;
+package com.usc.itp476.contact.contactproject.slidetab;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,24 +7,31 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+
+import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsActivity;
+import com.usc.itp476.contact.contactproject.slidetab.fragments.HomeActivity;
+import com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileActivity;
+import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.slidetab.helper.SlidingTabLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class AllTabActivity extends FragmentActivity {
-
-
     private static final int NUM_PAGES = 3;
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private SlidingTabLayout mSlidingTabLayout;
+    private ArrayList<Fragment> tabs;
+    private ArrayList<String> titles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tab);
 
-        ArrayList<Fragment> tabs = new ArrayList<>();
-        ArrayList<String> titles = new ArrayList<>();
+        tabs = new ArrayList<>();
+        titles = new ArrayList<>();
         titles.add( "Home" );
         titles.add( "Friends" );
         titles.add( "Profile" );

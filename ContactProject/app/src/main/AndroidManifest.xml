@@ -29,7 +29,7 @@
             android:value="AIzaSyArjR2wF1oHj1I_0lXL1OkwpMAhXUD1bZ0" />
 
         <activity
-            android:name=".AllTabActivity"
+            android:name=".slidetab.AllTabActivity"
             android:label="@string/title_activity_all_tab" >
         </activity>
 

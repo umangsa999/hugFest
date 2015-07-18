@@ -2,9 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.usc.itp476.contact.contactproject.AllTabActivity">
+    tools:context="com.usc.itp476.contact.contactproject.slidetab.AllTabActivity">
 
-    <com.usc.itp476.contact.contactproject.SlidingTabLayout
+    <com.usc.itp476.contact.contactproject.slidetab.helper.SlidingTabLayout
         android:id="@+id/slidingTabLayout"
         android:layout_width="match_parent"
         android:layout_height="100px"/>
