@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class InGameActivity extends Activity {
@@ -15,6 +16,9 @@ public class InGameActivity extends Activity {
     private TextView txvwMaxPoints;
     private int max;
     private int current = 0;
+    private long backPressedTime = 0;
+    private final long TIME_INTERVAL = 2000;
+    private Toast backToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +31,25 @@ public class InGameActivity extends Activity {
         txvwCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
         txvwMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
         setPoints();
+        backToast = Toast.makeText(getApplicationContext(),
+                "Press back again to leave game.",
+                Toast.LENGTH_SHORT);
     }
 
     private void setPoints(){
         txvwCurrentPoints.setText(String.valueOf(current));
         txvwMaxPoints.setText(max == -1 ? "10" : String.valueOf(max));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (TIME_INTERVAL + backPressedTime > System.currentTimeMillis()) {
+            backToast.cancel();
+            super.onBackPressed();
+            return;
+        }else{
+            backToast.show();
+        }
+        backPressedTime = System.currentTimeMillis();
     }
 }

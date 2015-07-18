@@ -46,7 +46,11 @@
         <activity
             android:name=".InGameActivity"
             android:label="@string/title_activity_in_game"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:parentActivityName=".slidetab.AllTabActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".slidetab.AllTabActivity" />
         </activity>
     </application>
 
