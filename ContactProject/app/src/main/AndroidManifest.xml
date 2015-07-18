@@ -2,11 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.usc.itp476.contact.contactproject" >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
         android:allowBackup="true"
@@ -23,22 +24,19 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".HomeActivity">
-        </activity>
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyArjR2wF1oHj1I_0lXL1OkwpMAhXUD1bZ0"/>
+            android:value="AIzaSyArjR2wF1oHj1I_0lXL1OkwpMAhXUD1bZ0" />
 
         <activity
             android:name=".AllTabActivity"
             android:label="@string/title_activity_all_tab" >
         </activity>
-        <activity
-            android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile" >
-        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>

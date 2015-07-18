@@ -17,11 +17,5 @@ public class ProfileActivity extends Fragment {
 
         return rootView;
     }
-    public void setTitle(String title){
-        mTitle = title;
-    }
 
-    CharSequence getTitle(){
-        return mTitle;
-    }
 }

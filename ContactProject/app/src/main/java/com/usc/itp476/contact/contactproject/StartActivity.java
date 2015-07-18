@@ -24,7 +24,7 @@ public class StartActivity extends Activity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+                Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
                 startActivity(i);
             }
         });

@@ -1,8 +1,5 @@
 package com.usc.itp476.contact.contactproject;
 
-/**
- * Created by ryanzhou on 7/17/15.
- */
 /*
  * Copyright 2014 Google Inc. All rights reserved.
  *

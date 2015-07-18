@@ -24,16 +24,13 @@ public class AllTabActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tab);
 
-        ArrayList<Fragment> tabs = new ArrayList<Fragment>();
-        ArrayList<String> titles = new ArrayList<String>();
+        ArrayList<Fragment> tabs = new ArrayList<>();
+        ArrayList<String> titles = new ArrayList<>();
+        titles.add( "Home" );
+        titles.add( "Friends" );
         titles.add( "Profile" );
-        titles.add( "Profile2" );
-        titles.add( "Profile3" );
 
-        //add tabs here
-        ProfileActivity p = new ProfileActivity();
-        //p.setTitle("Profile");
-        tabs.add( p );
+        tabs.add( new HomeActivity() );
 
 
         tabs.add( new ProfileActivity() );
