@@ -27,7 +27,11 @@ public class AllTabActivity extends FragmentActivity {
         ArrayList<Fragment> tabs = new ArrayList<Fragment>();
 
         //add tabs here
-        tabs.add( new ProfileActivity() );
+        ProfileActivity p = new ProfileActivity();
+        p.setTitle("Profile");
+        tabs.add( p );
+
+
         tabs.add( new ProfileActivity() );
         tabs.add( new ProfileActivity() );
         // Instantiate a ViewPager and a PagerAdapter.

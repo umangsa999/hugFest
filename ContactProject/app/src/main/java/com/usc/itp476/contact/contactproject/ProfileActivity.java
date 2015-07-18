@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 
 public class ProfileActivity extends Fragment {
 
+    private CharSequence mTitle;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -15,5 +16,12 @@ public class ProfileActivity extends Fragment {
                 R.layout.activity_profile, container, false);
 
         return rootView;
+    }
+    public void setTitle(String title){
+        mTitle = title;
+    }
+
+    CharSequence getTitle(){
+        return mTitle;
     }
 }
