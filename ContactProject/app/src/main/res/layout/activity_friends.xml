@@ -25,5 +25,18 @@
         android:layout_marginRight="2dp">
     </GridView>
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:id="@+id/btnAdd"
+        android:contentDescription="Edit"
+        android:minHeight="20dp"
+        android:alpha="255"
+        android:minWidth="20dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@mipmap/ic_launcher" />
 
 </RelativeLayout>
