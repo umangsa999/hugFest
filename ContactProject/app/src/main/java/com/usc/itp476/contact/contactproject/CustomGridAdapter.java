@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CustomGridAdapter extends BaseAdapter {
 
@@ -16,10 +16,11 @@ public class CustomGridAdapter extends BaseAdapter {
     String[] points;
     Context context;
     int[] imageId;
+    boolean displayCheckBox = false;
     private static LayoutInflater inflater = null;
     private static int staticPosition = 0;
 
-    public CustomGridAdapter(Context mainActivity, String[] prgmNameList, int[] prgmImages, String[] score){
+    public CustomGridAdapter(Context mainActivity, String[] prgmNameList, int[] prgmImages, String[] score, Boolean f){
         // TODO Auto-generated constructor stub
         result=prgmNameList;
         context=mainActivity;
@@ -27,6 +28,7 @@ public class CustomGridAdapter extends BaseAdapter {
         inflater=(LayoutInflater)context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         points = score;
+        displayCheckBox = f;
     }
     @Override
     public int getCount() {
@@ -47,6 +49,7 @@ public class CustomGridAdapter extends BaseAdapter {
         TextView tv;
         ImageView img;
         TextView points;
+        CheckBox invited;
     }
 
     @Override
@@ -56,21 +59,31 @@ public class CustomGridAdapter extends BaseAdapter {
         Holder holder = new Holder();
         View rowView;
         rowView = inflater.inflate(R.layout.grid_tile, null);
-        holder.tv = (TextView) rowView.findViewById(R.id.textViewFriendName);
+        //holder.tv = (TextView) rowView.findViewById(R.id.textViewFriendName);
         holder.img = (ImageView) rowView.findViewById(R.id.imageViewFriend);
         holder.points = (TextView) rowView.findViewById(R.id.imageViewScore);
-        holder.tv.setText(result[position].length() > 5 ?
-                result[position].substring(0,5) + "..." : result[position]);
+        holder.invited = (CheckBox) rowView.findViewById(R.id.ckbxInvite);
+
+        //holder.tv.setText(result[position].length() > 5 ?
+        //result[position].substring(0,5) + "..." : result[position]);
         holder.img.setImageResource(imageId[position]);
         holder.points.setText(points[position]);
 
-        rowView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context, "You Clicked " + result[staticPosition], Toast.LENGTH_SHORT).show();
+        if(displayCheckBox){
+            holder.points.setVisibility(View.GONE);
+        }else{
+            holder.points.setText( points[position]);
+            holder.invited.setVisibility(View.GONE);
+        }
 
-            }
-        });
+//        rowView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                CheckBox c = (CheckBox) view.findViewById(R.id.ckbxInvite);
+//                c.setChecked( !c.isChecked() );
+//            }
+//        });
+
         return rowView;
     }
 }

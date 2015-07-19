@@ -84,7 +84,7 @@ public class FriendsFragment extends Fragment {
         gridView = (GridView) rootView.findViewById(R.id.grid_view);
 
         // Instance of ImageAdapter Class
-        gridView.setAdapter(new CustomGridAdapter(c, prgmNameList, prgmImages, prgmPoints));
+        gridView.setAdapter(new CustomGridAdapter(c, prgmNameList, prgmImages, prgmPoints, false));
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -97,8 +97,6 @@ public class FriendsFragment extends Fragment {
                 Toast.makeText(c, "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
-
-
 
         return rootView;
     }

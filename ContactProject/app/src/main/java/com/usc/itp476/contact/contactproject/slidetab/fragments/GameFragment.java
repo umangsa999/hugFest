@@ -13,13 +13,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.usc.itp476.contact.contactproject.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.R;
 
@@ -31,6 +35,7 @@ public class GameFragment extends Fragment implements OnMapReadyCallback{
     private SupportMapFragment mapFragment;
     private View rootView;
     private Circle radiusCircle = null;
+    private final int fillColor = Color.argb(128, 0, 128, 128);
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -71,20 +76,28 @@ public class GameFragment extends Fragment implements OnMapReadyCallback{
         Location loc = LocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if (loc != null) {
-            LatLng temp = new LatLng(loc.getLatitude(), loc.getLongitude());
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(temp, 15));
+            myLoc = new LatLng(loc.getLatitude(), loc.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 15));
 
             CircleOptions circleOptions = new CircleOptions()
-                    .center(new LatLng(loc.getLatitude(), loc.getLongitude()))
-                    .radius(700).fillColor(Color.argb(128, 0, 128, 128))
-                    .strokeWidth(5).strokeColor(Color.argb(128, 0, 128, 128));
+                    .center( myLoc )//new LatLng(loc.getLatitude(), loc.getLongitude()))
+                    .radius(700).fillColor( fillColor )
+                    .strokeWidth(5).strokeColor( fillColor);
             radiusCircle = map.addCircle(circleOptions);
+            findPoints();
+        }else{
+            Toast.makeText(GameFragment.this.getActivity().getApplicationContext(), "No connecton to find game", Toast.LENGTH_SHORT).show();
         }
         btnGame.bringToFront();
         rootView.requestLayout();
         rootView.invalidate();
     }
 
+    private void findPoints() {
+        map.addMarker(new MarkerOptions()
+        .position(new LatLng(myLoc.latitude + 200, myLoc.longitude + 100)).title("Hello World")
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+    }
     private void assignListeners(){
         setCreateListener();
         setLocationListener();
