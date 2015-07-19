@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:clipToPadding="true"
     android:background="@drawable/borderouterimage">
 
     <ImageView
         android:id="@+id/imageViewFriend"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="150dp"
         android:gravity="center"
         android:contentDescription="Friend"
@@ -16,31 +15,27 @@
         android:adjustViewBounds="true"
         android:scaleType="fitXY"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageViewHolder"
-        android:background="@drawable/borderinnertext">
+        android:text="30"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:id="@+id/imageViewScore"
+        android:layout_alignTop="@+id/imageViewFriend"
+        android:layout_alignEnd="@+id/imageViewFriend"
+        android:layout_alignRight="@+id/imageViewFriend"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"/>
 
-        <TextView
-            android:id="@+id/textViewFriendName"
-            android:layout_width="wrap_content"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:layout_height="wrap_content"
-            android:text="Ryan"
-            android:layout_alignParentTop="true" />
+    <!--<CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ckbxInvite"
+        android:minWidth="30dp"
+        android:minHeight="30dp"
+        android:layout_alignTop="@+id/imageViewFriend"
+        android:layout_alignEnd="@+id/imageViewFriend"
+        android:layout_alignRight="@+id/imageViewFriend"/>-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="30"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:id="@+id/imageViewScore"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>
