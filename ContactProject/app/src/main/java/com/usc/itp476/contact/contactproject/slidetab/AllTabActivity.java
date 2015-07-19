@@ -33,14 +33,12 @@ public class AllTabActivity extends FragmentActivity {
         tabs = new ArrayList<>();
         titles = new ArrayList<>();
 
-
         titles.add( "Games" );
         titles.add( "Friends" );
         titles.add( "Profile" );
 
-        tabs.add( new FriendsFragment() );
         tabs.add( new GameFragment() );
-        //tabs.add( new FriendsFragment() );
+        tabs.add( new FriendsFragment() );
         tabs.add( new ProfileFragment() );
 
         // Instantiate a ViewPager and a PagerAdapter.
@@ -56,6 +54,8 @@ public class AllTabActivity extends FragmentActivity {
         mSlidingTabLayout.setViewPager(mPager);
 
     }
+
+
 
     @Override
     public void onBackPressed() {

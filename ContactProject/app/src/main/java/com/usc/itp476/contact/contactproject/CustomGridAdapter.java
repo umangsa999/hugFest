@@ -16,11 +16,11 @@ public class CustomGridAdapter extends BaseAdapter {
     String[] points;
     Context context;
     int[] imageId;
-    boolean displayCheckBox = false;
+    boolean mDisplayCheckBox = false;
     private static LayoutInflater inflater = null;
     private static int staticPosition = 0;
 
-    public CustomGridAdapter(Context mainActivity, String[] prgmNameList, int[] prgmImages, String[] score, Boolean f){
+    public CustomGridAdapter(Context mainActivity, String[] prgmNameList, int[] prgmImages, String[] score, Boolean displayCheckBox){
         // TODO Auto-generated constructor stub
         result=prgmNameList;
         context=mainActivity;
@@ -28,7 +28,7 @@ public class CustomGridAdapter extends BaseAdapter {
         inflater=(LayoutInflater)context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         points = score;
-        displayCheckBox = f;
+        mDisplayCheckBox = displayCheckBox;
     }
     @Override
     public int getCount() {
@@ -69,20 +69,20 @@ public class CustomGridAdapter extends BaseAdapter {
         holder.img.setImageResource(imageId[position]);
         holder.points.setText(points[position]);
 
-        if(displayCheckBox){
+        if(mDisplayCheckBox){
             holder.points.setVisibility(View.GONE);
         }else{
             holder.points.setText( points[position]);
             holder.invited.setVisibility(View.GONE);
         }
 
-//        rowView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                CheckBox c = (CheckBox) view.findViewById(R.id.ckbxInvite);
-//                c.setChecked( !c.isChecked() );
-//            }
-//        });
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CheckBox c = (CheckBox) view.findViewById(R.id.ckbxInvite);
+                c.setChecked( !c.isChecked() );
+            }
+        });
 
         return rowView;
     }
