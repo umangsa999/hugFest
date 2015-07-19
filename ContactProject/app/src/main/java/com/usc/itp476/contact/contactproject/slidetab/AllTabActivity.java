@@ -38,8 +38,9 @@ public class AllTabActivity extends FragmentActivity {
         titles.add( "Friends" );
         titles.add( "Profile" );
 
-        tabs.add( new GameFragment() );
         tabs.add( new FriendsFragment() );
+        tabs.add( new GameFragment() );
+        //tabs.add( new FriendsFragment() );
         tabs.add( new ProfileFragment() );
 
         // Instantiate a ViewPager and a PagerAdapter.

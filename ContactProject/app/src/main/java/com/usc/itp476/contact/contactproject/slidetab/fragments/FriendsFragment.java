@@ -21,10 +21,11 @@ public class FriendsFragment extends Fragment {
     private Fragment f;
     private GridView gridView;
     ArrayList prgmName;
-    public static String [] prgmNameList={"Ryan", "Chris", "Bob", "Smith", "Ryan",
-            "Chris", "Bob", "Smith"};
+    public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
+            "Paulina", "Trina", "Raymond"};
     public static int [] prgmImages={ R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
             R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large};
+    public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,7 +36,9 @@ public class FriendsFragment extends Fragment {
         gridView = (GridView) rootView.findViewById(R.id.grid_view);
 
         // Instance of ImageAdapter Class
-        gridView.setAdapter(new CustomGridAdapter(c, prgmNameList, prgmImages));
+        gridView.setAdapter(new CustomGridAdapter(c, prgmNameList, prgmImages, prgmPoints));
+
+        gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
         // On Click event for Single Gridview Item
 

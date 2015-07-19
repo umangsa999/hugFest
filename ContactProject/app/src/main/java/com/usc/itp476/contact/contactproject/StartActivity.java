@@ -19,6 +19,9 @@ public class StartActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
+        Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
+        startActivity(i);
+
         btnStart = (Button) findViewById(R.id.btnStart);
         edtxFirst = (EditText) findViewById(R.id.edtxFirst);
         edtxLast = (EditText) findViewById(R.id.edtxLast);

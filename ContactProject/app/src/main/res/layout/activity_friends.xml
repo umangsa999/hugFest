@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:gravity="center"-->
-    <!--android:orientation="vertical"-->
-    <!-->-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,15 +6,23 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <GridView
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/grid_view"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="6dp"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="0dp"
+        android:verticalSpacing="2dp"
+        android:horizontalSpacing="2dp"
+        android:scrollingCache="true"
+        android:smoothScrollbar="true"
+        android:clipChildren="true"
+        android:alwaysDrawnWithCache="true"
         android:numColumns="auto_fit"
-        android:gravity="center"
-        android:stretchMode="columnWidth">
+        android:columnWidth="100dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp">
     </GridView>
 
 
