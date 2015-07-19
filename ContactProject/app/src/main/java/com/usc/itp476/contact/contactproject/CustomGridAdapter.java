@@ -12,7 +12,6 @@ import android.widget.TextView;
 public class CustomGridAdapter extends BaseAdapter {
 
     //private Context mContext;
-    String[] result;
     String[] points;
     Context context;
     int[] imageId;
@@ -20,9 +19,8 @@ public class CustomGridAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     private static int staticPosition = 0;
 
-    public CustomGridAdapter(Context mainActivity, String[] prgmNameList, int[] prgmImages, String[] score, Boolean f){
+    public CustomGridAdapter(Context mainActivity, int[] prgmImages, String[] score, Boolean f){
         // TODO Auto-generated constructor stub
-        result=prgmNameList;
         context=mainActivity;
         imageId=prgmImages;
         inflater=(LayoutInflater)context.
@@ -32,7 +30,7 @@ public class CustomGridAdapter extends BaseAdapter {
     }
     @Override
     public int getCount() {
-        return result.length;
+        return points.length;
     }
 
     @Override
@@ -46,7 +44,6 @@ public class CustomGridAdapter extends BaseAdapter {
     }
 
     public class Holder {
-        TextView tv;
         ImageView img;
         TextView points;
         CheckBox invited;
@@ -59,13 +56,10 @@ public class CustomGridAdapter extends BaseAdapter {
         Holder holder = new Holder();
         View rowView;
         rowView = inflater.inflate(R.layout.grid_tile, null);
-        //holder.tv = (TextView) rowView.findViewById(R.id.textViewFriendName);
         holder.img = (ImageView) rowView.findViewById(R.id.imageViewFriend);
         holder.points = (TextView) rowView.findViewById(R.id.imageViewScore);
         holder.invited = (CheckBox) rowView.findViewById(R.id.ckbxInvite);
 
-        //holder.tv.setText(result[position].length() > 5 ?
-        //result[position].substring(0,5) + "..." : result[position]);
         holder.img.setImageResource(imageId[position]);
         holder.points.setText(points[position]);
 
@@ -76,13 +70,13 @@ public class CustomGridAdapter extends BaseAdapter {
             holder.invited.setVisibility(View.GONE);
         }
 
-//        rowView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                CheckBox c = (CheckBox) view.findViewById(R.id.ckbxInvite);
-//                c.setChecked( !c.isChecked() );
-//            }
-//        });
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CheckBox c = (CheckBox) view.findViewById(R.id.ckbxInvite);
+                c.setChecked( !c.isChecked() );
+            }
+        });
 
         return rowView;
     }

@@ -31,8 +31,6 @@ public class FriendsFragment extends Fragment {
     AlertDialog.Builder builder;
 
     ArrayList prgmName;
-    public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
-            "Paulina", "Trina", "Raymond"};
     public static int [] prgmImages={ R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
             R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large};
     public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7"};
@@ -84,7 +82,7 @@ public class FriendsFragment extends Fragment {
         gridView = (GridView) rootView.findViewById(R.id.grid_view);
 
         // Instance of ImageAdapter Class
-        gridView.setAdapter(new CustomGridAdapter(c, prgmNameList, prgmImages, prgmPoints, false));
+        gridView.setAdapter(new CustomGridAdapter(c, prgmImages, prgmPoints, true));
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
