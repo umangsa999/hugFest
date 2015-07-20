@@ -20,11 +20,8 @@ public class CreateGameActivity extends Activity {
     private TextView txvwMax;
     private SeekBar skbrMax;
     private ListView lsvwInvite;
-
     private GridView gridView;
-
     private int maxPoints = -1;
-
     public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
             "Paulina", "Trina", "Raymond"};
     public static int [] prgmImages={ R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
@@ -43,7 +40,7 @@ public class CreateGameActivity extends Activity {
 
         // Instance of ImageAdapter Class
         gridView.setAdapter(new FriendListGridAdapter( getApplicationContext(),
-                prgmNameList, prgmImages, prgmPoints, true, null, null));
+                prgmNameList, prgmImages, prgmPoints, true, null, null, null, null, null) );
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 

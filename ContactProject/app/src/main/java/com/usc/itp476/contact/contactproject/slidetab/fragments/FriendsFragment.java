@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +15,11 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
-
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
+import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+
+import java.util.ArrayList;
 
 public class FriendsFragment extends Fragment {
 
@@ -27,6 +30,7 @@ public class FriendsFragment extends Fragment {
     private ViewPager mPager;
     private String mInputAddFriendText = "";
     private ProfileFragment pFrag;
+    private PagerAdapter mPagerAdapter;
     AlertDialog.Builder builder;
 
     public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
@@ -36,14 +40,16 @@ public class FriendsFragment extends Fragment {
             R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
             R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large};
     public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7", "8", "5", "6", "7"};
+    private ArrayList<Fragment> tabArray;
+    private AllTabActivity mAllTabActivity;
 
     public void setPager( ViewPager p){
         mPager = p;
     }
-
     public void setpFrag( ProfileFragment p ){
         pFrag = p;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,7 +99,8 @@ public class FriendsFragment extends Fragment {
         // Instance of ImageAdapter Class
 
         gridView.setAdapter(new FriendListGridAdapter( mContext,
-                prgmNameList, prgmImages, prgmPoints, false, mPager, pFrag) );
+                prgmNameList, prgmImages, prgmPoints, false,
+                mPager, pFrag, tabArray, mPagerAdapter, mAllTabActivity) );
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -107,5 +114,17 @@ public class FriendsFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void setTabArray(ArrayList<Fragment> tabArray) {
+        this.tabArray = tabArray;
+    }
+
+    public void setPager(PagerAdapter pagerAdapter) {
+        this.mPagerAdapter = pagerAdapter;
+    }
+
+    public void setAllTabActivity(AllTabActivity allTabActivity) {
+        this.mAllTabActivity = allTabActivity;
     }
 }

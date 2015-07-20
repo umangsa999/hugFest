@@ -20,8 +20,13 @@ public class ProfileFragment extends Fragment {
     private EditText edtxName;
     private ImageView imgPhoto;
     private boolean isEditing = false;
+    public boolean mFriendProfile = false;
     public void setName(String name){
         txvwTotal.setText(name);
+    }
+
+    public void friendProfileTrue(){
+        mFriendProfile = true;
     }
 
     @Override
@@ -63,4 +68,8 @@ public class ProfileFragment extends Fragment {
             txvwName.setText(edtxName.getText());
         }
     }
+
+
+
+
 }

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
@@ -24,6 +25,8 @@ public class AllTabActivity extends FragmentActivity {
     private SlidingTabLayout mSlidingTabLayout;
     private ArrayList<Fragment> tabs;
     private ArrayList<String> titles;
+    public ProfileFragment mProfileFragment = null;
+    //we need this ^ because we later need to check the profile fragment is a view of the friends or user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class AllTabActivity extends FragmentActivity {
         mPager = (ViewPager) findViewById(R.id.viewPager);
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);
 
-        tabs = new ArrayList<>();
+        tabs = new ArrayList<Fragment>();
         titles = new ArrayList<>();
 
         titles.add("Games");
@@ -45,19 +48,18 @@ public class AllTabActivity extends FragmentActivity {
         FriendsFragment f = new FriendsFragment();
         tabs.add( f );
 
-//        FriendsFragment holder = tabs.at(1);
-//        tabs.at(1) = new ProfileFragment();
-        //1. Pressed, replace friends fragment with profile frag
-        //2. when back key press, destroy friend frag, load friend
-
         ProfileFragment p =  new ProfileFragment();
         tabs.add( p );
+        mProfileFragment = p;
 
         mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
         mPager.setAdapter(mPagerAdapter);
 
         f.setPager(mPager);
-        f.setpFrag( p );
+        f.setpFrag(p);
+        f.setTabArray(tabs);
+        f.setPager(mPagerAdapter);
+        f.setAllTabActivity(this);
 
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
@@ -66,18 +68,31 @@ public class AllTabActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
+
+        String temp = "false";
+        if( mProfileFragment.mFriendProfile){
+            temp = "true";
+        }
+        Log.wtf("AllTabActivity", "mPager:currentItem = "+ mPager.getCurrentItem() + " & " + temp );
         if (mPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
-        } else {
+        } else if( mPager.getCurrentItem() == 1 & mProfileFragment.mFriendProfile ){
+            //if the user has clicked to view one of his friend's profile in friendsfragment then we want to
+            //set the the current fragment back to the gridview of his friends
+            tabs.set(1, new FriendsFragment() );
+            mPagerAdapter.notifyDataSetChanged();
+            mPager.setAdapter(mPagerAdapter);
+            mPager.setCurrentItem( 1 );
+        }
+        else {
             // Otherwise, select the previous step.
             mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
     }
 
     class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-
         protected CharSequence[] mTitles;
         private List<Fragment> mTabs;
         public ScreenSlidePagerAdapter(FragmentManager fm, ArrayList<Fragment> tabs, List<String>titles) {
