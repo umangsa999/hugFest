@@ -118,11 +118,6 @@ public class FriendListGridAdapter extends BaseAdapter {
                 public void onClick(View view) {
                     //This is where we handle pressing gridtiles
 
-                    //        FriendsFragment holder = tabs.at(1);
-                    //        tabs.at(1) = new ProfileFragment();
-                    //1. Pressed, replace friends fragment with profile frag
-                    //2. when back key press, destroy friend frag, load friend
-
                     //setting the middle tab to profile of a friend
                     p = new ProfileFragment();
                     p.friendProfileTrue();
@@ -133,7 +128,6 @@ public class FriendListGridAdapter extends BaseAdapter {
                     mPager.setAdapter(mPagerAdapter);
                     mPager.setCurrentItem( 1 );
 
-                    //mPager.setCurrentItem(2);
                 }
             });
         }
