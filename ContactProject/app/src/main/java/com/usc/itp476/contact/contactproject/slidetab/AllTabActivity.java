@@ -26,6 +26,7 @@ public class AllTabActivity extends FragmentActivity {
     private ArrayList<Fragment> tabs;
     private ArrayList<String> titles;
     public ProfileFragment mProfileFragment = null;
+    public FriendsFragment mFriendFragment = null;
     //we need this ^ because we later need to check the profile fragment is a view of the friends or user
 
     @Override
@@ -45,21 +46,20 @@ public class AllTabActivity extends FragmentActivity {
         titles.add( "Profile" );
 
         tabs.add(new GameFragment());
-        FriendsFragment f = new FriendsFragment();
-        tabs.add( f );
+        mFriendFragment = new FriendsFragment();
+        tabs.add( mFriendFragment );
 
-        ProfileFragment p =  new ProfileFragment();
-        tabs.add( p );
-        mProfileFragment = p;
+        mProfileFragment = new ProfileFragment();
+        tabs.add( mProfileFragment );
 
         mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
         mPager.setAdapter(mPagerAdapter);
 
-        f.setPager(mPager);
-        f.setpFrag(p);
-        f.setTabArray(tabs);
-        f.setPager(mPagerAdapter);
-        f.setAllTabActivity(this);
+        mFriendFragment.setPager(mPager);
+        mFriendFragment.setpFrag( mProfileFragment );
+        mFriendFragment.setTabArray(tabs);
+        mFriendFragment.setPager(mPagerAdapter);
+        mFriendFragment.setAllTabActivity(this);
 
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
@@ -81,7 +81,15 @@ public class AllTabActivity extends FragmentActivity {
         } else if( mPager.getCurrentItem() == 1 & mProfileFragment.mFriendProfile ){
             //if the user has clicked to view one of his friend's profile in friendsfragment then we want to
             //set the the current fragment back to the gridview of his friends
-            tabs.set(1, new FriendsFragment() );
+
+            //destroy the profile fragment
+            //Fragment profileFragment = tabs.get(1);
+            //FragmentManager manager = profileFragment.getFragmentManager();
+            //FragmentTransaction trans = manager.beginTransaction();
+            //trans.remove( profileFragment );
+            //trans.commit();
+
+            tabs.set(1, mFriendFragment );
             mPagerAdapter.notifyDataSetChanged();
             mPager.setAdapter(mPagerAdapter);
             mPager.setCurrentItem( 1 );
