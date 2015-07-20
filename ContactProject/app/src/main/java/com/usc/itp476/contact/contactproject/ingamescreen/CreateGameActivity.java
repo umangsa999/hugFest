@@ -42,7 +42,8 @@ public class CreateGameActivity extends Activity {
         gridView = (GridView) findViewById(R.id.grid_view);
 
         // Instance of ImageAdapter Class
-        gridView.setAdapter(new FriendListGridAdapter( getApplicationContext(), prgmNameList, prgmImages, prgmPoints, true));
+        gridView.setAdapter(new FriendListGridAdapter( getApplicationContext(),
+                prgmNameList, prgmImages, prgmPoints, true, null, null));
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -61,7 +62,6 @@ public class CreateGameActivity extends Activity {
         btnCreate = (Button) findViewById(R.id.btnCreate);
         txvwMax = (TextView) findViewById(R.id.txvwMax);
         skbrMax = (SeekBar) findViewById(R.id.skbrMax);
-
         setListeners();
     }
 

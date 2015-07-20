@@ -8,10 +8,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
+import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.GameFragment;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileFragment;
-import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.helper.SlidingTabLayout;
 
 import java.util.ArrayList;
@@ -30,25 +30,28 @@ public class AllTabActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tab);
 
-        tabs = new ArrayList<>();
-        titles = new ArrayList<>();
-
-        titles.add( "Games" );
-        titles.add( "Friends" );
-        titles.add( "Profile" );
-
-        tabs.add( new GameFragment() );
-        tabs.add( new FriendsFragment() );
-        tabs.add( new ProfileFragment() );
-
         // Instantiate a ViewPager and a PagerAdapter.
-
         mPager = (ViewPager) findViewById(R.id.viewPager);
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);
 
-        mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
+        tabs = new ArrayList<>();
+        titles = new ArrayList<>();
 
+        titles.add("Games");
+        titles.add("Friends");
+        titles.add( "Profile" );
+
+        tabs.add(new GameFragment());
+        FriendsFragment f = new FriendsFragment();
+        tabs.add( f );
+        ProfileFragment p =  new ProfileFragment();
+        tabs.add( p );
+
+        mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
         mPager.setAdapter(mPagerAdapter);
+
+        f.setPager(mPager);
+        f.setpFrag( p );
 
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
