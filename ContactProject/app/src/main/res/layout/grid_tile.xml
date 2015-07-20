@@ -22,13 +22,13 @@
         android:textSize="16sp"
         android:textColor="@android:color/black"
         android:id="@+id/imageViewScore"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         android:layout_alignTop="@+id/imageViewFriend"
         android:layout_alignEnd="@+id/imageViewFriend"
-        android:layout_alignRight="@+id/imageViewFriend"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_alignRight="@+id/imageViewFriend"/>
 
-    <!--<CheckBox
+    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ckbxInvite"
@@ -36,6 +36,6 @@
         android:minHeight="30dp"
         android:layout_alignTop="@+id/imageViewFriend"
         android:layout_alignEnd="@+id/imageViewFriend"
-        android:layout_alignRight="@+id/imageViewFriend"/>-->
+        android:layout_alignRight="@+id/imageViewFriend"/>
 
 </RelativeLayout>

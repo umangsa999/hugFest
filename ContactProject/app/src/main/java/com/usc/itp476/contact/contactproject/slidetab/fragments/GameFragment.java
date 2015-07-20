@@ -94,11 +94,10 @@ public class GameFragment extends Fragment implements OnMapReadyCallback{
         rootView.invalidate();
     }
 
-    private void findPoints(){
+    private void findPoints() {
         map.addMarker(new MarkerOptions()
-                .position(new LatLng(myLoc.latitude + 10, myLoc.longitude + 10))
-                .title("Hello world")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        .position(new LatLng(myLoc.latitude + 200, myLoc.longitude + 100)).title("Hello World")
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
     private void assignListeners(){

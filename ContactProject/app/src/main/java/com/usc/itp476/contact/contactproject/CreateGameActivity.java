@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -15,19 +17,47 @@ public class CreateGameActivity extends Activity {
     private TextView txvwMax;
     private SeekBar skbrMax;
     private ListView lsvwInvite;
+
+    private GridView gridView;
+
     private int maxPoints = -1;
+
+    public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
+            "Paulina", "Trina", "Raymond"};
+    public static int [] prgmImages={ R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
+            R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large};
+    public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
 
+        //mContext = getActivity().getApplicationContext();
+        //mActivity = getActivity();
+
+        gridView = (GridView) findViewById(R.id.grid_view);
+
+        // Instance of ImageAdapter Class
+        gridView.setAdapter(new CustomGridAdapter( getApplicationContext(), prgmNameList, prgmImages, prgmPoints, true));
+
+        gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+
+        // On Click event for Single Gridview Item
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // Sending image id to FullScreenActivity
+                Toast.makeText( getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         Intent i = getIntent();
 
         btnCreate = (Button) findViewById(R.id.btnCreate);
         txvwMax = (TextView) findViewById(R.id.txvwMax);
         skbrMax = (SeekBar) findViewById(R.id.skbrMax);
-        lsvwInvite = (ListView) findViewById(R.id.lsvwInvite);
 
         setListeners();
     }

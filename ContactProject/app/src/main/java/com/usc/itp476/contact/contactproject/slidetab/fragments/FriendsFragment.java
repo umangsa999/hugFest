@@ -18,19 +18,17 @@ import android.widget.Toast;
 import com.usc.itp476.contact.contactproject.CustomGridAdapter;
 import com.usc.itp476.contact.contactproject.R;
 
-import java.util.ArrayList;
-
 public class FriendsFragment extends Fragment {
 
     private ImageButton buttonAdd;
-    private Context c;
-    private Activity a;
-    private Fragment f;
+    private Context mContext;
+    private Activity mActivity;
     private GridView gridView;
     private String mInputAddFriendText = "";
     AlertDialog.Builder builder;
 
-    ArrayList prgmName;
+    public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
+            "Paulina", "Trina", "Raymond"};
     public static int [] prgmImages={ R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
             R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large};
     public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7"};
@@ -38,21 +36,21 @@ public class FriendsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = (View) inflater.inflate(R.layout.activity_friends, container, true);
 
-        c = getActivity().getApplicationContext();
-        a = getActivity();
+        View rootView = (View) inflater.inflate(R.layout.activity_friends, container, false);
+        mContext = getActivity().getApplicationContext();
+        mActivity = getActivity();
 
         buttonAdd = (ImageButton) rootView.findViewById(R.id.btnAdd);
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // get prompts.xml view
-                LayoutInflater layoutInflater = LayoutInflater.from( a );
+                LayoutInflater layoutInflater = LayoutInflater.from( mActivity );
 
                 View promptView = layoutInflater.inflate(R.layout.prompts, null);
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( a );
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( mActivity );
 
                 // set prompts.xml to be the layout file of the alertdialog builder
                 alertDialogBuilder.setView(promptView);
@@ -83,21 +81,19 @@ public class FriendsFragment extends Fragment {
         gridView = (GridView) rootView.findViewById(R.id.grid_view);
 
         // Instance of ImageAdapter Class
-        gridView.setAdapter(new CustomGridAdapter(c, prgmImages, prgmPoints, false));
+
+        gridView.setAdapter(new CustomGridAdapter( mContext, prgmNameList, prgmImages, prgmPoints, false));
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
         // On Click event for Single Gridview Item
-
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Sending image id to FullScreenActivity
-                Toast.makeText(c, "Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText( mContext, "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
-
-
 
         return rootView;
     }
