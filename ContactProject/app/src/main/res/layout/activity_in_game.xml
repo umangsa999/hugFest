@@ -50,7 +50,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="30"
+        android:text="-1"
         android:id="@+id/txvwMaxScore"
         android:textSize="22dp"
         android:minWidth="30dp"
@@ -61,14 +61,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Temp to ResultsActivity"
-        android:id="@+id/button2"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -78,5 +70,15 @@
         android:scaleType="fitXY"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+"
+        android:id="@+id/btnPlus"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/imvwTarget"
+        android:layout_alignEnd="@+id/imvwTarget" />
 
 </RelativeLayout>

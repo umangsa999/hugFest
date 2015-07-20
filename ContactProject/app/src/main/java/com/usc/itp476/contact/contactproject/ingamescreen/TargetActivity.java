@@ -2,10 +2,9 @@ package com.usc.itp476.contact.contactproject.ingamescreen;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +30,16 @@ public class TargetActivity extends Activity {
 
         Intent i = getIntent();
         max = i.getIntExtra(MAXPOINTS, -1);
+        if (max == -1)
+            max = 10;
+
+        Button tempPoints = (Button) findViewById(R.id.btnPlus);
+        tempPoints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                increasePoints();
+            }
+        });
 
         txvwCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
         txvwMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
@@ -41,9 +50,23 @@ public class TargetActivity extends Activity {
                 Toast.LENGTH_SHORT);
     }
 
+    private void increasePoints(){
+        ++current;
+        setPoints();
+        checkWin();
+    }
+
+    private void checkWin(){
+        if (current == max){
+            Intent i = new Intent(getApplicationContext(), ResultActivity.class);
+            startActivity(i);
+        }
+    }
+
     private void setPoints(){
         txvwCurrentPoints.setText(String.valueOf(current));
-        txvwMaxPoints.setText(max == -1 ? "10" : String.valueOf(max));
+        if (txvwMaxPoints.getText().charAt(0) == '-')
+            txvwMaxPoints.setText(String.valueOf(max));
     }
 
     @Override
