@@ -1,12 +1,10 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,6 +20,14 @@ public class ProfileFragment extends Fragment {
     private EditText edtxName;
     private ImageView imgPhoto;
     private boolean isEditing = false;
+    public boolean mFriendProfile = false;
+    public void setName(String name){
+        txvwTotal.setText(name);
+    }
+
+    public void friendProfileTrue(){
+        mFriendProfile = true;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,7 +40,6 @@ public class ProfileFragment extends Fragment {
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
         txvwTotal = (TextView) rootView.findViewById(R.id.txvwTotal);
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
-
         setListeners();
 
         return rootView;
@@ -63,4 +68,8 @@ public class ProfileFragment extends Fragment {
             txvwName.setText(edtxName.getText());
         }
     }
+
+
+
+
 }

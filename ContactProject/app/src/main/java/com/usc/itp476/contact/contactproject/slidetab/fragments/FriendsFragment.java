@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +15,11 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.Toast;
-
-import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
+import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+
+import java.util.ArrayList;
 
 public class FriendsFragment extends Fragment {
 
@@ -24,19 +27,33 @@ public class FriendsFragment extends Fragment {
     private Context mContext;
     private Activity mActivity;
     private GridView gridView;
+    private ViewPager mPager;
     private String mInputAddFriendText = "";
+    private ProfileFragment pFrag;
+    private PagerAdapter mPagerAdapter;
     AlertDialog.Builder builder;
 
     public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
-            "Paulina", "Trina", "Raymond"};
+            "Paulina", "Trina", "Raymond",
+            "Nathan", "Paulina", "Trina", "Raymond"};
     public static int [] prgmImages={ R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
+            R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
             R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large};
-    public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7"};
+    public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7", "8", "5", "6", "7"};
+    private ArrayList<Fragment> tabArray;
+    private AllTabActivity mAllTabActivity;
+
+    public void setPager( ViewPager p){
+        mPager = p;
+    }
+    public void setpFrag( ProfileFragment p ){
+        pFrag = p;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View rootView = (View) inflater.inflate(R.layout.activity_friends, container, false);
         mContext = getActivity().getApplicationContext();
         mActivity = getActivity();
@@ -46,11 +63,11 @@ public class FriendsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // get prompts.xml view
-                LayoutInflater layoutInflater = LayoutInflater.from( mActivity );
+                LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
 
                 View promptView = layoutInflater.inflate(R.layout.prompts, null);
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( mActivity );
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
 
                 // set prompts.xml to be the layout file of the alertdialog builder
                 alertDialogBuilder.setView(promptView);
@@ -66,7 +83,7 @@ public class FriendsFragment extends Fragment {
                         })
                         .setNegativeButton("Cancel",
                                 new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,	int id) {
+                                    public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
                                     }
                                 });
@@ -81,7 +98,9 @@ public class FriendsFragment extends Fragment {
 
         // Instance of ImageAdapter Class
 
-        gridView.setAdapter(new FriendListGridAdapter( mContext, prgmNameList, prgmImages, prgmPoints, false));
+        gridView.setAdapter(new FriendListGridAdapter( mContext,
+                prgmNameList, prgmImages, prgmPoints, false,
+                mPager, pFrag, tabArray, mPagerAdapter, mAllTabActivity) );
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -90,10 +109,22 @@ public class FriendsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Sending image id to FullScreenActivity
-                Toast.makeText( mContext, "Clicked", Toast.LENGTH_SHORT).show();
+                //this shit doesn't run
             }
         });
 
         return rootView;
+    }
+
+    public void setTabArray(ArrayList<Fragment> tabArray) {
+        this.tabArray = tabArray;
+    }
+
+    public void setPager(PagerAdapter pagerAdapter) {
+        this.mPagerAdapter = pagerAdapter;
+    }
+
+    public void setAllTabActivity(AllTabActivity allTabActivity) {
+        this.mAllTabActivity = allTabActivity;
     }
 }
