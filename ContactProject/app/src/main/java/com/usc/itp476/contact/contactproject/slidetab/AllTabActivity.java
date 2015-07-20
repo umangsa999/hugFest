@@ -44,6 +44,12 @@ public class AllTabActivity extends FragmentActivity {
         tabs.add(new GameFragment());
         FriendsFragment f = new FriendsFragment();
         tabs.add( f );
+
+//        FriendsFragment holder = tabs.at(1);
+//        tabs.at(1) = new ProfileFragment();
+        //1. Pressed, replace friends fragment with profile frag
+        //2. when back key press, destroy friend frag, load friend
+
         ProfileFragment p =  new ProfileFragment();
         tabs.add( p );
 

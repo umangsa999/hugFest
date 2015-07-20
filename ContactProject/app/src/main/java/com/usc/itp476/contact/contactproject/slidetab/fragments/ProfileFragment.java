@@ -20,7 +20,6 @@ public class ProfileFragment extends Fragment {
     private EditText edtxName;
     private ImageView imgPhoto;
     private boolean isEditing = false;
-
     public void setName(String name){
         txvwTotal.setText(name);
     }
@@ -36,7 +35,6 @@ public class ProfileFragment extends Fragment {
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
         txvwTotal = (TextView) rootView.findViewById(R.id.txvwTotal);
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
-
         setListeners();
 
         return rootView;

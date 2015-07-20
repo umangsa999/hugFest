@@ -48,7 +48,6 @@ public class FriendsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View rootView = (View) inflater.inflate(R.layout.activity_friends, container, false);
         mContext = getActivity().getApplicationContext();
         mActivity = getActivity();
