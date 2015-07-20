@@ -20,7 +20,6 @@ public class CustomGridAdapter extends BaseAdapter {
     private static int staticPosition = 0;
     private boolean inviteNotFriend = false;
 
-
     public CustomGridAdapter(Context mainActivity, String[] prgmNameList, int[] prgmImages, String[] score, Boolean displayCheckBox){
         // TODO Auto-generated constructor stub
         context=mainActivity;
@@ -61,13 +60,10 @@ public class CustomGridAdapter extends BaseAdapter {
         View rowView;
         rowView = inflater.inflate(R.layout.grid_tile, null);
 
-        //holder.tv = (TextView) rowView.findViewById(R.id.textViewFriendName);
         holder.img = (ImageView) rowView.findViewById(R.id.imageViewFriend);
         holder.points = (TextView) rowView.findViewById(R.id.imageViewScore);
         holder.invited = (CheckBox) rowView.findViewById(R.id.ckbxInvite);
 
-        //holder.tv.setText(result[position].length() > 5 ?
-        //result[position].substring(0,5) + "..." : result[position]);
         holder.img.setImageResource(imageId[position]);
         holder.points = (TextView) rowView.findViewById(R.id.imageViewScore);
         //holder.invited = (CheckBox) rowView.findViewById(R.id.ckbxInvite);
