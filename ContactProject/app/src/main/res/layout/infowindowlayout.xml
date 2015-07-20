@@ -1,66 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/infoWindowImage"
-        android:src="@mipmap/ic_launcher"
+        android:src="@mipmap/medium"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"/>
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/infoWindowImage"
+        android:layout_toRightOf="@+id/infoWindowImage"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ryan Zhou"
+            android:id="@+id/infoWindowName"
+            style="@style/TextAppearance.AppCompat.Display1" />
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Join"
-                android:id="@+id/textView3"
-                android:layout_marginRight="4dp"
-                style="@style/TextAppearance.AppCompat.Headline" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ryan Zhou"
-                android:id="@+id/infoWindowName"
-                style="@style/TextAppearance.AppCompat.Headline" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="24"
-                android:id="@+id/infoWindowNumPlayer"
-                android:layout_marginRight="4dp"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:textSize="28dp" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageView3"
-                android:src="@mipmap/ic_launcher" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
@@ -69,14 +41,51 @@
                 android:text="Ends:"
                 android:id="@+id/textView6"
                 android:layout_marginRight="4dp"
-                style="@style/TextAppearance.AppCompat.Medium" />
+                style="@style/TextAppearance.AppCompat.Large"
+                android:textSize="24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5:30pm"
                 android:id="@+id/infoWindowEndTime"
-                style="@style/TextAppearance.AppCompat.Medium" />
+                style="@style/TextAppearance.AppCompat.Large"
+                android:textSize="26dp" />
         </LinearLayout>
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="22"
+                android:id="@+id/infoWindowNumPlayer"
+                android:textSize="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView3"
+                android:src="@mipmap/ic_numpeopleingame"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/infoWindowNumPlayer"
+                android:layout_toEndOf="@+id/infoWindowNumPlayer" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Join"
+                android:id="@+id/infoWindowButton"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/imageView3"
+                android:layout_toEndOf="@+id/imageView3" />
+
+        </RelativeLayout>
+
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

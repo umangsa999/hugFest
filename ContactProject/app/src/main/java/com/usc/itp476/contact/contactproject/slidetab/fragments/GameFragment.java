@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
@@ -36,12 +38,11 @@ import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GameFragment extends Fragment
-        implements /*GoogleMap.InfoWindowAdapter,*/ OnMapReadyCallback {
-    private ArrayList<Marker> availableGames;
+        implements GoogleMap.InfoWindowAdapter, OnMapReadyCallback {
     private GoogleMap map;
-    private boolean gameClicked;
     private ImageButton btnGame = null;
     private LatLng myLoc;
     private SupportMapFragment mapFragment;
@@ -50,6 +51,18 @@ public class GameFragment extends Fragment
     private final int maxDistanceDraw = 700;
     private final double maxDistance = 0.0075;
     private final int backgroundColor = Color.argb(128, 0, 128, 128);
+    private HashMap<Marker, GameData> markerToGame;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        markerToGame = new HashMap<>();
+        mapFragment = SupportMapFragment.newInstance();
+        FragmentTransaction fragmentTransaction =
+                getChildFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.mapHolder, mapFragment);
+        fragmentTransaction.commit();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -60,13 +73,10 @@ public class GameFragment extends Fragment
                 R.layout.activity_home, container, false);
 
         btnGame = (ImageButton) rootView.findViewById(R.id.btnGame);
-        mapFragment = SupportMapFragment.newInstance();
-        FragmentTransaction fragmentTransaction =
-                getChildFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.mapHolder, mapFragment);
-        fragmentTransaction.commit();
 
-        availableGames = new ArrayList<>();
+        if (map != null){
+            map.clear();
+        }
 
         //returning to this fragment after sliding to another
         if (map == null && mapFragment != null) {
@@ -74,7 +84,6 @@ public class GameFragment extends Fragment
         }//TODO make sure this is same map as last time
         //TODO it seems to just create new since getMapAsync again
 
-        gameClicked = false;
         btnGame.setBackgroundResource(R.mipmap.ic_create);
 
         //async call to create and set up map.
@@ -86,25 +95,25 @@ public class GameFragment extends Fragment
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        //map.setInfoWindowAdapter(this);
+        map.setInfoWindowAdapter(this);
         map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         map.setPadding(4, 4, 4, 4);
         map.setMyLocationEnabled(true);
+        map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                markerToGame.clear();
+                Intent i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
+                        TargetActivity.class);
+                startActivity(i);
+            }
+        });
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                gameClicked = true;
-                btnGame.setBackgroundResource(R.mipmap.ic_join);
-                checkDistance(marker.getPosition()); //find the distance and output it
-                return false; //not done processing user press
-            }
-        });
-
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                gameClicked = false;// change from join game mode to create game mode
-                btnGame.setBackgroundResource(R.mipmap.ic_create);
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
+                marker.showInfoWindow();
+                return true; //done processing user press so don't have Google do any work
             }
         });
 
@@ -128,37 +137,52 @@ public class GameFragment extends Fragment
         btnGame.bringToFront();
         rootView.requestLayout();
         rootView.invalidate();
+        setLocationListener();
     }
 
     //this method is suppose to do server call to find games
     private void findPoints() {
-        addPoint(myLoc.latitude + 0.001, myLoc.longitude + 0.001);
-        addPoint(myLoc.latitude + 0.002, myLoc.longitude - 0.001);
-        addPoint(myLoc.latitude + 0.001, myLoc.longitude + 0.004);
-        addPoint(myLoc.latitude + 0.012, myLoc.longitude + 0.001);
-        addPoint(myLoc.latitude + 0.002, myLoc.longitude - 0.011);
-        addPoint(myLoc.latitude + 0.031, myLoc.longitude + 0.024);
-        addPoint(myLoc.latitude + 0.003, myLoc.longitude + 0.007);
-        addPoint(myLoc.latitude - 0.005, myLoc.longitude + 0.002);
-        addPoint(myLoc.latitude - 0.008, myLoc.longitude - 0.003);
-        addPoint(myLoc.latitude - 0.002, myLoc.longitude - 0.004);
-        addPoint(myLoc.latitude, myLoc.longitude - 0.005);
-        addPoint(myLoc.latitude - 0.007, myLoc.longitude - 0.003);
-        addPoint(myLoc.latitude + 0.008, myLoc.longitude - 0.001);
-        addPoint(myLoc.latitude + 0.004, myLoc.longitude - 0.002);
+        addPoint(myLoc.latitude + 0.001, myLoc.longitude + 0.001,
+                new GameData("1234", "Chris Lee", "5:00pm", 1));
+        addPoint(myLoc.latitude + 0.002, myLoc.longitude - 0.001,
+                new GameData("2345", "Ryan Zhou", "12:00pm", 20));
+        addPoint(myLoc.latitude + 0.001, myLoc.longitude + 0.004,
+                new GameData("3456", "Mike Lee", "8:00am", 2));
+        addPoint(myLoc.latitude + 0.012, myLoc.longitude + 0.001,
+                new GameData("4567", "Nathan Greenfield", "10:00pm", 16));
+        addPoint(myLoc.latitude + 0.002, myLoc.longitude - 0.011,
+                new GameData("5678", "Paulina Gray", "7:00pm", 18));
+        addPoint(myLoc.latitude + 0.031, myLoc.longitude + 0.024,
+                new GameData("6789", "Raymond Kim", "4:00pm", 5));
+        addPoint(myLoc.latitude + 0.003, myLoc.longitude + 0.007,
+                new GameData("7890", "Rob Parke", "10:00am", 15));
+        addPoint(myLoc.latitude - 0.005, myLoc.longitude + 0.002,
+                new GameData("0987", "Michael Crowley", "5:00pm", 20));
+        addPoint(myLoc.latitude - 0.008, myLoc.longitude - 0.003,
+                new GameData("9876", "Trina Gregory", "7:45pm", 14));
+        addPoint(myLoc.latitude - 0.002, myLoc.longitude - 0.004,
+                new GameData("8765", "Sanjay Madhav", "2:30am", 8));
+        addPoint(myLoc.latitude, myLoc.longitude - 0.005,
+                new GameData("7654", "Andy Tse", "1:00pm", 3));
+        addPoint(myLoc.latitude - 0.007, myLoc.longitude - 0.003,
+                new GameData("6543", "Manjot Chahal", "2:10pm", 13));
+        addPoint(myLoc.latitude + 0.008, myLoc.longitude - 0.001,
+                new GameData("5432", "Ura Shurty", "11:00pm", 1));
+        addPoint(myLoc.latitude + 0.004, myLoc.longitude - 0.002,
+                new GameData("4321", "Inna Peench", "1:00am", 7));
     }
 
     //this may switch to taking in a LatLng depending on API
-    private void addPoint(double lat, double lng){
+    private void addPoint(double lat, double lng, GameData d){
         LatLng markerPoint = new LatLng(lat, lng);
         //only add if the start location is within our radius
         if (checkDistance(markerPoint)) {
-            availableGames.add(
-                map.addMarker(new MarkerOptions()
+            markerToGame.put(map.addMarker(new MarkerOptions()
                     .position(markerPoint)
                     .draggable(false)
                     .icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)))
+            ,d);
         }
     }
 
@@ -166,27 +190,19 @@ public class GameFragment extends Fragment
         double distance = Math.sqrt(Math.pow(myLoc.latitude - markerPoint.latitude, 2) +
                 Math.pow(myLoc.longitude - markerPoint.longitude, 2));
         boolean result = maxDistance >= distance;
-        Toast.makeText(getActivity().getApplicationContext(), "Distance: " + distance, Toast.LENGTH_SHORT).show();
         return result;
     }
 
     private void assignListeners(){
         setCreateListener();
-        setLocationListener();
     }
 
     private void setCreateListener(){
         btnGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i;
-                if (gameClicked) {
-                    i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
-                            TargetActivity.class);
-                } else {
-                    i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
+                Intent i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
                             CreateGameActivity.class);
-                }
                 startActivity(i);
             }
         });
@@ -200,7 +216,7 @@ public class GameFragment extends Fragment
         radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
     }
 
-    private void setLocationListener(){
+    private void setLocationListener() {
         LocationManager l =
                 (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
@@ -210,9 +226,9 @@ public class GameFragment extends Fragment
                 map.moveCamera(CameraUpdateFactory.newLatLng(myLoc));
 
                 //move the radius with the user
-                if (radiusCircle != null){
+                if (radiusCircle != null) {
                     radiusCircle.setCenter(myLoc);
-                }else {
+                } else {
                     //create the radius!
                     createRadius();
                 }
@@ -234,28 +250,27 @@ public class GameFragment extends Fragment
                 LocationManager.GPS_PROVIDER, 5000, 3, locationListener);
     }
 
-//    public class Info{
-//        TextView name;
-//        TextView players;
-//        TextView endTime;
-//        ImageView image;
-//    }
-//
-//    @Override
-//    public View getInfoWindow(Marker marker) {
-//        return null;
-//    }
-//
-//    @Override
-//    public View getInfoContents(Marker marker) {
-//        LayoutInflater inflater = GameFragment.this.getActivity().getLayoutInflater();
-//        View view = inflater.inflate(R.layout.infowindowlayout, null);
-//        Info info = new Info();
-//
-//        info.name = (TextView) view.findViewById(R.id.infoWindowName);
-//        info.players = (TextView) view.findViewById(R.id.infoWindowNumPlayer);
-//        info.endTime = (TextView) view.findViewById(R.id.infoWindowEndTime);
-//        info.image = (ImageView) view.findViewById(R.id.infoWindowImage);
-//        return view;
-//    }
+    @Override
+    public View getInfoWindow(Marker marker) {
+        return null;
+    }
+
+    @Override
+    public View getInfoContents(Marker marker) {
+        LayoutInflater inflater = GameFragment.this.getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.infowindowlayout, null);
+
+        TextView name = (TextView) view.findViewById(R.id.infoWindowName);
+        TextView players = (TextView) view.findViewById(R.id.infoWindowNumPlayer);
+        TextView endTime = (TextView) view.findViewById(R.id.infoWindowEndTime);
+        ImageView image = (ImageView) view.findViewById(R.id.infoWindowImage);
+
+        GameData data = markerToGame.get(marker);
+        name.setText(data.getHostName());
+        players.setText(String.valueOf(data.getPlayerCount()));
+        endTime.setText(data.getEndTime());
+        //TODO make images dynamic
+
+        return view;
+    }
 }
