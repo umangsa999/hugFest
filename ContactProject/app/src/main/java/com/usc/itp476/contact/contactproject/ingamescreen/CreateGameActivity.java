@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject;
+package com.usc.itp476.contact.contactproject.ingamescreen;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,9 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 
 public class CreateGameActivity extends Activity {
     private Button btnCreate;
@@ -39,7 +42,7 @@ public class CreateGameActivity extends Activity {
         gridView = (GridView) findViewById(R.id.grid_view);
 
         // Instance of ImageAdapter Class
-        gridView.setAdapter(new CustomGridAdapter( getApplicationContext(), prgmNameList, prgmImages, prgmPoints, true));
+        gridView.setAdapter(new FriendListGridAdapter( getApplicationContext(), prgmNameList, prgmImages, prgmPoints, true));
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -66,8 +69,8 @@ public class CreateGameActivity extends Activity {
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(CreateGameActivity.this.getApplicationContext(), InGameActivity.class);
-                i.putExtra(InGameActivity.MAXPOINTS, maxPoints);
+                Intent i = new Intent(CreateGameActivity.this.getApplicationContext(), TargetActivity.class);
+                i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
                 startActivity(i);
             }
         });

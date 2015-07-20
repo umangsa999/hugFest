@@ -15,7 +15,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.usc.itp476.contact.contactproject.CustomGridAdapter;
+import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.R;
 
 public class FriendsFragment extends Fragment {
@@ -77,12 +77,11 @@ public class FriendsFragment extends Fragment {
             }
         });
 
-        ;
         gridView = (GridView) rootView.findViewById(R.id.grid_view);
 
         // Instance of ImageAdapter Class
 
-        gridView.setAdapter(new CustomGridAdapter( mContext, prgmNameList, prgmImages, prgmPoints, false));
+        gridView.setAdapter(new FriendListGridAdapter( mContext, prgmNameList, prgmImages, prgmPoints, false));
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 

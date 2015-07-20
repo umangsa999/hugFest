@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.usc.itp476.contact.contactproject.CreateGameActivity;
+import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.R;
 
 public class GameFragment extends Fragment implements OnMapReadyCallback{

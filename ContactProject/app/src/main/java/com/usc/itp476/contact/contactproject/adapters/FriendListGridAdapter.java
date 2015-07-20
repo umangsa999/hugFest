@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject;
+package com.usc.itp476.contact.contactproject.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +9,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CustomGridAdapter extends BaseAdapter {
+import com.usc.itp476.contact.contactproject.R;
+
+public class FriendListGridAdapter extends BaseAdapter {
 
     //private Context mContext;
     String[] points;
@@ -19,7 +21,7 @@ public class CustomGridAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     private static int staticPosition = 0;
 
-    public CustomGridAdapter(Context mainActivity, String[] prgmNameList, int[] prgmImages, String[] score, Boolean displayCheckBox){
+    public FriendListGridAdapter(Context mainActivity, String[] prgmNameList, int[] prgmImages, String[] score, Boolean displayCheckBox){
         // TODO Auto-generated constructor stub
         context=mainActivity;
         imageId=prgmImages;

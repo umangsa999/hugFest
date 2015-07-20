@@ -39,12 +39,12 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".CreateGameActivity"
+            android:name=".ingamescreen.CreateGameActivity"
             android:label="@string/title_activity_create_game"
             android:noHistory="true">
         </activity>
         <activity
-            android:name=".InGameActivity"
+            android:name=".ingamescreen.TargetActivity"
             android:label="@string/title_activity_in_game"
             android:noHistory="true"
             android:parentActivityName=".slidetab.AllTabActivity">
