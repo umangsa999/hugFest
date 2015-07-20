@@ -124,9 +124,10 @@ public class FriendListGridAdapter extends BaseAdapter {
                     //2. when back key press, destroy friend frag, load friend
 
                     //setting the middle tab to profile of a friend
-                    ProfileFragment p = new ProfileFragment();
+                    p = new ProfileFragment();
                     p.friendProfileTrue();
-                    tabArray.set(1, new ProfileFragment() );
+
+                    tabArray.set(1, p);
                     mAllTabActivity.mProfileFragment = p;
                     mPagerAdapter.notifyDataSetChanged();
                     mPager.setAdapter(mPagerAdapter);
