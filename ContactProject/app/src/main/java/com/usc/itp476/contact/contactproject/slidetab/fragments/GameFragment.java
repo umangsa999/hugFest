@@ -68,14 +68,16 @@ public class GameFragment extends Fragment
 
         availableGames = new ArrayList<>();
 
+        //returning to this fragment after sliding to another
         if (map == null && mapFragment != null) {
             map = mapFragment.getMap();
-        }
+        }//TODO make sure this is same map as last time
+        //TODO it seems to just create new since getMapAsync again
 
         gameClicked = false;
-        if (btnGame != null)
-            btnGame.setBackgroundResource(R.mipmap.ic_create);
+        btnGame.setBackgroundResource(R.mipmap.ic_create);
 
+        //async call to create and set up map.
         mapFragment.getMapAsync(this);
         assignListeners();
         return rootView;
@@ -93,15 +95,15 @@ public class GameFragment extends Fragment
             public boolean onMarkerClick(Marker marker) {
                 gameClicked = true;
                 btnGame.setBackgroundResource(R.mipmap.ic_join);
-                checkDistance(marker.getPosition());
-                return true;
+                checkDistance(marker.getPosition()); //find the distance and output it
+                return false; //not done processing user press
             }
         });
 
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                gameClicked = false;
+                gameClicked = false;// change from join game mode to create game mode
                 btnGame.setBackgroundResource(R.mipmap.ic_create);
             }
         });
@@ -110,26 +112,25 @@ public class GameFragment extends Fragment
                 (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location loc = LocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+        //only when we have location access
         if (loc != null) {
             myLoc = new LatLng(loc.getLatitude(), loc.getLongitude());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 15));
 
-            findPoints();
-
-            CircleOptions circleOptions = new CircleOptions()
-                    .center(myLoc)
-                    .radius(maxDistanceDraw).fillColor(backgroundColor)
-                    .strokeWidth(5).strokeColor(backgroundColor);
-            radiusCircle = map.addCircle(circleOptions);
+            findPoints(); //do a server call for all games
+            createRadius();
         }else{
             Toast.makeText(GameFragment.this.getActivity().getApplicationContext(),
                     "No connection to find games.", Toast.LENGTH_SHORT).show();
         }
+
+        //make sure the create button is still at top
         btnGame.bringToFront();
         rootView.requestLayout();
         rootView.invalidate();
     }
 
+    //this method is suppose to do server call to find games
     private void findPoints() {
         addPoint(myLoc.latitude + 0.001, myLoc.longitude + 0.001);
         addPoint(myLoc.latitude + 0.002, myLoc.longitude - 0.001);
@@ -147,8 +148,10 @@ public class GameFragment extends Fragment
         addPoint(myLoc.latitude + 0.004, myLoc.longitude - 0.002);
     }
 
+    //this may switch to taking in a LatLng depending on API
     private void addPoint(double lat, double lng){
         LatLng markerPoint = new LatLng(lat, lng);
+        //only add if the start location is within our radius
         if (checkDistance(markerPoint)) {
             availableGames.add(
                 map.addMarker(new MarkerOptions()
@@ -177,16 +180,24 @@ public class GameFragment extends Fragment
             @Override
             public void onClick(View v) {
                 Intent i;
-                if(gameClicked){
+                if (gameClicked) {
                     i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
                             TargetActivity.class);
-                }else {
+                } else {
                     i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
                             CreateGameActivity.class);
                 }
                 startActivity(i);
             }
         });
+    }
+
+    private void createRadius(){
+        CircleOptions circleOptions = new CircleOptions()
+                .center(myLoc)
+                .radius(maxDistanceDraw).fillColor(backgroundColor)
+                .strokeWidth(5).strokeColor(backgroundColor);
+        radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
     }
 
     private void setLocationListener(){
@@ -198,14 +209,12 @@ public class GameFragment extends Fragment
                 myLoc = new LatLng(location.getLatitude(), location.getLongitude());
                 map.moveCamera(CameraUpdateFactory.newLatLng(myLoc));
 
+                //move the radius with the user
                 if (radiusCircle != null){
                     radiusCircle.setCenter(myLoc);
                 }else {
-                    CircleOptions circleOptions = new CircleOptions()
-                            .center(myLoc)
-                            .radius(maxDistanceDraw).fillColor(backgroundColor)
-                            .strokeWidth(5).strokeColor(backgroundColor);
-                    radiusCircle = map.addCircle(circleOptions);
+                    //create the radius!
+                    createRadius();
                 }
             }
 
