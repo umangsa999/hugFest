@@ -39,8 +39,11 @@ public class StartActivity extends Activity {
             public void onClick(View v) {
                 //name is incompatible
                 if (edtxFirst.getText().length() == 0 || edtxLast.getText().length() == 0){
+//                    Toast.makeText(getApplicationContext(),
+//                            "Please enter a valid name.",
+//                            Toast.LENGTH_SHORT).show();
                     Toast.makeText(getApplicationContext(),
-                            "Please enter a valid name.",
+                            "Assuming debugging.",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
