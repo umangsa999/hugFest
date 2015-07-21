@@ -59,7 +59,6 @@ public class AllTabActivity extends FragmentActivity {
         mFriendFragment.setTabArray(tabs);
         mFriendFragment.setPager(mPagerAdapter);
         mFriendFragment.setAllTabActivity(this);
-
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
 
