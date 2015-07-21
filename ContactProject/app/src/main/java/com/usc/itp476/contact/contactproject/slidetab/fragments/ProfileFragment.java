@@ -1,5 +1,7 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.R;
 
 public class ProfileFragment extends Fragment {
@@ -45,6 +48,7 @@ public class ProfileFragment extends Fragment {
         txvwTotal = (TextView) rootView.findViewById(R.id.txvwTotal);
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
         setListeners();
+        loadSaveData();
         return rootView;
     }
 
@@ -55,6 +59,22 @@ public class ProfileFragment extends Fragment {
                 switchIcon();
             }
         });
+    }
+
+    private void loadSaveData(){
+        SharedPreferences sharedPreferences =
+                getActivity().getSharedPreferences(GameData.PREFFILE, Context.MODE_PRIVATE);
+
+        String name = sharedPreferences.getString(GameData.FULL_NAME, null);
+        int totalhugs = sharedPreferences.getInt(GameData.TOTAL_HUGS, -1);
+
+        if (name != null){
+            txvwName.setText(name);
+        }
+
+        if (totalhugs != -1){
+            txvwTotal.setText(String.valueOf(totalhugs));
+        }
     }
 
     private void switchIcon(){
@@ -69,10 +89,17 @@ public class ProfileFragment extends Fragment {
             txvwName.setVisibility(View.VISIBLE);
             edtxName.setVisibility(View.GONE);
             txvwName.setText(edtxName.getText());
+
+            //save a working name
+            SharedPreferences sharedPreferences =
+                    getActivity().getSharedPreferences(GameData.PREFFILE,
+                            Context.MODE_PRIVATE);
+            SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
+
+            sharedPrefEditor.putString(GameData.FULL_NAME,
+                    txvwName.getText().toString());
+
+            sharedPrefEditor.commit();
         }
     }
-
-
-
-
 }

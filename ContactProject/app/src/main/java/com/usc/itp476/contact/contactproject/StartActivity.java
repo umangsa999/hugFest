@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 public class StartActivity extends Activity {
-    private final String PREFFILE = "com.usc.itp476.contact.contactproject.StartActivity.PREFFILE";
-    private final String USERID = "com.usc.itp476.contact.contactproject.StartActivity.USERID";
     private Button btnStart;
     private EditText edtxFirst;
     private EditText edtxLast;
@@ -22,9 +22,10 @@ public class StartActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFFILE, MODE_PRIVATE);
-        String id = sharedPreferences.getString(USERID, null);
+        SharedPreferences sharedPreferences = getSharedPreferences(GameData.PREFFILE, MODE_PRIVATE);
+        String id = sharedPreferences.getString(GameData.USER_ID, null);
 
+        //the user has already logged in before
         if (id != null){
             goToHome();
         }
@@ -36,6 +37,32 @@ public class StartActivity extends Activity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //name is incompatible
+                if (edtxFirst.getText().length() == 0 || edtxLast.getText().length() == 0){
+                    Toast.makeText(getApplicationContext(),
+                            "Please enter a valid name.",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //TODO Make so that user can continue from last time as opposed to always resetting
+                //save a working name
+                SharedPreferences sharedPreferences =
+                        getSharedPreferences(GameData.PREFFILE, MODE_PRIVATE);
+                SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
+
+                sharedPrefEditor.putString(GameData.FULL_NAME,
+                        edtxFirst.getText().toString() + " " + edtxLast.getText().toString());
+
+                //add a random total hugs for now
+                //TODO set to 0
+                sharedPrefEditor.putInt(GameData.TOTAL_HUGS, (int)(Math.random() * 200));
+
+                //TODO add ID here
+
+                //save the user's name asynchronously
+                sharedPrefEditor.apply();
+
                 goToHome();
             }
         });
