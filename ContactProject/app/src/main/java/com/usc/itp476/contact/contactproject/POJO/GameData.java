@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GameData {
+    final String TAG = this.getClass().getSimpleName();
     public static final String PREFFILE = "com.usc.itp476.contact.contactproject.POJO.GameData.PREFFILE";
     public static final String USER_ID = "com.usc.itp476.contact.contactproject.POJO.GameData.USER_ID";
     public static final String FULL_NAME = "com.usc.itp476.contact.contactproject.POJO.GameData.FULL_NAME";

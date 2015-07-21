@@ -19,13 +19,13 @@ import android.widget.Toast;
 import com.usc.itp476.contact.contactproject.R;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
 public class TargetActivity extends Activity {
     public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject";
+    final String TAG = this.getClass().getSimpleName();
     private TextView txvwCurrentPoints;
     private TextView txvwMaxPoints;
     private ImageView mImageView;
@@ -59,7 +59,6 @@ public class TargetActivity extends Activity {
             }
         });
 
-        mImageView = (ImageView) findViewById(R.id.imageViewResult);
         txvwCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
         txvwMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
         imvwTarget = (ImageView) findViewById(R.id.imvwTarget);
@@ -69,6 +68,7 @@ public class TargetActivity extends Activity {
             @Override
             public void onClick(View view) {
                 dispatchTakePictureIntent();
+                //DispatchtakePicture starts an camera screen intent
             }
         });
 
@@ -83,11 +83,39 @@ public class TargetActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //V only geta thumbnail
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            //setPic();;
-            Uri selectedImage = data.getData();
-            Bitmap mBitmap = null;
-            
-            mImageView.setImageBitmap(mBitmap);
+            setPic();
+        }
+    }
+
+    /** Create a File for saving an image or video */
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        if( isExternalStorageWritable() && isExternalStorageReadable() ) {
+            File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                    + "/Android/data/"
+                    + getApplicationContext().getPackageName()
+                    + "/Files");
+
+            // This location works best if you want the created images to be shared
+            // between applications and persist after your app has been uninstalled.
+            // Create the storage directory if it does not exist
+            if (!mediaStorageDir.exists()) {
+                if (!mediaStorageDir.mkdirs()) {
+                    return null;
+                }
+            }
+            // Create a media file name
+            String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+            File mediaFile;
+            String mImageName = "MI_" + timeStamp + ".jpg";
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+            mCurrentPhotoPath = mediaFile.getAbsolutePath();
+            return mediaFile;
+        }else{
+            Log.wtf( TAG, "External storage not writable or readable" );
+            return null;
         }
     }
 
@@ -113,8 +141,9 @@ public class TargetActivity extends Activity {
         bmOptions.inPurgeable = true;
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        mImageView.setImageBitmap(bitmap);
+        //mImageView.setImageBitmap(bitmap);
         imvwTarget.setVisibility(View.GONE);
+        Log.wtf(TAG, mCurrentPhotoPath);
     }
 
     private void dispatchTakePictureIntent() {
@@ -124,8 +153,10 @@ public class TargetActivity extends Activity {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
+
+                //getOutputMediaFile gets a appropriate, unique filepathname
+                photoFile = getOutputMediaFile();
+            } catch (Exception ex) {
                 // Error occurred while creating the File
                 Log.wtf("TargetActivity", ex.getMessage());
             }
@@ -137,21 +168,24 @@ public class TargetActivity extends Activity {
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            Log.wtf("TA, writable", state);
+            return true;
+        }
+        return false;
+    }
 
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
+    /* Checks if external storage is available to at least read */
+    public boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            Log.wtf("TA, readable", state);
+            return true;
+        }
+        return false;
     }
 
     private void increasePoints(){

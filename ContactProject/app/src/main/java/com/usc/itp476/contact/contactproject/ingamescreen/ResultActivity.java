@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.usc.itp476.contact.contactproject.R;
 
 public class ResultActivity extends Activity {
+    final String TAG = this.getClass().getSimpleName();
     private ImageView winnerImage, leftImage, middleImage, rightImage;
     private TextView winnerName, leftName, middleName, rightName;
 

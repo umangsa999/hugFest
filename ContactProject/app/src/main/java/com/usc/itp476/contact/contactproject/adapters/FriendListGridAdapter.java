@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 public class FriendListGridAdapter extends BaseAdapter {
 
+    final String TAG = this.getClass().getSimpleName();
     //private Context mContext;
     String[] points;
     Context context;

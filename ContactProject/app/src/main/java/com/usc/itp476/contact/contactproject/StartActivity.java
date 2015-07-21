@@ -13,6 +13,7 @@ import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 public class StartActivity extends Activity {
+    final String TAG = this.getClass().getSimpleName();
     private Button btnStart;
     private EditText edtxFirst;
     private EditText edtxLast;

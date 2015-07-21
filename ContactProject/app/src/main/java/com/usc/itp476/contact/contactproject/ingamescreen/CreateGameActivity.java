@@ -16,6 +16,7 @@ import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 
 public class CreateGameActivity extends Activity {
+    final String TAG = this.getClass().getSimpleName();
     private Button btnCreate;
     private TextView txvwMax;
     private SeekBar skbrMax;
