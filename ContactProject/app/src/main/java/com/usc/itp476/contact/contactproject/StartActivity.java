@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseUser;
+import com.parse.ParseException;
 import com.parse.SignUpCallback;
 import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
