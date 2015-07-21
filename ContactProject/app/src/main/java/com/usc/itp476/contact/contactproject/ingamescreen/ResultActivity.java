@@ -1,6 +1,7 @@
 package com.usc.itp476.contact.contactproject.ingamescreen;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,5 +27,12 @@ public class ResultActivity extends Activity {
         leftName = (TextView) findViewById(R.id.resultsLeftName);
         middleName = (TextView) findViewById(R.id.resultsMiddleName);
         rightName = (TextView) findViewById(R.id.resultsRightName);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(TargetActivity.RETURN_FROM_RESULT, intent);
+        finish();
     }
 }

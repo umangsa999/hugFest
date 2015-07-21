@@ -26,6 +26,8 @@ import java.util.Date;
 public class TargetActivity extends Activity {
     public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject";
     final String TAG = this.getClass().getSimpleName();
+    public static final int RETURN_FROM_RESULT = 80085;
+    public static final int REQUEST_ACKNOWLEDGE_RESULT = 7236;
     private TextView txvwCurrentPoints;
     private TextView txvwMaxPoints;
     private ImageView mImageView;
@@ -82,9 +84,11 @@ public class TargetActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //V only geta thumbnail
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) 
             setPic();
-        }
+        else if (resultCode == RETURN_FROM_RESULT)
+            finish();
+       
     }
 
     /** Create a File for saving an image or video */
@@ -197,7 +201,7 @@ public class TargetActivity extends Activity {
     private void checkWin(){
         if (current == max){
             Intent i = new Intent(getApplicationContext(), ResultActivity.class);
-            startActivity(i);
+            startActivityForResult(i, REQUEST_ACKNOWLEDGE_RESULT);
         }
     }
 
