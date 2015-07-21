@@ -84,11 +84,11 @@ public class TargetActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //V only geta thumbnail
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) 
-            setPic();
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
+            //TODO upload pic to server & shit
+        }
         else if (resultCode == RETURN_FROM_RESULT)
             finish();
-       
     }
 
     /** Create a File for saving an image or video */
@@ -124,30 +124,21 @@ public class TargetActivity extends Activity {
     }
 
     //use this for lower memory (probably need for gridview friends)
-    private void setPic() {
-        // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
-
+    private Bitmap convertToBM() {
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
-
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
+        //int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
+        //bmOptions.inSampleSize = scaleFactor;
         bmOptions.inPurgeable = true;
-
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        //mImageView.setImageBitmap(bitmap);
-        imvwTarget.setVisibility(View.GONE);
-        Log.wtf(TAG, mCurrentPhotoPath);
+        return bitmap;
     }
 
     private void dispatchTakePictureIntent() {
