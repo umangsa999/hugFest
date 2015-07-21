@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
@@ -69,11 +68,6 @@ public class AllTabActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
 
-        String temp = "false";
-        if( mProfileFragment.mFriendProfile){
-            temp = "true";
-        }
-        Log.wtf("AllTabActivity", "mPager:currentItem = "+ mPager.getCurrentItem() + " & " + temp );
         if (mPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
@@ -81,13 +75,6 @@ public class AllTabActivity extends FragmentActivity {
         } else if( mPager.getCurrentItem() == 1 & mProfileFragment.mFriendProfile ){
             //if the user has clicked to view one of his friend's profile in friendsfragment then we want to
             //set the the current fragment back to the gridview of his friends
-
-            //destroy the profile fragment
-            //Fragment profileFragment = tabs.get(1);
-            //FragmentManager manager = profileFragment.getFragmentManager();
-            //FragmentTransaction trans = manager.beginTransaction();
-            //trans.remove( profileFragment );
-            //trans.commit();
 
             tabs.set(1, mFriendFragment );
             mPagerAdapter.notifyDataSetChanged();

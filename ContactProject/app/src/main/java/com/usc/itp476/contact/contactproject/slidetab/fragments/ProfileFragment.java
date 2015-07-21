@@ -18,7 +18,7 @@ public class ProfileFragment extends Fragment {
     private TextView txvwName;
     private TextView txvwTotal;
     private EditText edtxName;
-    private ImageView imgPhoto;
+    private ImageView imgPhoto = null;
     private boolean isEditing = false;
     public boolean mFriendProfile = false;
     public void setName(String name){
@@ -36,12 +36,15 @@ public class ProfileFragment extends Fragment {
                 R.layout.activity_profile, container, false);
 
         imbnEdit = (ImageButton) rootView.findViewById(R.id.btnEdit);
+
+        if( mFriendProfile )
+            imbnEdit.setVisibility(View.GONE);
+
         imgPhoto = (ImageView) rootView.findViewById(R.id.imvwPhoto);
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
         txvwTotal = (TextView) rootView.findViewById(R.id.txvwTotal);
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
         setListeners();
-
         return rootView;
     }
 
