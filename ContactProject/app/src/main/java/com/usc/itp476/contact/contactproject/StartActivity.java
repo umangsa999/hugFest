@@ -42,10 +42,10 @@ public class StartActivity extends Activity {
 //                    Toast.makeText(getApplicationContext(),
 //                            "Please enter a valid name.",
 //                            Toast.LENGTH_SHORT).show();
+//                    return;
                     Toast.makeText(getApplicationContext(),
                             "Assuming debugging.",
                             Toast.LENGTH_SHORT).show();
-                    return;
                 }
 
                 //TODO Make so that user can continue from last time as opposed to always resetting

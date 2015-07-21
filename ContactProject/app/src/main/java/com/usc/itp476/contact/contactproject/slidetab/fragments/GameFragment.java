@@ -62,6 +62,7 @@ public class GameFragment extends Fragment
                 getChildFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.mapHolder, mapFragment);
         fragmentTransaction.commit();
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -74,35 +75,38 @@ public class GameFragment extends Fragment
 
         btnGame = (ImageButton) rootView.findViewById(R.id.btnGame);
 
-        //returning to this fragment after sliding to another
-        if (map != null){
-            map.clear();
-        }else if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }//TODO make sure this is same map as last time
+        //TODO make sure this is same map as last time
         //TODO it seems to just create new since getMapAsync again
 
         btnGame.setBackgroundResource(R.mipmap.ic_create);
 
         //async call to create and set up map.
         assignListeners();
-        return rootView;
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
         if (map != null) {
             createRadius();
             findPoints();
+        }else if (mapFragment != null){
+            map = mapFragment.getMap();
+        }else{
+            mapFragment = SupportMapFragment.newInstance();
+            FragmentTransaction fragmentTransaction =
+                    getChildFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.mapHolder, mapFragment);
+            fragmentTransaction.commit();
+            mapFragment.getMapAsync(this);
         }
+
+        return rootView;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        map.clear();
-        markerToGame.clear();
+        if (map != null) {
+            map.clear();
+            markerToGame.clear();
+        }
     }
 
     @Override
@@ -202,8 +206,7 @@ public class GameFragment extends Fragment
     private boolean checkDistance(LatLng markerPoint) {
         double distance = Math.sqrt(Math.pow(myLoc.latitude - markerPoint.latitude, 2) +
                 Math.pow(myLoc.longitude - markerPoint.longitude, 2));
-        boolean result = maxDistance >= distance;
-        return result;
+        return maxDistance >= distance;
     }
 
     private void assignListeners(){
