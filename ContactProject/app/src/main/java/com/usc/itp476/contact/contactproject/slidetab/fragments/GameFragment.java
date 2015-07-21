@@ -74,22 +74,35 @@ public class GameFragment extends Fragment
 
         btnGame = (ImageButton) rootView.findViewById(R.id.btnGame);
 
+        //returning to this fragment after sliding to another
         if (map != null){
             map.clear();
-        }
-
-        //returning to this fragment after sliding to another
-        if (map == null && mapFragment != null) {
-            map = mapFragment.getMap();
+        }else if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
         }//TODO make sure this is same map as last time
         //TODO it seems to just create new since getMapAsync again
 
         btnGame.setBackgroundResource(R.mipmap.ic_create);
 
         //async call to create and set up map.
-        mapFragment.getMapAsync(this);
         assignListeners();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (map != null) {
+            createRadius();
+            findPoints();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        map.clear();
+        markerToGame.clear();
     }
 
     @Override
