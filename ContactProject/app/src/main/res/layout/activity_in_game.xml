@@ -71,6 +71,16 @@
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageViewResult"
+        android:src="@mipmap/large"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -80,5 +90,18 @@
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/imvwTarget"
         android:layout_alignEnd="@+id/imvwTarget" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take Picture"
+        android:id="@+id/buttonTakePicture"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/txvwMaxScore"
+        android:layout_alignEnd="@+id/txvwMaxScore" />
+
+
 
 </RelativeLayout>
