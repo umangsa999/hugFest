@@ -1,12 +1,168 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="16dp"
+    android:paddingRight="32dp"
+    android:paddingLeft="32dp"
     tools:context="com.usc.itp476.contact.contactproject.ingamescreen.ResultActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Winner"
+        android:id="@+id/textView"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="32sp"
+        android:text="Nathan Greenfield"
+        android:id="@+id/resultsWinnerName"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="-4dp"
+        android:layout_marginBottom="2dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/resultsWinnerImage"
+        android:layout_below="@+id/resultsWinnerName"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@mipmap/large"
+        android:layout_marginTop="-2dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="So close..."
+        android:textSize="20sp"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/resultsWinnerImage"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="-8dp"
+        android:layout_centerHorizontal="true" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="-8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Raymond Kim"
+                android:id="@+id/resultsLeftName"
+                android:layout_alignLeft="@+id/resultsLeftImage"
+                android:layout_alignStart="@+id/resultsLeftImage"
+                android:layout_alignRight="@+id/resultsLeftImage"
+                android:layout_alignEnd="@+id/resultsLeftImage"
+                android:gravity="center_horizontal"
+                android:layout_below="@+id/resultsLeftImage"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/resultsLeftImage"
+                android:src="@mipmap/medium"
+                android:adjustViewBounds="true"
+                android:maxWidth="105dp"
+                android:minWidth="105dp"
+                android:maxHeight="105dp"
+                android:minHeight="105dp"
+                android:scaleType="centerInside"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Mike Lee"
+                android:layout_alignLeft="@+id/resultsMiddleImage"
+                android:layout_alignStart="@+id/resultsMiddleImage"
+                android:layout_alignRight="@+id/resultsMiddleImage"
+                android:layout_alignEnd="@+id/resultsMiddleImage"
+                android:gravity="center_horizontal"
+                android:id="@+id/resultsMiddleName"
+                android:layout_below="@+id/resultsMiddleImage"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/resultsMiddleImage"
+                android:src="@mipmap/medium"
+                android:adjustViewBounds="true"
+                android:maxWidth="105dp"
+                android:minWidth="105dp"
+                android:maxHeight="105dp"
+                android:minHeight="105dp"
+                android:scaleType="centerInside"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/resultsRightImage"
+                android:src="@mipmap/medium"
+                android:adjustViewBounds="true"
+                android:maxWidth="105dp"
+                android:minWidth="105dp"
+                android:maxHeight="105dp"
+                android:minHeight="105dp"
+                android:scaleType="centerInside"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Ryan Zhou"
+                android:id="@+id/resultsRightName"
+                android:layout_alignLeft="@+id/resultsRightImage"
+                android:layout_alignStart="@+id/resultsRightImage"
+                android:layout_alignRight="@+id/resultsRightImage"
+                android:layout_alignEnd="@+id/resultsRightImage"
+                android:gravity="center_horizontal"
+                android:layout_below="@+id/resultsRightImage"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>
