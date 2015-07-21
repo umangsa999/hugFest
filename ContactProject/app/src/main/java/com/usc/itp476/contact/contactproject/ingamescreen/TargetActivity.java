@@ -26,6 +26,8 @@ import java.util.Date;
 
 public class TargetActivity extends Activity {
     public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject";
+    public static final int RETURN_FROM_RESULT = 80085;
+    public static final int REQUEST_ACKNOWLEDGE_RESULT = 7236;
     private TextView txvwCurrentPoints;
     private TextView txvwMaxPoints;
     private ImageView mImageView;
@@ -88,6 +90,8 @@ public class TargetActivity extends Activity {
             Bitmap mBitmap = null;
             
             mImageView.setImageBitmap(mBitmap);
+        }else if (resultCode == RETURN_FROM_RESULT){
+            finish();
         }
     }
 
@@ -163,7 +167,7 @@ public class TargetActivity extends Activity {
     private void checkWin(){
         if (current == max){
             Intent i = new Intent(getApplicationContext(), ResultActivity.class);
-            startActivity(i);
+            startActivityForResult(i, REQUEST_ACKNOWLEDGE_RESULT);
         }
     }
 
