@@ -9,17 +9,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.games.Game;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -30,15 +27,19 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.usc.itp476.contact.contactproject.POJO.GameData;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GameFragment extends Fragment
         implements GoogleMap.InfoWindowAdapter, OnMapReadyCallback {
@@ -51,7 +52,7 @@ public class GameFragment extends Fragment
     private final int maxDistanceDraw = 700;
     private final double maxDistance = 0.0075;
     private final int backgroundColor = Color.argb(128, 0, 128, 128);
-    private HashMap<Marker, GameData> markerToGame;
+    private HashMap<Marker, GameMarker> markerToGame;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,6 +102,15 @@ public class GameFragment extends Fragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (map != null) {
+            createRadius();
+            findPoints();
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (map != null) {
@@ -134,6 +144,15 @@ public class GameFragment extends Fragment
             }
         });
 
+        setupLocationChecks();
+        //make sure the create button is still at top
+        btnGame.bringToFront();
+        rootView.requestLayout();
+        rootView.invalidate();
+        setLocationListener();
+    }
+
+    private void setupLocationChecks(){
         LocationManager LocMan =
                 (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location loc = LocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -149,49 +168,34 @@ public class GameFragment extends Fragment
             Toast.makeText(GameFragment.this.getActivity().getApplicationContext(),
                     "No connection to find games.", Toast.LENGTH_SHORT).show();
         }
-
-        //make sure the create button is still at top
-        btnGame.bringToFront();
-        rootView.requestLayout();
-        rootView.invalidate();
-        setLocationListener();
     }
 
     //this method is suppose to do server call to find games
     private void findPoints() {
-        addPoint(myLoc.latitude + 0.001, myLoc.longitude + 0.001,
-                new GameData("1234", "Chris Lee", "5:00pm", 1));
-        addPoint(myLoc.latitude + 0.002, myLoc.longitude - 0.001,
-                new GameData("2345", "Ryan Zhou", "12:00pm", 20));
-        addPoint(myLoc.latitude + 0.001, myLoc.longitude + 0.004,
-                new GameData("3456", "Mike Lee", "8:00am", 2));
-        addPoint(myLoc.latitude + 0.012, myLoc.longitude + 0.001,
-                new GameData("4567", "Nathan Greenfield", "10:00pm", 16));
-        addPoint(myLoc.latitude + 0.002, myLoc.longitude - 0.011,
-                new GameData("5678", "Paulina Gray", "7:00pm", 18));
-        addPoint(myLoc.latitude + 0.031, myLoc.longitude + 0.024,
-                new GameData("6789", "Raymond Kim", "4:00pm", 5));
-        addPoint(myLoc.latitude + 0.003, myLoc.longitude + 0.007,
-                new GameData("7890", "Rob Parke", "10:00am", 15));
-        addPoint(myLoc.latitude - 0.005, myLoc.longitude + 0.002,
-                new GameData("0987", "Michael Crowley", "5:00pm", 20));
-        addPoint(myLoc.latitude - 0.008, myLoc.longitude - 0.003,
-                new GameData("9876", "Trina Gregory", "7:45pm", 14));
-        addPoint(myLoc.latitude - 0.002, myLoc.longitude - 0.004,
-                new GameData("8765", "Sanjay Madhav", "2:30am", 8));
-        addPoint(myLoc.latitude, myLoc.longitude - 0.005,
-                new GameData("7654", "Andy Tse", "1:00pm", 3));
-        addPoint(myLoc.latitude - 0.007, myLoc.longitude - 0.003,
-                new GameData("6543", "Manjot Chahal", "2:10pm", 13));
-        addPoint(myLoc.latitude + 0.008, myLoc.longitude - 0.001,
-                new GameData("5432", "Ura Shurty", "11:00pm", 1));
-        addPoint(myLoc.latitude + 0.004, myLoc.longitude - 0.002,
-                new GameData("4321", "Inna Peench", "1:00am", 7));
+        ParseGeoPoint myLocParse = new ParseGeoPoint(myLoc.latitude, myLoc.longitude);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Marker");
+        query.whereNotEqualTo("host", ParseUser.getCurrentUser() );
+        query.whereWithinRadians("start", myLocParse, maxDistance);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e != null || list.size() < 1){
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Could find any games nearby", Toast.LENGTH_SHORT).show();
+                }else{
+                    for (ParseObject p : list){
+                        addPoint(p);
+                    }
+                }
+            }
+        });
     }
 
     //this may switch to taking in a LatLng depending on API
-    private void addPoint(double lat, double lng, GameData d){
-        LatLng markerPoint = new LatLng(lat, lng);
+    private void addPoint(ParseObject p){
+        GameMarker gm = (GameMarker) p;
+        LatLng markerPoint = new LatLng(gm.getLocation().getLatitude(),
+                gm.getLocation().getLongitude());
         //only add if the start location is within our radius
         if (checkDistance(markerPoint)) {
             markerToGame.put(map.addMarker(new MarkerOptions()
@@ -199,7 +203,7 @@ public class GameFragment extends Fragment
                     .draggable(false)
                     .icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_RED)))
-            ,d);
+            ,gm);
         }
     }
 
@@ -278,13 +282,13 @@ public class GameFragment extends Fragment
 
         TextView name = (TextView) view.findViewById(R.id.infoWindowName);
         TextView players = (TextView) view.findViewById(R.id.infoWindowNumPlayer);
-        TextView endTime = (TextView) view.findViewById(R.id.infoWindowEndTime);
+        TextView points = (TextView) view.findViewById(R.id.infoWindowPointsToWin);
         ImageView image = (ImageView) view.findViewById(R.id.infoWindowImage);
 
-        GameData data = markerToGame.get(marker);
+        GameMarker data = markerToGame.get(marker);
         name.setText(data.getHostName());
+        points.setText(String.valueOf(data.getPoints()));
         players.setText(String.valueOf(data.getPlayerCount()));
-        endTime.setText(data.getEndTime());
         //TODO make images dynamic
 
         return view;

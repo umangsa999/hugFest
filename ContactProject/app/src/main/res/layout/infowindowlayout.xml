@@ -38,7 +38,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ends:"
+                android:text="Points to win:"
                 android:id="@+id/textView6"
                 android:layout_marginRight="4dp"
                 style="@style/TextAppearance.AppCompat.Large"
@@ -47,8 +47,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5:30pm"
-                android:id="@+id/infoWindowEndTime"
+                android:text="20"
+                android:id="@+id/infoWindowPointsToWin"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:textSize="26dp" />
         </LinearLayout>

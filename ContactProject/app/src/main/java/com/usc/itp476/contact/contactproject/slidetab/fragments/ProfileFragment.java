@@ -12,7 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.usc.itp476.contact.contactproject.POJO.GameData;
+import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 
 public class ProfileFragment extends Fragment {
@@ -63,10 +63,10 @@ public class ProfileFragment extends Fragment {
 
     private void loadSaveData(){
         SharedPreferences sharedPreferences =
-                getActivity().getSharedPreferences(GameData.PREFFILE, Context.MODE_PRIVATE);
+                getActivity().getSharedPreferences(GameMarker.PREFFILE, Context.MODE_PRIVATE);
 
-        String name = sharedPreferences.getString(GameData.FULL_NAME, null);
-        int totalhugs = sharedPreferences.getInt(GameData.TOTAL_HUGS, -1);
+        String name = sharedPreferences.getString(GameMarker.FULL_NAME, null);
+        int totalhugs = sharedPreferences.getInt(GameMarker.TOTAL_HUGS, -1);
 
         if (name != null){
             txvwName.setText(name);
@@ -92,11 +92,11 @@ public class ProfileFragment extends Fragment {
 
             //save a working name
             SharedPreferences sharedPreferences =
-                    getActivity().getSharedPreferences(GameData.PREFFILE,
+                    getActivity().getSharedPreferences(GameMarker.PREFFILE,
                             Context.MODE_PRIVATE);
             SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
 
-            sharedPrefEditor.putString(GameData.FULL_NAME,
+            sharedPrefEditor.putString(GameMarker.FULL_NAME,
                     txvwName.getText().toString());
 
             sharedPrefEditor.commit();
