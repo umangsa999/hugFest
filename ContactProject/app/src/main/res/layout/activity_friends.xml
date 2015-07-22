@@ -39,4 +39,10 @@
         android:layout_marginBottom="16dp"
         android:background="@mipmap/ic_launcher" />
 
+    <!--<com.mopub.mobileads.MoPubView-->
+        <!--android:id="@+id/mopub_sample_ad"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="50dp"/>-->
+
 </RelativeLayout>

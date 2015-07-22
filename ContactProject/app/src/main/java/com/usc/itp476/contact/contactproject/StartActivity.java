@@ -14,6 +14,11 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.crashlytics.android.Crashlytics;
+import com.digits.sdk.android.AuthCallback;
+import com.digits.sdk.android.DigitsAuthButton;
+import com.digits.sdk.android.DigitsException;
+import com.digits.sdk.android.DigitsSession;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -23,6 +28,14 @@ import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.common.SignInButton;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
@@ -30,15 +43,24 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
 
+import io.fabric.sdk.android.Fabric;
+
 public class StartActivity extends FragmentActivity {
+
+    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    private static final String TWITTER_KEY = "Ai9qe71kw0YSzWrsOhsqOGzJB";
+    private static final String TWITTER_SECRET = "VRYJY0hRozcEupHlTNus18RbSxiLE5ioKkVCRZmjUF4ErKqL59";
+
     final String TAG = this.getClass().getSimpleName();
     private Button btnStart;
     private EditText edtxFirst;
     private EditText edtxLast;
+    private SignInButton loginGoogle;
     final List<String> permissions = Arrays.asList("public_profile", "user_friends");
-    private LoginButton loginButton;
+    private LoginButton loginButtonFacebook;
     private CallbackManager mCallbackManager;
     private FacebookCallback<LoginResult> mCallback;
+    private TwitterLoginButton loginButtonTwitter;
 
     @Override
     protected void onPause() {
@@ -84,8 +106,42 @@ public class StartActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig), new Crashlytics());
         FacebookSdk.sdkInitialize(this.getApplicationContext());
+        //findViewById(R.id.sign_in_button).setOnClickListener(this);
         setContentView(R.layout.activity_start);
+
+        DigitsAuthButton digitsButton = (DigitsAuthButton) findViewById(R.id.auth_button);
+        digitsButton.setCallback(new AuthCallback() {
+            @Override
+            public void success(DigitsSession session, String phoneNumber) {
+                // Do something with the session and phone number
+                Log.wtf(TAG, "DigitsAuth success");
+            }
+
+            @Override
+            public void failure(DigitsException exception) {
+                // Do something on failure
+                Log.wtf(TAG, "DigitsAuth Fail");
+            }
+        });
+
+        loginButtonTwitter = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
+
+        loginButtonTwitter.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                // Do something with result, which provides a TwitterSession for making API calls
+                Log.wtf(TAG, "Twitter success");
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                // Do something on failure
+                Log.wtf(TAG, "Twitter fail");
+            }
+        });
 
         mCallback = new FacebookCallback<LoginResult>() {
             @Override
@@ -110,10 +166,10 @@ public class StartActivity extends FragmentActivity {
         };
 
         mCallbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButtonFacebook = (LoginButton) findViewById(R.id.login_button);
         //loginButton.setFragment(this);
-        loginButton.setReadPermissions(permissions);
-        loginButton.registerCallback( mCallbackManager, mCallback );
+        loginButtonFacebook.setReadPermissions(permissions);
+        loginButtonFacebook.registerCallback(mCallbackManager, mCallback );
 
         Log.wtf(TAG, printKeyHash(this));
 //
@@ -229,6 +285,8 @@ public class StartActivity extends FragmentActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult( requestCode, resultCode, data);
+        loginButtonTwitter.onActivityResult(requestCode, resultCode, data);
+
     }
     private void goToHome(){
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
