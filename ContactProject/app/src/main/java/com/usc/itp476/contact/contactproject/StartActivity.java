@@ -8,14 +8,36 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.util.Log;
 
+import com.facebook.FacebookSdk;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.SignUpCallback;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.digits.sdk.android.AuthCallback;
+import com.digits.sdk.android.DigitsAuthButton;
+import com.digits.sdk.android.DigitsException;
+import com.digits.sdk.android.DigitsSession;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.Profile;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 public class StartActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
@@ -25,10 +47,16 @@ public class StartActivity extends Activity {
     private EditText edtxPass;
     private String name;
     private String pass;
+    final List<String> permissions = Arrays.asList("public_profile", "user_friends");
+    private LoginButton loginButtonFacebook;
+    private CallbackManager mCallbackManager;
+    private FacebookCallback<LoginResult> mCallback;
+    private TwitterLoginButton loginButtonTwitter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_start);
 
         //todo this might not be necessary with Parse local datastore
@@ -48,6 +76,12 @@ public class StartActivity extends Activity {
         edtxFirst = (EditText) findViewById(R.id.edtxFirst);
         edtxLast = (EditText) findViewById(R.id.edtxLast);
         edtxPass = (EditText) findViewById(R.id.edtxPassword);
+        loginButtonTwitter = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
+        loginButtonFacebook = (LoginButton) findViewById(R.id.login_button);
+
+        createDigitButton();
+        createTwitterCallback();
+        createFacebookCallback();
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +89,87 @@ public class StartActivity extends Activity {
                 check();
             }
         });
+        Log.wtf(TAG, ContactApplication.printKeyHash(this));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(StartActivity.this);
+    }
+
+    //Causes app to crash
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(StartActivity.this);
+    }
+
+    //Called when facebook is done
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult( requestCode, resultCode, data);
+        loginButtonTwitter.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void createDigitButton(){
+        DigitsAuthButton digitsButton = (DigitsAuthButton) findViewById(R.id.auth_button);
+        digitsButton.setCallback(new AuthCallback() {
+            @Override
+            public void success(DigitsSession session, String phoneNumber) {
+                // Do something with the session and phone number
+                Log.wtf(TAG, "DigitsAuth success");
+            }
+
+            @Override
+            public void failure(DigitsException exception) {
+                // Do something on failure
+                Log.wtf(TAG, "DigitsAuth Fail");
+            }
+        });
+    }
+
+    private void createTwitterCallback(){
+        loginButtonTwitter.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                // Do something with result, which provides a TwitterSession for making API calls
+                Log.wtf(TAG, "Twitter success");
+            }
+            @Override
+            public void failure(TwitterException exception) {
+                // Do something on failure
+                Log.wtf(TAG, "Twitter fail");
+            }
+        });
+    }
+
+    private void createFacebookCallback(){
+        mCallback = new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.wtf(TAG, "Facebook success");
+                AccessToken accessToken = loginResult.getAccessToken();
+                Profile profile = Profile.getCurrentProfile();
+                if( profile != null){
+                    Log.wtf(TAG, profile.getFirstName() + " "+ profile.getLastName() );
+                }
+            }
+            @Override
+            public void onCancel() {
+                Log.wtf(TAG, "cancel");
+            }
+            @Override
+            public void onError(FacebookException e) {
+                Log.wtf(TAG, "error");
+            }
+        };
+        mCallbackManager = CallbackManager.Factory.create();
+        loginButtonFacebook.setReadPermissions(permissions);
+        loginButtonFacebook.registerCallback(mCallbackManager, mCallback );
     }
 
     private void check(){
