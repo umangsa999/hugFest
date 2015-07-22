@@ -1,5 +1,6 @@
 package com.usc.itp476.contact.contactproject.slidetab;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +10,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.GameFragment;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileFragment;
@@ -83,7 +85,9 @@ public class AllTabActivity extends FragmentActivity {
         if (mPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed();
+            Intent i = new Intent();
+            setResult(StartActivity.RESULT_ALLTABS_QUIT_STAY_LOGIN, i);
+            finish();
         } else if( mPager.getCurrentItem() == 1 && mProfileFragment.mFriendProfile ){
             //if the user has clicked to view one of his friend's profile in friendsfragment then we want to
             //set the the current fragment back to the gridview of his friends

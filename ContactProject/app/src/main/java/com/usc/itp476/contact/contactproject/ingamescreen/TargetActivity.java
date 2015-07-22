@@ -89,8 +89,9 @@ public class TargetActivity extends Activity {
             convertToBM();
             //TODO upload pic to server
         }
-        else if (resultCode == RETURN_FROM_RESULT)
+        else if (resultCode == RETURN_FROM_RESULT) {
             finish();
+        }
     }
 
     /** Create a File for saving an image or video */

@@ -41,6 +41,8 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 public class StartActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
+    public static final int REQUEST_START_GAME = 1939;
+    public static final int RESULT_ALLTABS_QUIT_STAY_LOGIN = 1945;
     private Button btnStart;
     private EditText edtxFirst;
     private EditText edtxLast;
@@ -89,7 +91,6 @@ public class StartActivity extends Activity {
                 check();
             }
         });
-        Log.wtf(TAG, ContactApplication.printKeyHash(this));
     }
 
     @Override
@@ -110,9 +111,12 @@ public class StartActivity extends Activity {
     //Called when facebook is done
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult( requestCode, resultCode, data);
-        loginButtonTwitter.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_ALLTABS_QUIT_STAY_LOGIN){
+            finish();
+        }else{
+            mCallbackManager.onActivityResult( requestCode, resultCode, data);
+            loginButtonTwitter.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void createDigitButton(){
@@ -239,6 +243,6 @@ public class StartActivity extends Activity {
 
     private void goToHome(){
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
-        startActivity(i);
+        startActivityForResult(i, REQUEST_START_GAME);
     }
 }
