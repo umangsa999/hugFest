@@ -1,7 +1,5 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,9 +9,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.usc.itp476.contact.contactproject.POJO.GameMarker;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+
+import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
@@ -24,12 +30,16 @@ public class ProfileFragment extends Fragment {
     private ImageView imgPhoto = null;
     private boolean isEditing = false;
     public boolean mFriendProfile = false;
+    private AllTabActivity myParent = null;
+    private String friendID = null;
     public void setName(String name){
         txvwTotal.setText(name);
     }
 
-    public void friendProfileTrue(){
+    public void friendProfileTrue(String id, AllTabActivity parent){
         mFriendProfile = true;
+        myParent = parent;
+        friendID = id;
     }
 
     @Override
@@ -39,16 +49,19 @@ public class ProfileFragment extends Fragment {
                 R.layout.activity_profile, container, false);
 
         imbnEdit = (ImageButton) rootView.findViewById(R.id.btnEdit);
-
-        if( mFriendProfile )
-            imbnEdit.setVisibility(View.GONE);
-
         imgPhoto = (ImageView) rootView.findViewById(R.id.imvwPhoto);
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
         txvwTotal = (TextView) rootView.findViewById(R.id.txvwTotal);
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
-        setListeners();
-        loadSaveData();
+
+        if( mFriendProfile ) {
+            imbnEdit.setVisibility(View.GONE);
+            loadFriendSaveData();
+        }else {
+            setListeners();
+            loadMySaveData();
+        }
+
         return rootView;
     }
 
@@ -61,20 +74,43 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void loadSaveData(){
-        SharedPreferences sharedPreferences =
-                getActivity().getSharedPreferences(GameMarker.PREFFILE, Context.MODE_PRIVATE);
+    private void loadFriendSaveData(){
+        ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
+        friendQuery.whereEqualTo("objectId", friendID);
+        friendQuery.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> list, ParseException e) {
+                if (e != null || list.size() != 1){
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Could not find friend",
+                            Toast.LENGTH_SHORT).show();
+                    myParent.returnToList();
+                }else{
+                    ParseUser u = list.get(0);
+                    txvwTotal.setText(String.valueOf(u.getInt("totalHugs")));
+                    txvwName.setText(u.getUsername());
+                }
+            }
+        });
+    }
 
-        String name = sharedPreferences.getString(GameMarker.FULL_NAME, null);
-        int totalhugs = sharedPreferences.getInt(GameMarker.TOTAL_HUGS, -1);
-
-        if (name != null){
-            txvwName.setText(name);
-        }
-
-        if (totalhugs != -1){
-            txvwTotal.setText(String.valueOf(totalhugs));
-        }
+    private void loadMySaveData(){
+//        SharedPreferences sharedPreferences =
+//                getActivity().getSharedPreferences(GameMarker.PREFFILE, Context.MODE_PRIVATE);
+//
+//        String name = sharedPreferences.getString(GameMarker.FULL_NAME, null);
+//        int totalhugs = sharedPreferences.getInt(GameMarker.TOTAL_HUGS, -1);
+//
+//        if (name != null){
+//            txvwName.setText(name);
+//        }
+//
+//        if (totalhugs != -1){
+//            txvwTotal.setText(String.valueOf(totalhugs));
+//        }
+        ParseUser display = ParseUser.getCurrentUser();
+        txvwName.setText(display.getUsername());
+        txvwTotal.setText(String.valueOf(display.getInt("totalHugs")));
     }
 
     private void switchIcon(){
@@ -91,15 +127,33 @@ public class ProfileFragment extends Fragment {
             txvwName.setText(edtxName.getText());
 
             //save a working name
-            SharedPreferences sharedPreferences =
-                    getActivity().getSharedPreferences(GameMarker.PREFFILE,
-                            Context.MODE_PRIVATE);
-            SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
-
-            sharedPrefEditor.putString(GameMarker.FULL_NAME,
-                    txvwName.getText().toString());
-
-            sharedPrefEditor.commit();
+//            //TODO incorporate this for
+//            SharedPreferences sharedPreferences =
+//                    getActivity().getSharedPreferences(GameMarker.PREFFILE,
+//                            Context.MODE_PRIVATE);
+//            SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
+//
+//            sharedPrefEditor.putString(GameMarker.FULL_NAME,
+//                    txvwName.getText().toString());
+//
+//            sharedPrefEditor.commit();
+            if (!mFriendProfile){
+                ParseUser update = ParseUser.getCurrentUser();
+                update.put("username", txvwName.getText().toString());
+                update.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        Toast t = new Toast(getActivity().getApplicationContext());
+                        t.setDuration(Toast.LENGTH_SHORT);
+                        if (e == null){
+                            t.setText("Could not update your name.");
+                        }else{
+                            t.setText("Name updated!");
+                        }
+                        t.show();
+                    }
+                });
+            }
         }
     }
 }

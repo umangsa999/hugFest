@@ -54,14 +54,27 @@ public class AllTabActivity extends FragmentActivity {
         mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
         mPager.setAdapter(mPagerAdapter);
 
-        mFriendFragment.setPager(mPager);
-        mFriendFragment.setpFrag( mProfileFragment );
-        mFriendFragment.setTabArray(tabs);
-        mFriendFragment.setPager(mPagerAdapter);
         mFriendFragment.setAllTabActivity(this);
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
+    }
 
+    public void showFriendProfile(String id){
+        //setting the middle tab to profile of a friend
+        mProfileFragment = new ProfileFragment();
+        mProfileFragment.friendProfileTrue(id, this);
+        tabs.set(1, mProfileFragment);
+        mPagerAdapter.notifyDataSetChanged();
+        mPager.setAdapter(mPagerAdapter);
+        mPager.setCurrentItem( 1 );
+    }
+
+    public void returnToList(){
+        tabs.set(1, mFriendFragment);
+        mProfileFragment = null;
+        mPagerAdapter.notifyDataSetChanged();
+        mPager.setAdapter(mPagerAdapter);
+        mPager.setCurrentItem( 1 );
     }
 
     @Override
@@ -71,14 +84,11 @@ public class AllTabActivity extends FragmentActivity {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
-        } else if( mPager.getCurrentItem() == 1 & mProfileFragment.mFriendProfile ){
+        } else if( mPager.getCurrentItem() == 1 && mProfileFragment.mFriendProfile ){
             //if the user has clicked to view one of his friend's profile in friendsfragment then we want to
             //set the the current fragment back to the gridview of his friends
 
-            tabs.set(1, mFriendFragment );
-            mPagerAdapter.notifyDataSetChanged();
-            mPager.setAdapter(mPagerAdapter);
-            mPager.setCurrentItem( 1 );
+            returnToList();
         }
         else {
             // Otherwise, select the previous step.

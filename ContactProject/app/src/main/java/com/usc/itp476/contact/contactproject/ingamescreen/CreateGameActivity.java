@@ -48,7 +48,7 @@ public class CreateGameActivity extends Activity {
 
         // Instance of ImageAdapter Class
         gridView.setAdapter(new FriendListGridAdapter( getApplicationContext(),
-                prgmNameList, prgmImages, prgmPoints, true, null, null, null, null, null) );
+                prgmNameList, prgmImages, prgmPoints, true, null) );
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 

@@ -25,29 +25,18 @@ public class FriendListGridAdapter extends BaseAdapter {
     String[] points;
     Context context;
     int[] imageId;
-    private ViewPager mPager = null;
     boolean mDisplayCheckBox = false;
     private static LayoutInflater inflater = null;
     private static int staticPosition = 0;
-    private ArrayList<Fragment> tabArray = null;
-    private PagerAdapter mPagerAdapter;
     private AllTabActivity mAllTabActivity = null;
-    ProfileFragment p;
 
     public FriendListGridAdapter(Context mainActivity,
                                  String[] prgmNameList,
                                  int[] prgmImages,
                                  String[] score,
                                  Boolean displayCheckBox,
-                                 ViewPager p,
-                                 ProfileFragment pfrag,
-                                 ArrayList<Fragment> tabArray,
-                                 PagerAdapter pagerAdapter,
                                  AllTabActivity allTabActivity){
         // TODO Auto-generated constructor stub
-        this.tabArray = tabArray;
-        this.mPagerAdapter = pagerAdapter;
-        mPager = p;
         context=mainActivity;
         imageId=prgmImages;
         inflater=(LayoutInflater)context.
@@ -55,15 +44,6 @@ public class FriendListGridAdapter extends BaseAdapter {
         points = score;
         mDisplayCheckBox = displayCheckBox;
         this.mAllTabActivity = allTabActivity;
-        setProfileFragment( pfrag  );
-    }
-
-    public void setProfileFragment( ProfileFragment p  ){
-        this.p = p;
-    }
-
-    public void setPager(ViewPager pager){
-        mPager = pager;
     }
 
     @Override
@@ -117,22 +97,12 @@ public class FriendListGridAdapter extends BaseAdapter {
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //This is where we handle pressing gridtiles
-
-                    //setting the middle tab to profile of a friend
-                    p = new ProfileFragment();
-                    p.friendProfileTrue();
-
-                    tabArray.set(1, p);
-                    mAllTabActivity.mProfileFragment = p;
-                    mPagerAdapter.notifyDataSetChanged();
-                    mPager.setAdapter(mPagerAdapter);
-                    mPager.setCurrentItem( 1 );
-
+            //This is where we handle pressing gridtiles
+                    //TODO replace 1234 with actual friend ID
+            mAllTabActivity.showFriendProfile("1234");
                 }
             });
         }
         return rowView;
     }
-
 }
