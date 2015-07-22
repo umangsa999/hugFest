@@ -29,6 +29,7 @@ public class FriendsFragment extends Fragment {
     private GridView gridView;
     private String mInputAddFriendText = "";
     AlertDialog.Builder builder;
+    // TODO: Replace this test id with your personal ad unit id
 
     public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
             "Paulina", "Trina", "Raymond",
@@ -106,4 +107,11 @@ public class FriendsFragment extends Fragment {
     public void setAllTabActivity(AllTabActivity allTabActivity) {
         this.mAllTabActivity = allTabActivity;
     }
+
+    @Override
+    public void onDestroy() {
+        //moPubView.destroy();
+        super.onDestroy();
+    }
+
 }
