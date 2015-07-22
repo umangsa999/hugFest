@@ -4,6 +4,9 @@ android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
 
+    repositories{
+        mavenCentral()  //  This is the Maven Central repo
+    }
     defaultConfig {
         applicationId "com.usc.itp476.contact.contactproject"
         minSdkVersion 15
@@ -19,9 +22,6 @@ android {
     }
 }
 
-repositories{
-    mavenCentral()  //  This is the Maven Central repo
-}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
