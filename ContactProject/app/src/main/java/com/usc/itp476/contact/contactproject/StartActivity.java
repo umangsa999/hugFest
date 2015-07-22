@@ -23,21 +23,24 @@ public class StartActivity extends Activity {
     private EditText edtxFirst;
     private EditText edtxLast;
     private EditText edtxPass;
+    private String name;
+    private String pass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        // Enable Local Datastore.
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "ellChjDHP7hNM4CBQLHrBNWzDMoOzElwUgy3MpEc", "aXSv9sdHcVcnjSIaqy8KuymGh16K5I53MiWXGgnN");
+        //todo this might not be necessary with Parse local datastore
+//        SharedPreferences sharedPreferences = getSharedPreferences(GameMarker.PREFFILE, MODE_PRIVATE);
+//        String id = sharedPreferences.getString(GameMarker.USER_ID, null);
+//
+//        //the user has already logged in before
+//        if (id != null){
+//            goToHome();
+//        }
 
-        SharedPreferences sharedPreferences = getSharedPreferences(GameMarker.PREFFILE, MODE_PRIVATE);
-        String id = sharedPreferences.getString(GameMarker.USER_ID, null);
-
-        //the user has already logged in before
-        if (id != null){
+        if (ParseUser.getCurrentUser() != null) {
             goToHome();
         }
 
@@ -56,31 +59,33 @@ public class StartActivity extends Activity {
 
     private void check(){
         //name is incompatible
-        if (edtxFirst.getText().length() == 0 || edtxLast.getText().length() == 0){
+        name = edtxFirst.getText().toString() + " " + edtxLast.getText().toString();
+        pass = edtxPass.getText().toString();
+        if (edtxFirst.getText().length() == 0 ||
+                edtxLast.getText().length() == 0 ||
+                edtxPass.getText().length() == 0){
                     Toast.makeText(getApplicationContext(),
                             "Please enter a valid name.",
                             Toast.LENGTH_SHORT).show();
-        }else if (ParseUser.getCurrentUser() != null) {
-            goToHome();
         }else{
-            ParseUser.logInInBackground(
-                    edtxFirst.getText().toString() + " " + edtxLast.getText().toString(),
-                    edtxPass.getText().toString(),
-                    new LogInCallback() {
-                        @Override
-                        public void done(ParseUser user, ParseException e) {
-                            if (e == null) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Welcome back,\nuser.getUsername()",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                saveParse();
-                            }
-                        }
+            //TODO incorporate multiple people with same name
+            ParseUser.logInInBackground(name, pass, new LogInCallback() {
+                @Override
+                public void done(ParseUser user, ParseException e) {
+                    if (e == null) {
+                        Toast.makeText(getApplicationContext(),
+                                "Welcome back,\n" + user.getUsername(),
+                                Toast.LENGTH_SHORT).show();
+                        goToHome();
+                    } else {
+                        saveParse();
+                    }
+                }
             });
         }
     }
 
+    //TODO might not be needed anymore due to local data
     private void saveLocal(){
         //TODO Make so that user can continue from last time as opposed to always resetting
         //save a working name
@@ -88,14 +93,8 @@ public class StartActivity extends Activity {
                 getSharedPreferences(GameMarker.PREFFILE, MODE_PRIVATE);
         SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
 
-        sharedPrefEditor.putString(GameMarker.FULL_NAME,
-                edtxFirst.getText().toString() + " " + edtxLast.getText().toString());
-
-        //add a random total hugs for now
-        //TODO set to 0
-        sharedPrefEditor.putInt(GameMarker.TOTAL_HUGS, (int)(Math.random() * 200));
-
-        //TODO add ID here
+        sharedPrefEditor.putString(GameMarker.FULL_NAME, name);
+        sharedPrefEditor.putInt(GameMarker.TOTAL_HUGS, 0);
 
         //save the user's name asynchronously
         sharedPrefEditor.apply();
@@ -103,11 +102,11 @@ public class StartActivity extends Activity {
 
     private void saveParse(){
         ParseUser user = new ParseUser();
-        user.setUsername("my name");
-        user.setPassword("my pass");
+        user.setUsername(name);
+        user.setPassword(pass);
 
         user.signUpInBackground(new SignUpCallback() {
-            public void done(ParseException e) {
+            public void done(ParseException e) {//TODO incorporate multiple people with same name
                 if (e == null) {
                     // Hooray! Let them use the app now.
                     saveLocal();
