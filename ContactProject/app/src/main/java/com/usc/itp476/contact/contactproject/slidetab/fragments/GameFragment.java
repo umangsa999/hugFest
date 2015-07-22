@@ -51,6 +51,7 @@ public class GameFragment extends Fragment
     private Circle radiusCircle = null;
     private final int maxDistanceDraw = 700;
     private final double maxDistance = 0.0075;
+    public static final int MAX_PLAYERS = 20;
     private final int backgroundColor = Color.argb(128, 0, 128, 128);
     private HashMap<Marker, GameMarker> markerToGame;
 
@@ -84,18 +85,17 @@ public class GameFragment extends Fragment
         //async call to create and set up map.
         assignListeners();
 
-        if (map != null) {
-            createRadius();
-            findPoints();
-        }else if (mapFragment != null){
-            map = mapFragment.getMap();
-        }else{
-            mapFragment = SupportMapFragment.newInstance();
-            FragmentTransaction fragmentTransaction =
-                    getChildFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.mapHolder, mapFragment);
-            fragmentTransaction.commit();
-            mapFragment.getMapAsync(this);
+        if (map == null) {
+            if (mapFragment != null){
+                map = mapFragment.getMap();
+            }else{
+                mapFragment = SupportMapFragment.newInstance();
+                FragmentTransaction fragmentTransaction =
+                        getChildFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.mapHolder, mapFragment);
+                fragmentTransaction.commit();
+                mapFragment.getMapAsync(this);
+            }
         }
 
         return rootView;
@@ -135,6 +135,7 @@ public class GameFragment extends Fragment
                 startActivity(i);
             }
         });
+
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -175,6 +176,7 @@ public class GameFragment extends Fragment
         ParseGeoPoint myLocParse = new ParseGeoPoint(myLoc.latitude, myLoc.longitude);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Marker");
         query.whereNotEqualTo("host", ParseUser.getCurrentUser() );
+        query.whereLessThan("numberPlayers", MAX_PLAYERS);
         query.whereWithinRadians("start", myLocParse, maxDistance);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -251,6 +253,7 @@ public class GameFragment extends Fragment
                 } else {
                     //create the radius!
                     createRadius();
+                    findPoints();
                 }
             }
 

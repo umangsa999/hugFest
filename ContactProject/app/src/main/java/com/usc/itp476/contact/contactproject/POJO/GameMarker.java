@@ -1,12 +1,17 @@
 package com.usc.itp476.contact.contactproject.POJO;
 
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 @ParseClassName("Marker")
 public class GameMarker extends ParseObject {
@@ -15,6 +20,14 @@ public class GameMarker extends ParseObject {
     public static final String USER_ID = "com.usc.itp476.contact.contactproject.POJO.GameMarker.USER_ID";
     public static final String FULL_NAME = "com.usc.itp476.contact.contactproject.POJO.GameMarker.FULL_NAME";
     public static final String TOTAL_HUGS = "com.usc.itp476.contact.contactproject.POJO.GameMarker.TOTAL_HUGS";
+
+    public String getGameID(){
+        return getString("game");
+    }
+
+    public void setGameID(String id){
+        put("game", id);
+    }
 
     public void setHostName(){
         put("host", ParseUser.getCurrentUser());
