@@ -8,7 +8,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
@@ -20,12 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AllTabActivity extends FragmentActivity {
+    final String TAG = this.getClass().getSimpleName();
     private static final int NUM_PAGES = 3;
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private SlidingTabLayout mSlidingTabLayout;
     private ArrayList<Fragment> tabs;
     private ArrayList<String> titles;
+    private ArrayList<ParseUser> friendList;
     public ProfileFragment mProfileFragment = null;
     public FriendsFragment mFriendFragment = null;
     //we need this ^ because we later need to check the profile fragment is a view of the friends or user
@@ -59,6 +68,50 @@ public class AllTabActivity extends FragmentActivity {
         mFriendFragment.setAllTabActivity(this);
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
+
+        updateFriends();
+    }
+
+    public void updateFriends(){
+        ParseRelation<ParseUser> friends = ParseUser.getCurrentUser().getRelation("friends");
+        ParseQuery<ParseUser> getAllFriends = friends.getQuery();
+        getAllFriends.addDescendingOrder("totalHugs");
+        getAllFriends.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> list, ParseException e) {
+                if (e != null) {
+                    Log.wtf(TAG, e.getLocalizedMessage());
+                } else if (list.size() == 0) {
+                    Toast.makeText(getApplicationContext(),
+                            "Could not find friends", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.wtf(TAG, String.valueOf(list.size()));
+                    grabRealFriends(list);
+                    signalUpdateFriends();
+                }
+            }
+        });
+    }
+
+    private void grabRealFriends(List<ParseUser> list){
+        friendList = new ArrayList<>();
+        //for each user in the relation, we only have the ObjectId and username
+        for (ParseUser u : list){
+            try {
+                ParseUser friend = ParseUser.getQuery().get(u.getObjectId()); //get the rest
+                if (friend != null){
+                    friendList.add(friend); //add our friend locally
+                }else{
+                    Log.wtf(TAG, "COULD NOT ADD: " + u.getObjectId());
+                }
+            } catch (ParseException e) {
+                Log.wtf(TAG, e.getLocalizedMessage());
+            }
+        }
+    }
+
+    private void signalUpdateFriends(){
+        mFriendFragment.updateFriends(friendList);
     }
 
     public void showFriendProfile(String id){

@@ -1,6 +1,7 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -79,8 +80,6 @@ public class GameFragment extends Fragment
 
         //TODO make sure this is same map as last time
         //TODO it seems to just create new since getMapAsync again
-
-        btnGame.setBackgroundResource(R.mipmap.ic_create);
 
         //async call to create and set up map.
         assignListeners();
@@ -216,15 +215,11 @@ public class GameFragment extends Fragment
     }
 
     private void assignListeners(){
-        setCreateListener();
-    }
-
-    private void setCreateListener(){
         btnGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
-                            CreateGameActivity.class);
+                        CreateGameActivity.class);
                 startActivity(i);
             }
         });

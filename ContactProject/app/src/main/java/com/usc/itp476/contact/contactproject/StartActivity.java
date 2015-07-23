@@ -11,6 +11,7 @@ import android.widget.Toast;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
+import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseUser;
@@ -95,6 +96,25 @@ public class StartActivity extends Activity {
         });
     }
 
+    private void createTestUsers(){
+        for (int i = 0; i < 50; ++i){
+            ParseUser u = new ParseUser();
+            u.setUsername("TestUser#" + i);
+            u.setPassword("TestUser#" + i);
+            u.put("name", "TestUser#" + i);
+            u.put("totalHugs", Math.random() * 2000);
+            u.signUpInBackground(new SignUpCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null){
+                        Log.wtf(TAG, "could not create test" + e.getLocalizedMessage());
+                        ParseUser.logOut();
+                    }
+                }
+            });
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -175,7 +195,7 @@ public class StartActivity extends Activity {
         };
         mCallbackManager = CallbackManager.Factory.create();
         loginButtonFacebook.setReadPermissions(permissions);
-        loginButtonFacebook.registerCallback(mCallbackManager, mCallback );
+        loginButtonFacebook.registerCallback(mCallbackManager, mCallback);
     }
 
     private void check(){
@@ -206,6 +226,19 @@ public class StartActivity extends Activity {
         }
     }
 
+    private void addAll(){
+        for (int i = 0; i < 50; ++i){
+            ParseUser.getQuery().whereEqualTo("name", "TestUser#" + i).getFirstInBackground(new GetCallback<ParseUser>() {
+                @Override
+                public void done(ParseUser parseUser, ParseException e) {
+                    ParseUser me = ParseUser.getCurrentUser();
+                    me.getRelation("friends").add(parseUser);
+                    me.saveInBackground();
+                }
+            });
+        }
+    }
+
     //TODO might not be needed anymore due to local data
     private void saveLocal(){
         //TODO Make so that user can continue from last time as opposed to always resetting
@@ -231,6 +264,9 @@ public class StartActivity extends Activity {
                 if (e == null) {
                     // Hooray! Let them use the app now.
                     saveLocal();
+                    Toast.makeText(getApplicationContext(),
+                            "Welcome aboard, " + name + "!",
+                            Toast.LENGTH_SHORT).show();
                     goToHome();
                 } else {
                     // Sign up didn't succeed. Look at the ParseException

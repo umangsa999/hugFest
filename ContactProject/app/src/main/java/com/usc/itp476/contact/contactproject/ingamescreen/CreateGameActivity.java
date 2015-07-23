@@ -17,24 +17,26 @@ import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
+import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+
+import java.util.ArrayList;
 
 public class CreateGameActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
+    private AllTabActivity mAllTabActivity;
+    private ArrayList<ParseUser> friendList;
+    private FriendListGridAdapter mFriendListAdapter;
     private Button btnCreate;
     private TextView txvwMax;
     private SeekBar skbrMax;
     private ListView lsvwInvite;
     private GridView gridView;
     private int maxPoints = -1;
-    public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
-            "Paulina", "Trina", "Raymond"};
-    public static int [] prgmImages={ R.mipmap.large, R.mipmap.large ,R.mipmap.large,
-            R.mipmap.large, R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large};
-    public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +47,16 @@ public class CreateGameActivity extends Activity {
         //mActivity = getActivity();
 
         gridView = (GridView) findViewById(R.id.grid_view);
+        btnCreate = (Button) findViewById(R.id.btnCreate);
+        txvwMax = (TextView) findViewById(R.id.txvwMax);
+        skbrMax = (SeekBar) findViewById(R.id.skbrMax);
+        setGridAdapter();
+        setListeners();
+    }
 
-        // Instance of ImageAdapter Class
-        gridView.setAdapter(new FriendListGridAdapter( getApplicationContext(), true, null) );
+    private void setGridAdapter(){
+        mFriendListAdapter = new FriendListGridAdapter( getApplicationContext(), true, null);
+        gridView.setAdapter( mFriendListAdapter );
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -60,13 +69,6 @@ public class CreateGameActivity extends Activity {
                 Toast.makeText( getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
-
-        Intent i = getIntent();
-
-        btnCreate = (Button) findViewById(R.id.btnCreate);
-        txvwMax = (TextView) findViewById(R.id.txvwMax);
-        skbrMax = (SeekBar) findViewById(R.id.skbrMax);
-        setListeners();
     }
 
     private void setListeners(){
@@ -128,5 +130,25 @@ public class CreateGameActivity extends Activity {
                 }
             }
         });
+    }
+
+    private void askUpdateFriends(){
+        mAllTabActivity.updateFriends();
+    }
+
+    public void updateFriends(ArrayList<ParseUser> p){
+        friendList = p;
+        mFriendListAdapter.setFriendsList(friendList);
+        mFriendListAdapter.notifyDataSetChanged(); //actually tell people to display
+    }
+
+    public void setAllTabActivity(AllTabActivity allTabActivity) {
+        this.mAllTabActivity = allTabActivity;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        askUpdateFriends();
     }
 }

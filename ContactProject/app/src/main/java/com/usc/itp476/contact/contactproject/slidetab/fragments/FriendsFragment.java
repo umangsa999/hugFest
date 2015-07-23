@@ -16,19 +16,16 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.parse.CountCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class FriendsFragment extends Fragment {
@@ -40,8 +37,6 @@ public class FriendsFragment extends Fragment {
     private Activity mActivity;
     private GridView gridView;
     private String mInputAddFriendText = "";
-    // TODO: Replace this test id with your personal ad unit id
-
     private AllTabActivity mAllTabActivity;
 
     @Override
@@ -56,7 +51,6 @@ public class FriendsFragment extends Fragment {
 
         setAddListener();
         generateGridView();
-        obtainFriends();
 
         return rootView;
     }
@@ -147,47 +141,20 @@ public class FriendsFragment extends Fragment {
         });
     }
 
-    private void obtainFriends(){
-        ParseRelation<ParseUser> friends = ParseUser.getCurrentUser().getRelation("friends");
-        ParseQuery<ParseUser> getAllFriends = friends.getQuery();
-        getAllFriends.addDescendingOrder("totalHugs");
-        getAllFriends.findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> list, ParseException e) {
-                if (e != null) {
-                    Log.wtf(TAG, e.getLocalizedMessage());
-                } else if (list.size() == 0) {
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Could not find friends", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.wtf(TAG, String.valueOf(list.size()));
-                    grabRealFriends(list);
-                }
-            }
-        });
+    private void askUpdateFriends(){
+        mAllTabActivity.updateFriends();
     }
 
-    private void updateFriends(){
+    public void updateFriends(ArrayList<ParseUser> p){
+        friendList = p;
         mFriendListAdapter.setFriendsList(friendList);
         mFriendListAdapter.notifyDataSetChanged(); //actually tell people to display
     }
 
-    private void grabRealFriends(List<ParseUser> list){
-        friendList = new ArrayList<>();
-        //for each user in the relation, we only have the ObjectId and username
-        for (ParseUser u : list){
-            try {
-                ParseUser friend = ParseUser.getQuery().get(u.getObjectId()); //get the rest
-                if (friend != null){
-                    friendList.add(friend); //add our friend locally
-                }else{
-                    Log.wtf(TAG, "COULD NOT ADD: " + u.getObjectId());
-                }
-            } catch (ParseException e) {
-                Log.wtf(TAG, e.getLocalizedMessage());
-            }
-        }
-        updateFriends();
+    @Override
+    public void onResume() {
+        super.onResume();
+        askUpdateFriends();
     }
 
     @Override
