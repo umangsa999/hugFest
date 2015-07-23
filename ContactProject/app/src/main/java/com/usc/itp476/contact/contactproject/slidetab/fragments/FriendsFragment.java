@@ -6,8 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,39 +14,58 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.Toast;
+
+import com.parse.CountCallback;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class FriendsFragment extends Fragment {
-
+    final String TAG = this.getClass().getSimpleName();
+    private ArrayList<ParseUser> friendList;
+    private FriendListGridAdapter mFriendListAdapter;
     private ImageButton buttonAdd;
     private Context mContext;
     private Activity mActivity;
     private GridView gridView;
     private String mInputAddFriendText = "";
-    AlertDialog.Builder builder;
     // TODO: Replace this test id with your personal ad unit id
 
-    public static String [] prgmNameList={"Ryan", "Chris", "Mike", "Rob", "Nathan",
-            "Paulina", "Trina", "Raymond",
-            "Nathan", "Paulina", "Trina", "Raymond"};
-    public static int [] prgmImages={ R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
-            R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large,
-            R.mipmap.large, R.mipmap.large ,R.mipmap.large ,R.mipmap.large};
-    public static String [] prgmPoints={"0", "1", "2", "3", "4", "5", "6", "7", "8", "5", "6", "7"};
     private AllTabActivity mAllTabActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = (View) inflater.inflate(R.layout.activity_friends, container, false);
+        View rootView = inflater.inflate(R.layout.activity_friends, container, false);
         mContext = getActivity().getApplicationContext();
         mActivity = getActivity();
 
         buttonAdd = (ImageButton) rootView.findViewById(R.id.btnAdd);
+        gridView = (GridView) rootView.findViewById(R.id.grid_view);
+
+        setAddListener();
+        generateGridView();
+        obtainFriends();
+
+        return rootView;
+    }
+
+    public void setAllTabActivity(AllTabActivity allTabActivity) {
+        this.mAllTabActivity = allTabActivity;
+    }
+
+    private void setAddListener(){
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,6 +86,7 @@ public class FriendsFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int id) {
                                 // get user input and set it to result
                                 mInputAddFriendText = input.getText().toString();
+                                addFriend(mInputAddFriendText);
                             }
                         })
                         .setNegativeButton("Cancel",
@@ -82,13 +101,14 @@ public class FriendsFragment extends Fragment {
                 alertDialogBuilder.show();
             }
         });
+    }
 
-        gridView = (GridView) rootView.findViewById(R.id.grid_view);
-
-        // Instance of ImageAdapter Class
-
-        gridView.setAdapter(new FriendListGridAdapter( mContext,
-                prgmNameList, prgmImages, prgmPoints, false, mAllTabActivity) );
+    private void generateGridView(){
+        if (friendList == null)
+            friendList = new ArrayList<>();
+        mFriendListAdapter = new FriendListGridAdapter( mContext,
+                friendList, false, mAllTabActivity);
+        gridView.setAdapter( mFriendListAdapter );
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -100,12 +120,68 @@ public class FriendsFragment extends Fragment {
                 //this shit doesn't run
             }
         });
-
-        return rootView;
     }
 
-    public void setAllTabActivity(AllTabActivity allTabActivity) {
-        this.mAllTabActivity = allTabActivity;
+    private void addFriend(String inputFriendUsername){
+        ParseQuery<ParseUser> findFriend = ParseUser.getQuery();
+        findFriend.whereEqualTo("username", inputFriendUsername);
+        findFriend.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> list, ParseException e) {
+                if (e != null){
+                    Log.wtf(TAG, e.getLocalizedMessage());
+                }else if (list.size() != 1) {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Could not find user.", Toast.LENGTH_SHORT).show();
+                } else {
+                    ParseUser friend = list.get(0);
+                    ParseUser me = ParseUser.getCurrentUser();
+                    ParseRelation<ParseUser> myFriends = me.getRelation("friends");
+
+                    myFriends.add(friend);
+                    me.saveInBackground();
+
+                    friendList.add(friend);
+                    mFriendListAdapter.notifyDataSetChanged();
+                    //TODO make a push notification from me to friend asking for permission
+                    //TODO this is because we do not have ACL authority
+                }
+            }
+        });
+    }
+
+    private void obtainFriends(){
+        ParseRelation<ParseUser> friends = ParseUser.getCurrentUser().getRelation("friends");
+        ParseQuery<ParseUser> getAllFriends = friends.getQuery();
+        getAllFriends.addDescendingOrder("totalHugs");
+        getAllFriends.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> list, ParseException e) {
+                if (e != null) {
+                    Log.wtf(TAG, e.getLocalizedMessage());
+                } else if (friendList.size() == 0) {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Could not find friends", Toast.LENGTH_SHORT).show();
+                } else {
+                    grabRealFriends(list);
+                }
+            }
+        });
+    }
+
+    private void grabRealFriends(List<ParseUser> list){
+        friendList = new ArrayList<>();
+        for (ParseUser u : list){
+            try {
+                ParseUser friend = ParseUser.getQuery().get(u.getObjectId());
+                if (friend != null){
+                    friendList.add(friend);
+                }
+            } catch (ParseException e) {
+                Log.wtf(TAG, e.getLocalizedMessage());
+            }
+        }
+        mFriendListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -113,5 +189,4 @@ public class FriendsFragment extends Fragment {
         //moPubView.destroy();
         super.onDestroy();
     }
-
 }

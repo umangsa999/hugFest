@@ -2,6 +2,7 @@ package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
-
+    final String TAG = this.getClass().getSimpleName();
     private ImageButton imbnEdit;
     private TextView txvwName;
     private TextView txvwTotal;
@@ -75,23 +76,22 @@ public class ProfileFragment extends Fragment {
     }
 
     private void loadFriendSaveData(){
-        ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
-        friendQuery.whereEqualTo("objectId", friendID);
-        friendQuery.findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> list, ParseException e) {
-                if (e != null || list.size() != 1){
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Could not find friend",
-                            Toast.LENGTH_SHORT).show();
-                    myParent.returnToList();
-                }else{
-                    ParseUser u = list.get(0);
-                    txvwTotal.setText(String.valueOf(u.getInt("totalHugs")));
-                    txvwName.setText(u.getUsername());
-                }
+        try {
+            ParseUser friend = ParseUser.getQuery().get(friendID);
+            if (friend != null){
+                txvwTotal.setText(String.valueOf(friend.getInt("totalHugs")));
+                txvwName.setText(friend.getUsername());
+            }else{
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Could not find friend",
+                        Toast.LENGTH_SHORT).show();
             }
-        });
+        }catch(ParseException pe){
+            Log.wtf(TAG, pe.getLocalizedMessage());
+            Toast.makeText(getActivity().getApplicationContext(),
+                    "Could not find friend",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadMySaveData(){

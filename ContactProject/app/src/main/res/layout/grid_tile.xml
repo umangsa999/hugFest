@@ -19,14 +19,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="30"
-        android:textSize="16sp"
         android:textColor="@android:color/black"
         android:id="@+id/imageViewScore"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:layout_alignTop="@+id/imageViewFriend"
         android:layout_alignEnd="@+id/imageViewFriend"
-        android:layout_alignRight="@+id/imageViewFriend"/>
+        android:layout_alignRight="@+id/imageViewFriend"
+        style="@style/TextAppearance.AppCompat.Headline" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -37,5 +37,16 @@
         android:layout_alignTop="@+id/imageViewFriend"
         android:layout_alignEnd="@+id/imageViewFriend"
         android:layout_alignRight="@+id/imageViewFriend"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="1234"
+        android:id="@+id/ObjectIdTextView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

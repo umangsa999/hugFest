@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.parse.LogInCallback;
+import com.parse.Parse;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.SignUpCallback;
@@ -71,7 +72,8 @@ public class StartActivity extends Activity {
 //        }
 
         if (ParseUser.getCurrentUser() != null) {
-            goToHome();
+            //goToHome();
+            ParseUser.logOut();
         }
 
         btnStart = (Button) findViewById(R.id.btnStart);
