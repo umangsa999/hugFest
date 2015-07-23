@@ -80,7 +80,7 @@ public class ProfileFragment extends Fragment {
             ParseUser friend = ParseUser.getQuery().get(friendID);
             if (friend != null){
                 txvwTotal.setText(String.valueOf(friend.getInt("totalHugs")));
-                txvwName.setText(friend.getUsername());
+                txvwName.setText(friend.getString("name"));
             }else{
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Could not find friend",
@@ -109,7 +109,7 @@ public class ProfileFragment extends Fragment {
 //            txvwTotal.setText(String.valueOf(totalhugs));
 //        }
         ParseUser display = ParseUser.getCurrentUser();
-        txvwName.setText(display.getUsername());
+        txvwName.setText(display.getString("name"));
         txvwTotal.setText(String.valueOf(display.getInt("totalHugs")));
     }
 
@@ -139,16 +139,19 @@ public class ProfileFragment extends Fragment {
 //            sharedPrefEditor.commit();
             if (!mFriendProfile){
                 ParseUser update = ParseUser.getCurrentUser();
-                update.put("username", txvwName.getText().toString());
+                update.put("name", txvwName.getText().toString());
                 update.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         Toast t = new Toast(getActivity().getApplicationContext());
                         t.setDuration(Toast.LENGTH_SHORT);
-                        if (e == null){
-                            t.setText("Could not update your name.");
+                        if (e != null){
+                            Toast.makeText(getActivity().getApplicationContext(),
+                                    "Could not update your name", Toast.LENGTH_SHORT).show();
+                            Log.wtf(TAG, e.getLocalizedMessage());
                         }else{
-                            t.setText("Name updated!");
+                            Toast.makeText(getActivity().getApplicationContext(),
+                                    "Name updated!", Toast.LENGTH_SHORT).show();
                         }
                         t.show();
                     }

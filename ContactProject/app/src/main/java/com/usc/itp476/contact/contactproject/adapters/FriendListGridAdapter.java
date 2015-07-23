@@ -26,26 +26,29 @@ public class FriendListGridAdapter extends BaseAdapter {
     private AllTabActivity mAllTabActivity = null;
 
     public FriendListGridAdapter(Context mainActivity,
-                                 ArrayList<ParseUser> displayThese,
                                  Boolean displayCheckBox,
                                  AllTabActivity allTabActivity){
         // TODO Auto-generated constructor stub
         context=mainActivity;
         inflater=(LayoutInflater)context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        friendsList = displayThese;
+        friendsList = null;
         mDisplayCheckBox = displayCheckBox;
         this.mAllTabActivity = allTabActivity;
     }
 
+    public void setFriendsList(ArrayList<ParseUser> list){
+        friendsList = list;
+    }
+
     @Override
     public int getCount() {
-        return friendsList.size();
+        return friendsList == null ? 0 : friendsList.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return friendsList.get(i);
+        return friendsList == null ? null : friendsList.get(i);
     }
 
     @Override
@@ -58,7 +61,6 @@ public class FriendListGridAdapter extends BaseAdapter {
         TextView points;
         TextView objectID;
         CheckBox invited;
-        int id = 0;
     }
 
     @Override
@@ -74,8 +76,10 @@ public class FriendListGridAdapter extends BaseAdapter {
         holder.invited = (CheckBox) rowView.findViewById(R.id.ckbxInvite);
         holder.objectID = (TextView) rowView.findViewById(R.id.ObjectIdTextView);
         holder.img.setImageResource(R.mipmap.medium);
-        holder.id = position;
-        holder.objectID.setText(friendsList.get(position).getObjectId());
+        holder.objectID.setText(
+                friendsList == null ?
+                        "" :
+                        friendsList.get(position).getObjectId());
 
         if(mDisplayCheckBox){
             holder.points.setVisibility(View.GONE);
@@ -87,7 +91,9 @@ public class FriendListGridAdapter extends BaseAdapter {
                 }
             });
         }else{
-            holder.points.setText( String.valueOf(friendsList.get(position).getInt("totalHugs")));
+            holder.points.setText( friendsList == null ?
+                    "" :
+                    String.valueOf(friendsList.get(position).getInt("totalHugs")));
             holder.invited.setVisibility(View.GONE);
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
