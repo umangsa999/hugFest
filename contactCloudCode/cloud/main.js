@@ -62,7 +62,7 @@ Parse.Cloud.define("addFriendMutual", function(request, response){
 							HelenFriends.add(Tom);
 							Parse.Object.saveAll([Helen, Tom], {
 								success:function(in){
-									response.success(1);
+									//response.success(1);
 								},
 								error:function(erro){
 									response.error(3); //3 means cannot save

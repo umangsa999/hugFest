@@ -1,14 +1,13 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.support.v4.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,10 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -35,8 +35,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
-import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
 
 import java.util.HashMap;
@@ -218,9 +218,16 @@ public class GameFragment extends Fragment
         btnGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
-                        CreateGameActivity.class);
-                startActivity(i);
+                //Intent i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
+                //        CreateGameActivity.class);
+                //startActivity(i);
+                ParseUser.logOut();
+                LoginManager.getInstance().logOut();
+
+                Intent i = new Intent();
+                getActivity().setResult(StartActivity.RESULT_LOGOUT);
+                getActivity().finish();
+
             }
         });
     }
