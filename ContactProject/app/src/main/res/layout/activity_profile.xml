@@ -44,12 +44,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imvwPhoto"
-        android:layout_alignParentBottom="true"
         android:contentDescription="User image"
         android:layout_below="@+id/relativeLayout"
         android:src="@mipmap/large"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY"/>
+        android:scaleType="centerInside"
+        android:layout_above="@+id/holdingButtons" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -64,4 +64,24 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:background="@mipmap/ic_edit" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/holdingButtons"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:id="@+id/btnLogout" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Link Profile"
+            android:id="@+id/btnLink" />
+    </LinearLayout>
 </RelativeLayout>

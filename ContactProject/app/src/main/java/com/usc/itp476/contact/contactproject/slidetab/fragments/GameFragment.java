@@ -230,7 +230,7 @@ public class GameFragment extends Fragment
                 .center(myLoc)
                 .radius(maxDistanceDraw).fillColor(backgroundColor)
                 .strokeWidth(5).strokeColor(backgroundColor);
-        radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
+//        radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
     }
 
     private void setLocationListener() {

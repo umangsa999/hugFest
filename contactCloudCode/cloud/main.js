@@ -60,14 +60,7 @@ Parse.Cloud.define("addFriendMutual", function(request, response){
 							var TomFriends = Tom.relation("friends");
 							TomFriends.add(Helen);
 							HelenFriends.add(Tom);
-							Parse.Object.saveAll([Helen, Tom], {
-								success:function(in){
-									response.success(1);
-								},
-								error:function(erro){
-									response.error(3); //3 means cannot save
-								}
-							});
+							Parse.Object.saveAll([Helen, Tom]);
 						},
 						error:function(er){
 							response.error(2); //2 means cannot obtain Tom
@@ -80,4 +73,55 @@ Parse.Cloud.define("addFriendMutual", function(request, response){
 			response.error(0); //0 means cannot obtain Helen
 		}
 	});
+});
+
+//GET FBID array
+//GIVE Parse array
+Parse.Cloud.define("getParseFriendsFromFBID", function(request, response){
+	var ids = request.ids;
+	console.log("id is: ");
+	console.log(ids);
+	var numIDs = ids.length;
+	console.log("number of ids is: ");
+	console.log(numIDs);
+	var queryArray;
+	for (var i = 0; i < numIDs; ++i){
+		console.log("Processing number: " + i);
+		queryArray.push((new Parse.Query(Parse.User)).equalTo("facebookID", ids[i]).first());
+	}
+	
+	console.log(numIDs + " friend search");
+	if (ids.length == 1){
+		queryArray[0].find({
+			success:function(user){
+				response.success([user]);
+			},
+			error:function(error){
+				response.error(error.message);
+			}
+		});
+	}else if (ids.length == 2){
+		var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
+		wholeQuery.find({
+			success:function(users){
+				response.success(users);
+			},
+			error:function(error){
+				response.error(error.message);
+			}
+		});
+	}else{
+		var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
+		for (var i = 2; i < numIDs.length; ++i){
+			wholeQuery = Parse.Query.or(wholeQuery, queryArray[i]);
+		}
+		wholeQuery.find({
+			success:function(users){
+				response.success(users);
+			},
+			error:function(error){
+				response.error(error.message);
+			}
+		});
+	}
 });
