@@ -11,12 +11,11 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
-import com.usc.itp476.contact.contactproject.POJO.GameMarker;
-
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 
 import java.security.MessageDigest;
 
@@ -42,7 +41,8 @@ public class ContactApplication extends Application {
         Parse.initialize(this,
                 "ellChjDHP7hNM4CBQLHrBNWzDMoOzElwUgy3MpEc",
                 "aXSv9sdHcVcnjSIaqy8KuymGh16K5I53MiWXGgnN");
-        ParseUser.enableAutomaticUser();
+        ParseFacebookUtils.initialize(this); //For converting authenticated FB users to Parse users
+        //ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();
         ParseACL.setDefaultACL(defaultACL, true);
 

@@ -3,7 +3,9 @@ package com.usc.itp476.contact.contactproject;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,15 +33,35 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.parse.SignUpCallback;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.usc.itp476.contact.contactproject.POJO.GameMarker;
+import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class StartActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
@@ -51,7 +73,15 @@ public class StartActivity extends Activity {
     private EditText edtxPass;
     private String name;
     private String pass;
-    final List<String> permissions = Arrays.asList("public_profile", "user_friends");
+    private ParseUser user;
+    private String userEmail;
+    private JSONArray facebookIDs = null;
+    private LoginResult mLoginResult = null;
+
+    private boolean hasParseAccount = false;
+    //TODO -- if user has parseaccount and no facebook association, if they click fb, link it
+
+    final List<String> permissions = Arrays.asList("public_profile", "user_friends", "email");
     private LoginButton loginButtonFacebook;
     private CallbackManager mCallbackManager;
     private FacebookCallback<LoginResult> mCallback;
@@ -73,7 +103,7 @@ public class StartActivity extends Activity {
 //        }
 
         if (ParseUser.getCurrentUser() != null) {
-            //goToHome();
+            Log.wtf(TAG, "There IS a PU");
             ParseUser.logOut();
         }
 
@@ -133,11 +163,13 @@ public class StartActivity extends Activity {
     //Called when facebook is done
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_ALLTABS_QUIT_STAY_LOGIN){
             finish();
         }else{
             mCallbackManager.onActivityResult( requestCode, resultCode, data);
             loginButtonTwitter.onActivityResult(requestCode, resultCode, data);
+            ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -158,13 +190,14 @@ public class StartActivity extends Activity {
         });
     }
 
-    private void createTwitterCallback(){
+    private void createTwitterCallback() {
         loginButtonTwitter.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
                 // Do something with result, which provides a TwitterSession for making API calls
                 Log.wtf(TAG, "Twitter success");
             }
+
             @Override
             public void failure(TwitterException exception) {
                 // Do something on failure
@@ -178,10 +211,35 @@ public class StartActivity extends Activity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.wtf(TAG, "Facebook success");
-                AccessToken accessToken = loginResult.getAccessToken();
-                Profile profile = Profile.getCurrentProfile();
-                if( profile != null){
-                    Log.wtf(TAG, profile.getFirstName() + " "+ profile.getLastName() );
+                mLoginResult = loginResult;
+                    /*
+                    TODO check if parseuser exists and just add FB to parse
+                    TODO Just run this and check if it works - Chris
+                     */
+                ParseUser currentParseUser = ParseUser.getCurrentUser();
+                if (currentParseUser != null ) {
+                    Log.wtf(TAG, currentParseUser.toString() );
+                    Log.wtf(TAG, "currentPU != null");
+                    if (currentParseUser.get("facebookID") == null) {
+                        Log.wtf(TAG, "facebookID == null");
+                        //currentParseUser.put("facebookID", Profile.getCurrentProfile().getId() );
+                        currentParseUser.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                            if (e != null) {
+                                Log.wtf(TAG, "e!= null");
+                                Log.wtf(TAG, e.getLocalizedMessage());
+                            } else {
+                                goToHome();
+                            }
+                            }
+                        });
+                    }else{
+                        Log.wtf(TAG, "currentPU == null & going home");
+                        goToHome(); //TODO maybe check for new facebook friends here
+                    }
+                }else {
+                    findFacebookUserData();
                 }
             }
             @Override
@@ -198,6 +256,139 @@ public class StartActivity extends Activity {
         loginButtonFacebook.registerCallback(mCallbackManager, mCallback);
     }
 
+    private void addFaceBookFriends(){
+        //Gets all friends that have logged in with the app
+//        ParseQuery<ParseObject> myFriends = ParseUser.getCurrentUser().getRelation("friends").getQuery();
+//        Task<List<ParseObject>> myParseFriendsList =  myFriends.findInBackground();
+//        myParseFriendsList.waitForCompletion();
+//        myParseFriendsList.getResult(); //TODO finish this -Chris
+
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/me/friends",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        //Log.wtf(TAG, response.toString());
+                        JSONObject tempArray = response.getJSONObject();
+                        try {
+                            if( tempArray!= null ){
+                                facebookIDs = tempArray.getJSONArray("data");
+                                Log.wtf(TAG ,"facebook id");
+                                for( int i = 0; i< facebookIDs.length(); i++) {
+                                    JSONObject j = facebookIDs.getJSONObject(i);
+                                    Log.wtf(TAG, i+": " + j.getString("id"));
+
+                                }
+                            }
+                        } catch (JSONException e) {
+                            Log.wtf(TAG, e.getLocalizedMessage());
+                        }
+//                        createFaceBookParseUser();
+                    }
+                }
+        ).executeAsync();
+    }
+
+    private void findFacebookUserData(){
+        GraphRequest request = GraphRequest.newMeRequest(
+            mLoginResult.getAccessToken(),
+            new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(
+                        JSONObject object,
+                        GraphResponse response) {
+                    // Application code
+                    //Log.wtf(TAG, response.toString());
+                    try {
+                        userEmail = object.get("email").toString();
+                    } catch (JSONException e) {
+                        Log.wtf(TAG, e.getLocalizedMessage());
+                    }
+                    createFaceBookParseUser();
+                }
+            });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "email");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
+
+    private void createFaceBookParseUser() {
+        Log.wtf(TAG, "createfbusr");
+        AccessToken accessToken = mLoginResult.getAccessToken();
+
+        Date expirationDate = accessToken.getExpires();
+        String token = accessToken.getToken();
+
+        Set getRecentlyGrantedPermissions = mLoginResult.getRecentlyGrantedPermissions();
+        Set getDeniedPermissions = mLoginResult.getRecentlyDeniedPermissions();
+        Profile profile = Profile.getCurrentProfile();
+        String lastName = profile.getLastName();
+        String firstName = profile.getFirstName();
+        String facebookID = profile.getId();
+        Uri profileLink = profile.getLinkUri();
+        Uri profilePictureUri = profile.getProfilePictureUri(150, 150);
+
+        String username = firstName +lastName;
+        user = new ParseUser();
+        user.setUsername(username);
+        user.put("name", firstName + " " + lastName);
+        user.setPassword(username); //TODO create a more complex password
+        //user.put("authData", facebookAuth);
+        user.setEmail(userEmail);
+        user.put("totalGames", 0);
+        user.put("totalHugs", 0);
+
+        //Log.wtf(TAG, "facebookID STRING: " + facebookID);
+        //Log.wtf(TAG, "facebookID INT: "+ Integer.parseInt(facebookID) );
+        user.put("facebookID", facebookID);
+
+//        if( facebookIDs != null) {
+//            for (int index = 0; index < facebookIDs.length(); index++) {
+//
+//            }
+//        }
+//        ParseUser.getQuery().whereEqualTo("name", "TestUser#" + i).getFirstInBackground(new GetCallback<ParseUser>() {
+//            @Override
+//            public void done(ParseUser parseUser, ParseException e) {
+//                ParseUser me = ParseUser.getCurrentUser();
+//                me.getRelation("friends").add(parseUser);
+//                me.saveInBackground();
+//            }
+//        });
+        user.signUpInBackground(new SignUpCallback() {
+            public void done(ParseException e) {//TODO incorporate multiple people with same name
+                if (e == null) {
+                    // Hooray! Let them use the app now.
+                    ParseFacebookUtils.linkInBackground(user, mLoginResult.getAccessToken(), new SaveCallback() {
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.wtf(TAG, "Success save");
+                                addFaceBookFriends();
+                                goToHome();
+                            } else {
+                                Log.wtf(TAG, "Not save");
+                                Log.wtf(TAG, e.getLocalizedMessage());
+                            }
+                        }
+                    });
+
+                } else {
+                    // Sign up didn't succeed. Look at the ParseException
+                    // to figure out what went wron
+                    Log.wtf(TAG, e.toString() + " & "+ e.getLocalizedMessage() );
+                    Toast.makeText(getApplicationContext(),
+                            "Could not sign you up", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        //user.setPassword(pass); //TODO random password generator
+
+    }
+
     private void check(){
         //name is incompatible
         name = edtxFirst.getText().toString() + " " + edtxLast.getText().toString();
@@ -210,19 +401,19 @@ public class StartActivity extends Activity {
                             Toast.LENGTH_SHORT).show();
         }else{
             //TODO incorporate multiple people with same name
-            ParseUser.logInInBackground(name, pass, new LogInCallback() {
-                @Override
-                public void done(ParseUser user, ParseException e) {
-                    if (e == null) {
-                        Toast.makeText(getApplicationContext(),
-                                "Welcome back,\n" + user.getUsername(),
-                                Toast.LENGTH_SHORT).show();
-                        goToHome();
-                    } else {
-                        saveParse();
-                    }
-                }
-            });
+//            ParseUser.logInInBackground(name, pass, new LogInCallback() {
+//                @Override
+//                public void done(ParseUser user, ParseException e) {
+//                    if (e == null) {
+//                        Toast.makeText(getApplicationContext(),
+//                                "Welcome back,\n" + user.getUsername(),
+//                                Toast.LENGTH_SHORT).show();
+//                        goToHome();
+//                    } else {
+//                        saveParse();
+//                    }
+//                }
+//            });
         }
     }
 
@@ -238,6 +429,54 @@ public class StartActivity extends Activity {
             });
         }
     }
+
+//    For Android, your code to make your users query-able by Facebook ID would look like this:
+//
+//            ParseFacebookUtils.logIn(this, new LogInCallback() {
+//        @Override
+//        public void done(ParseUser user, ParseException error) {
+//            // When your user logs in, immediately get and store its Facebook ID
+//            if (user != null) {
+//                getFacebookIdInBackground();
+//            }
+//        }
+//    });
+//
+//    private static void getFacebookIdInBackground() {
+//        Request.executeMeRequestAsync(ParseFacebookUtils.getSession(), new Request.GraphUserCallback() {
+//            @Override
+//            public void onCompleted(GraphUser user, Response response) {
+//                if (user != null) {
+//                    ParseUser.getCurrentUser().put("fbId", user.getId());
+//                    ParseUser.getCurrentUser().saveInBackground();
+//                }
+//            }
+//        });
+//    }
+//    Then, when you are ready to search for your user's friends, you would issue another request:
+//
+//            Request.executeMyFriendsRequestAsync(ParseFacebookUtils.getSession(), new Request.GraphUserListCallback() {
+//
+//        @Override
+//        public void onCompleted(List<GraphUser> users, Response response) {
+//            if (users != null) {
+//                List<String> friendsList = new ArrayList<String>();
+//                for (GraphUser user : users) {
+//                    friendsList.add(user.getId());
+//                }
+//
+//                // Construct a ParseUser query that will find friends whose
+//                // facebook IDs are contained in the current user's friend list.
+//                ParseQuery friendQuery = ParseQuery.getUserQuery();
+//                friendQuery.whereContainedIn("fbId", friendsList);
+//
+//                // findObjects will return a list of ParseUsers that are friends with
+//                // the current user
+//                List<ParseObject> friendUsers = friendQuery.find();
+//            }
+//        }
+//    });
+
 
     //TODO might not be needed anymore due to local data
     private void saveLocal(){
@@ -278,6 +517,7 @@ public class StartActivity extends Activity {
             }
         });
     }
+
 
     private void goToHome(){
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
