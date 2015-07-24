@@ -6,13 +6,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Profile;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.LogInCallback;
+import com.parse.ParseClassName;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -20,11 +26,14 @@ import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
     final String TAG = this.getClass().getSimpleName();
     private ImageButton imbnEdit;
+    private Button btnLogout;
+    private Button btnLink;
     private TextView txvwName;
     private TextView txvwTotal;
     private EditText edtxName;
@@ -54,6 +63,8 @@ public class ProfileFragment extends Fragment {
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
         txvwTotal = (TextView) rootView.findViewById(R.id.txvwTotal);
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
+        btnLink = (Button) rootView.findViewById(R.id.btnLink);
+        btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
 
         if( mFriendProfile ) {
             imbnEdit.setVisibility(View.GONE);
@@ -71,6 +82,64 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 switchIcon();
+            }
+        });
+        btnLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, Object> parms = new HashMap<>();
+                String tokenID;
+                Profile p = Profile.getCurrentProfile();
+                if (p != null) {
+                    //GET OLD PARSE
+                    String un = "", ps = "";
+                    //TODO create a dialog for username and password
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("ParseUsername", un);
+                    map.put("ParsePassword", ps);
+                    ParseCloud.callFunctionInBackground("mergeNewFBOldParse", map, new FunctionCallback<String>() {
+                        @Override
+                        public void done(String s, ParseException e) {
+                            if (e == null){
+                                //TODO update page or push back to gamesFragment somehow
+                                ParseUser.becomeInBackground(s, new LogInCallback() {
+                                    @Override
+                                    public void done(ParseUser parseUser, ParseException e) {
+                                        if (e != null) {
+                                            Log.wtf(TAG, e.getLocalizedMessage());
+                                            Toast.makeText(getActivity().getApplicationContext(),
+                                                    "Could not sign in as Facebook user after merge",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }else{
+                                Log.wtf(TAG, e.getLocalizedMessage());
+                                Toast.makeText(getActivity().getApplicationContext(),
+                                        "Could not merge your accounts",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                    //PUT OLD PARSE IN NEW
+                    parms.put("facebookID", p.getId());
+                    Log.wtf(TAG, p.getId() + " is my facebookID");
+                    try {
+                        tokenID = ParseCloud.callFunction("getUserSessionToken", parms);
+                        ParseUser.become(tokenID);
+                        Log.wtf(TAG, tokenID + " is my token");
+                        //TODO merge old and new FB
+                    } catch (ParseException e) {
+                        Log.wtf(TAG, e.getLocalizedMessage());
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Could not link accounts", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    //TODO get user to sign in facebook, get their facebook id, and add to parse
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Please login facebook", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
