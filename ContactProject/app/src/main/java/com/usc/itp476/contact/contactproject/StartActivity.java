@@ -21,7 +21,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
-import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
@@ -45,7 +44,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +60,7 @@ public class StartActivity extends Activity {
     private ParseUser user;
     private String userEmail;
     private JSONArray facebookIDs = null;
+    private LoginResult mLoginResult = null;
 
     private boolean hasParseAccount = false;
     //TODO -- if user has parseaccount and no facebook association, if they click fb, link it
@@ -86,13 +85,11 @@ public class StartActivity extends Activity {
 //        if (id != null){
 //            goToHome();
 //        }
+
         if (ParseUser.getCurrentUser() != null) {
-            //goToHome();
+            Log.wtf(TAG, "There IS a PU");
             ParseUser p = ParseUser.getCurrentUser();
             p.logOut();
-        }else{
-
-            //goToHome and log the person in
         }
 
         btnStart = (Button) findViewById(R.id.btnStart);
@@ -174,57 +171,38 @@ public class StartActivity extends Activity {
     private void createFacebookCallback(){
         mCallback = new FacebookCallback<LoginResult>() {
             @Override
-            public void onSuccess(final LoginResult loginResult) {
+            public void onSuccess(LoginResult loginResult) {
                 Log.wtf(TAG, "Facebook success");
-                //TODO check if parseuser exists and just add FB to parse
-
-                //createParseUser(loginResult);
-                // App code
-                final GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
+                mLoginResult = loginResult;
+                    /*
+                    TODO check if parseuser exists and just add FB to parse
+                    TODO Just run this and check if it works - Chris
+                     */
+                ParseUser currentParseUser = ParseUser.getCurrentUser();
+                if (currentParseUser != null ) {
+                    Log.wtf(TAG, currentParseUser.toString() );
+                    Log.wtf(TAG, "currentPU != null");
+                    if (currentParseUser.get("facebookID") == null) {
+                        Log.wtf(TAG, "facebookID == null");
+                        //currentParseUser.put("facebookID", Profile.getCurrentProfile().getId() );
+                        currentParseUser.saveInBackground(new SaveCallback() {
                             @Override
-                            public void onCompleted(
-                                    JSONObject object,
-                                    GraphResponse response) {
-                                // Application code
-                                Log.wtf(TAG, response.toString());
-                                try {
-                                    userEmail = object.get("email").toString();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                //Gets all friends that have logged in with the app
-                                GraphRequestAsyncTask friends = new GraphRequest(
-                                        AccessToken.getCurrentAccessToken(),
-                                        "/me/friends",
-                                        null,
-                                        HttpMethod.GET,
-                                        new GraphRequest.Callback() {
-                                            public void onCompleted(GraphResponse response) {
-                                                Log.wtf(TAG, response.toString());
-                                                facebookIDs = response.getJSONArray();
-                                                try {
-                                                    if( facebookIDs!= null ){
-                                                        for( int i = 0; i< facebookIDs.length(); i++)
-                                                            Log.wtf(TAG, facebookIDs.get(i).toString() );
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                                createParseUser(loginResult);
-                                            }
-                                        }
-                                ).executeAsync();
+                            public void done(ParseException e) {
+                            if (e != null) {
+                                Log.wtf(TAG, "e!= null");
+                                Log.wtf(TAG, e.getLocalizedMessage());
+                            } else {
+                                goToHome();
+                            }
                             }
                         });
-
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "email");
-                request.setParameters(parameters);
-                request.executeAsync();
-
+                    }else{
+                        Log.wtf(TAG, "currentPU == null & going home");
+                        goToHome(); //TODO maybe check for new facebook friends here
+                    }
+                }else {
+                    findFacebookUserData();
+                }
             }
             @Override
             public void onCancel() {
@@ -240,14 +218,75 @@ public class StartActivity extends Activity {
         loginButtonFacebook.registerCallback(mCallbackManager, mCallback);
     }
 
-    private void createParseUser(final LoginResult loginResult) {
-        AccessToken accessToken = loginResult.getAccessToken();
+    private void addFaceBookFriends(){
+        //Gets all friends that have logged in with the app
+//        ParseQuery<ParseObject> myFriends = ParseUser.getCurrentUser().getRelation("friends").getQuery();
+//        Task<List<ParseObject>> myParseFriendsList =  myFriends.findInBackground();
+//        myParseFriendsList.waitForCompletion();
+//        myParseFriendsList.getResult(); //TODO finish this -Chris
+
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/me/friends",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        //Log.wtf(TAG, response.toString());
+                        JSONObject tempArray = response.getJSONObject();
+                        try {
+                            if( tempArray!= null ){
+                                facebookIDs = tempArray.getJSONArray("data");
+                                Log.wtf(TAG ,"facebook id");
+                                for( int i = 0; i< facebookIDs.length(); i++) {
+                                    JSONObject j = facebookIDs.getJSONObject(i);
+                                    Log.wtf(TAG, i+": " + j.getString("id"));
+
+                                }
+                            }
+                        } catch (JSONException e) {
+                            Log.wtf(TAG, e.getLocalizedMessage());
+                        }
+//                        createFaceBookParseUser();
+                    }
+                }
+        ).executeAsync();
+    }
+
+    private void findFacebookUserData(){
+        GraphRequest request = GraphRequest.newMeRequest(
+            mLoginResult.getAccessToken(),
+            new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(
+                        JSONObject object,
+                        GraphResponse response) {
+                    // Application code
+                    //Log.wtf(TAG, response.toString());
+                    try {
+                        userEmail = object.get("email").toString();
+                    } catch (JSONException e) {
+                        Log.wtf(TAG, e.getLocalizedMessage());
+                    }
+                    createFaceBookParseUser();
+                }
+            });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "email");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
+
+    private void createFaceBookParseUser() {
+        Log.wtf(TAG, "createfbusr");
+        AccessToken accessToken = mLoginResult.getAccessToken();
 
         Date expirationDate = accessToken.getExpires();
         String token = accessToken.getToken();
 
-        Set getRecentlyGrantedPermissions = loginResult.getRecentlyGrantedPermissions();
-        Set getDeniedPermissions = loginResult.getRecentlyDeniedPermissions();
+        Set getRecentlyGrantedPermissions = mLoginResult.getRecentlyGrantedPermissions();
+        Set getDeniedPermissions = mLoginResult.getRecentlyDeniedPermissions();
         Profile profile = Profile.getCurrentProfile();
         String lastName = profile.getLastName();
         String firstName = profile.getFirstName();
@@ -255,28 +294,19 @@ public class StartActivity extends Activity {
         Uri profileLink = profile.getLinkUri();
         Uri profilePictureUri = profile.getProfilePictureUri(150, 150);
 
-        JSONObject facebookAuth = new JSONObject();
-        JSONObject subData = new JSONObject();
-        try {
-            subData.put("id", facebookID);
-            subData.put("access_token", token);
-            subData.put("expiration_date", expirationDate.toString());
-            facebookAuth.put("facebook", subData);
-        }catch(Exception e){
-            Log.e(TAG, e.getMessage());
-        }
-
-        StringWriter out = new StringWriter();
-        //Log.wtf(TAG, facebookAuth.toString() );
-
         String username = firstName +lastName;
         user = new ParseUser();
         user.setUsername(username);
-        user.setPassword(username);
+        user.put("name", firstName + " " + lastName);
+        user.setPassword(username); //TODO create a more complex password
         //user.put("authData", facebookAuth);
         user.setEmail(userEmail);
         user.put("totalGames", 0);
         user.put("totalHugs", 0);
+
+        //Log.wtf(TAG, "facebookID STRING: " + facebookID);
+        //Log.wtf(TAG, "facebookID INT: "+ Integer.parseInt(facebookID) );
+        user.put("facebookID", facebookID);
 
 //        if( facebookIDs != null) {
 //            for (int index = 0; index < facebookIDs.length(); index++) {
@@ -291,29 +321,29 @@ public class StartActivity extends Activity {
 //                me.saveInBackground();
 //            }
 //        });
-
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {//TODO incorporate multiple people with same name
                 if (e == null) {
                     // Hooray! Let them use the app now.
-                    ParseFacebookUtils.linkInBackground(user, loginResult.getAccessToken(), new SaveCallback() {
+                    ParseFacebookUtils.linkInBackground(user, mLoginResult.getAccessToken(), new SaveCallback() {
                         public void done(ParseException e) {
                             if (e == null) {
                                 Log.wtf(TAG, "Success save");
+                                addFaceBookFriends();
+                                goToHome();
                             } else {
                                 Log.wtf(TAG, "Not save");
+                                Log.wtf(TAG, e.getLocalizedMessage());
                             }
                         }
                     });
 
-                    saveLocal();
-                    goToHome();
                 } else {
                     // Sign up didn't succeed. Look at the ParseException
-                    // to figure out what went wrong
+                    // to figure out what went wron
+                    Log.wtf(TAG, e.toString() + " & "+ e.getLocalizedMessage() );
                     Toast.makeText(getApplicationContext(),
-                            "Sorry, that user already exists",
-                            Toast.LENGTH_SHORT).show();
+                            "Could not sign you up", Toast.LENGTH_SHORT).show();
                 }
             }
         });
