@@ -27,6 +27,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.parse.GetCallback;
+import com.parse.LogInCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -358,6 +359,7 @@ public class StartActivity extends Activity {
         Set getRecentlyGrantedPermissions = mLoginResult.getRecentlyGrantedPermissions();
         Set getDeniedPermissions = mLoginResult.getRecentlyDeniedPermissions();
         Profile profile = Profile.getCurrentProfile();
+        Log.wtf(TAG, "Profile is null: " + (profile == null));
         String lastName = Profile.getCurrentProfile().getLastName();
         String firstName = Profile.getCurrentProfile().getFirstName();
         //String facebookID =  Profile.getCurrentProfile().
@@ -435,19 +437,19 @@ public class StartActivity extends Activity {
                             Toast.LENGTH_SHORT).show();
         }else{
             //TODO incorporate multiple people with same name
-//            ParseUser.logInInBackground(name, pass, new LogInCallback() {
-//                @Override
-//                public void done(ParseUser user, ParseException e) {
-//                    if (e == null) {
-//                        Toast.makeText(getApplicationContext(),
-//                                "Welcome back,\n" + user.getUsername(),
-//                                Toast.LENGTH_SHORT).show();
-//                        goToHome();
-//                    } else {
-//                        saveParse();
-//                    }
-//                }
-//            });
+            ParseUser.logInInBackground(name, pass, new LogInCallback() {
+                @Override
+                public void done(ParseUser user, ParseException e) {
+                    if (e == null) {
+                        Toast.makeText(getApplicationContext(),
+                                "Welcome back,\n" + user.getUsername(),
+                                Toast.LENGTH_SHORT).show();
+                        goToHome();
+                    } else {
+                        saveParse();
+                    }
+                }
+            });
         }
     }
 
@@ -511,32 +513,18 @@ public class StartActivity extends Activity {
 //        }
 //    });
 
-
-    //TODO might not be needed anymore due to local data
-    private void saveLocal(){
-        //TODO Make so that user can continue from last time as opposed to always resetting
-        //save a working name
-        SharedPreferences sharedPreferences =
-                getSharedPreferences(GameMarker.PREFFILE, MODE_PRIVATE);
-        SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
-
-        sharedPrefEditor.putString(GameMarker.FULL_NAME, name);
-        sharedPrefEditor.putInt(GameMarker.TOTAL_HUGS, 0);
-
-        //save the user's name asynchronously
-        sharedPrefEditor.apply();
-    }
-
     private void saveParse(){
         ParseUser user = new ParseUser();
         user.setUsername(name);
         user.setPassword(pass);
+        user.put("name", name);
+        user.put("totalHugs", 0);
+        user.put("totalGames", 0);
 
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {//TODO incorporate multiple people with same name
                 if (e == null) {
                     // Hooray! Let them use the app now.
-                    saveLocal();
                     Toast.makeText(getApplicationContext(),
                             "Welcome aboard, " + name + "!",
                             Toast.LENGTH_SHORT).show();
@@ -551,7 +539,6 @@ public class StartActivity extends Activity {
             }
         });
     }
-
 
     private void goToHome(){
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);

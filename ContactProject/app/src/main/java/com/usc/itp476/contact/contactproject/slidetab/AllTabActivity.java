@@ -44,14 +44,13 @@ public class AllTabActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tab);
 
-        Log.wtf(TAG, "Total Hugs: " + ParseUser.getCurrentUser().getInt("totalHugs"));
+        tabs = new ArrayList<Fragment>();
+        titles = new ArrayList<>();
+        friendList = new ArrayList<>();
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.viewPager);
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);
-
-        tabs = new ArrayList<Fragment>();
-        titles = new ArrayList<>();
 
         titles.add("Games");
         titles.add("Friends");
@@ -59,6 +58,7 @@ public class AllTabActivity extends FragmentActivity {
 
         tabs.add(new GameFragment());
         mFriendFragment = new FriendsFragment();
+        mFriendFragment.setAllTabActivity(this, friendList);
         tabs.add( mFriendFragment );
 
         mProfileFragment = new ProfileFragment();
@@ -67,7 +67,6 @@ public class AllTabActivity extends FragmentActivity {
         mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
         mPager.setAdapter(mPagerAdapter);
 
-        mFriendFragment.setAllTabActivity(this);
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mPager);
 
@@ -96,7 +95,6 @@ public class AllTabActivity extends FragmentActivity {
     }
 
     private void grabRealFriends(List<ParseUser> list){
-        friendList = new ArrayList<>();
         //for each user in the relation, we only have the ObjectId and username
         for (ParseUser u : list){
             try {
@@ -143,7 +141,7 @@ public class AllTabActivity extends FragmentActivity {
             Intent i = new Intent();
             setResult(StartActivity.RESULT_ALLTABS_QUIT_STAY_LOGIN, i);
             finish();
-        } else if( mPager.getCurrentItem() == 1 && mProfileFragment.mFriendProfile ){
+        } else if( mPager.getCurrentItem() == 1 && (mProfileFragment != null) ){
             //if the user has clicked to view one of his friend's profile in friendsfragment then we want to
             //set the the current fragment back to the gridview of his friends
 

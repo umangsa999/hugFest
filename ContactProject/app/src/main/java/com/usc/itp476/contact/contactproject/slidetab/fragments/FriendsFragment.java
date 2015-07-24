@@ -55,8 +55,9 @@ public class FriendsFragment extends Fragment {
         return rootView;
     }
 
-    public void setAllTabActivity(AllTabActivity allTabActivity) {
+    public void setAllTabActivity(AllTabActivity allTabActivity, ArrayList<ParseUser> f) {
         this.mAllTabActivity = allTabActivity;
+        friendList = f;
     }
 
     private void setAddListener(){
@@ -100,6 +101,7 @@ public class FriendsFragment extends Fragment {
     private void generateGridView(){
         mFriendListAdapter = new FriendListGridAdapter( mContext, false, mAllTabActivity);
         gridView.setAdapter( mFriendListAdapter );
+        mFriendListAdapter.setFriendsList(friendList);
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -113,6 +115,7 @@ public class FriendsFragment extends Fragment {
         });
     }
 
+    //TODO make this code more server heavy
     private void addFriend(String inputFriendUsername){
         ParseQuery<ParseUser> findFriend = ParseUser.getQuery();
         findFriend.whereEqualTo("username", inputFriendUsername);
@@ -128,11 +131,15 @@ public class FriendsFragment extends Fragment {
                     ParseUser friend = list.get(0);
                     ParseUser me = ParseUser.getCurrentUser();
                     ParseRelation<ParseUser> myFriends = me.getRelation("friends");
-
+                    //TODO need to check for duplicates before adding
                     myFriends.add(friend);
                     me.saveInBackground();
 
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Added " + friend.getUsername(), Toast.LENGTH_SHORT).show();
+
                     friendList.add(friend);
+                    updateFriends(friendList);
                     mFriendListAdapter.notifyDataSetChanged();
                     //TODO make a push notification from me to friend asking for permission
                     //TODO this is because we do not have ACL authority
