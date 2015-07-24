@@ -44,6 +44,8 @@ public class AllTabActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tab);
 
+        Log.wtf(TAG, "Total Hugs: " + ParseUser.getCurrentUser().getInt("totalHugs"));
+
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.viewPager);
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);

@@ -10,20 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.util.Log;
-
-import com.facebook.FacebookSdk;
-import com.parse.GetCallback;
-import com.parse.LogInCallback;
-import com.parse.Parse;
-import com.parse.ParseUser;
-import com.parse.ParseException;
-import com.parse.SignUpCallback;
-import com.usc.itp476.contact.contactproject.POJO.GameMarker;
-import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
-
-import java.util.Arrays;
-import java.util.List;
 
 import com.digits.sdk.android.AuthCallback;
 import com.digits.sdk.android.DigitsAuthButton;
@@ -41,6 +27,8 @@ import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
@@ -60,6 +48,7 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -212,34 +201,38 @@ public class StartActivity extends Activity {
             public void onSuccess(LoginResult loginResult) {
                 Log.wtf(TAG, "Facebook success");
                 mLoginResult = loginResult;
-                    /*
+
+                     /*
                     TODO check if parseuser exists and just add FB to parse
                     TODO Just run this and check if it works - Chris
                      */
-                ParseUser currentParseUser = ParseUser.getCurrentUser();
-                if (currentParseUser != null ) {
-                    Log.wtf(TAG, currentParseUser.toString() );
-                    Log.wtf(TAG, "currentPU != null");
-                    if (currentParseUser.get("facebookID") == null) {
-                        Log.wtf(TAG, "facebookID == null");
-                        //currentParseUser.put("facebookID", Profile.getCurrentProfile().getId() );
-                        currentParseUser.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                            if (e != null) {
-                                Log.wtf(TAG, "e!= null");
-                                Log.wtf(TAG, e.getLocalizedMessage());
-                            } else {
-                                goToHome();
-                            }
-                            }
-                        });
-                    }else{
-                        Log.wtf(TAG, "currentPU == null & going home");
-                        goToHome(); //TODO maybe check for new facebook friends here
-                    }
-                }else {
+                //We dont know if new user OR old user
+                //We want to query using the facebook ID
+
+                String tokenID = null;
+                String facebookID = Profile.getCurrentProfile().getId();
+                HashMap<String, Object> parms = new HashMap<String, Object>();
+                parms.put("facebookID", facebookID);
+                try {
+                    tokenID = ParseCloud.callFunction("getUserSessionToken", parms);
+                    //tokenID = JSONObject))
+                    //Log.wtf(TAG, "token: " + token.toString() );
+                    //Log.wtf(TAG, "token: " + token.get("facebookID").toString() );
+                    Log.wtf(TAG, "token: " + tokenID );
+                } catch (ParseException e) {
+                    //New user
+                    Log.wtf(TAG, e.getMessage() );
                     findFacebookUserData();
+                    return;
+                }
+                if (tokenID != null) {
+                    try {
+                        ParseUser.become(tokenID);
+                        Log.wtf(TAG, ParseUser.getCurrentUser().getUsername());
+                        goToHome();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             @Override
