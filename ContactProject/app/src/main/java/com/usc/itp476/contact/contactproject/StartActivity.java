@@ -3,7 +3,6 @@ package com.usc.itp476.contact.contactproject;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -62,8 +61,10 @@ public class StartActivity extends Activity {
     private EditText edtxPass;
     private String name;
     private String pass;
+    int i = 1;
     private ParseUser user;
     private String userEmail;
+    private String facebookID = "0";
     private JSONArray facebookIDs = null;
     private LoginResult mLoginResult = null;
 
@@ -202,15 +203,25 @@ public class StartActivity extends Activity {
                 Log.wtf(TAG, "Facebook success");
                 mLoginResult = loginResult;
 
-                     /*
+                /*
                     TODO check if parseuser exists and just add FB to parse
                     TODO Just run this and check if it works - Chris
-                     */
+                 */
+
                 //We dont know if new user OR old user
                 //We want to query using the facebook ID
 
                 String tokenID = null;
-                String facebookID = Profile.getCurrentProfile().getId();
+
+                //String facebookID = Profile.getCurrentProfile().getId();
+//                try {
+//                    //findFacebookUserID().
+//                    Log.wtf(TAG, "facebookID: "+ facebookID);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                }
                 HashMap<String, Object> parms = new HashMap<String, Object>();
                 parms.put("facebookID", facebookID);
                 try {
@@ -221,14 +232,15 @@ public class StartActivity extends Activity {
                     Log.wtf(TAG, "token: " + tokenID );
                 } catch (ParseException e) {
                     //New user
-                    Log.wtf(TAG, e.getMessage() );
-                    findFacebookUserData();
+                    Log.wtf(TAG, "Parseexception: "+ e.getMessage());
+                    //findFacebookUserData();
+                    createFaceBookParseUser();
                     return;
                 }
                 if (tokenID != null) {
                     try {
                         ParseUser.become(tokenID);
-                        Log.wtf(TAG, ParseUser.getCurrentUser().getUsername());
+                        Log.wtf(TAG, "ParseUsername" + ParseUser.getCurrentUser().getUsername());
                         goToHome();
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -255,7 +267,6 @@ public class StartActivity extends Activity {
 //        Task<List<ParseObject>> myParseFriendsList =  myFriends.findInBackground();
 //        myParseFriendsList.waitForCompletion();
 //        myParseFriendsList.getResult(); //TODO finish this -Chris
-
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me/friends",
@@ -276,7 +287,7 @@ public class StartActivity extends Activity {
                                 }
                             }
                         } catch (JSONException e) {
-                            Log.wtf(TAG, e.getLocalizedMessage());
+                            Log.wtf(TAG, "JSONex: "+ e.getLocalizedMessage());
                         }
 //                        createFaceBookParseUser();
                     }
@@ -297,7 +308,7 @@ public class StartActivity extends Activity {
                     try {
                         userEmail = object.get("email").toString();
                     } catch (JSONException e) {
-                        Log.wtf(TAG, e.getLocalizedMessage());
+                        Log.wtf(TAG, "FindFBUSerData: "+e.getLocalizedMessage());
                     }
                     createFaceBookParseUser();
                 }
@@ -309,8 +320,36 @@ public class StartActivity extends Activity {
         request.executeAsync();
     }
 
+    private void findFacebookUserID(){
+        GraphRequest request = GraphRequest.newMeRequest(
+                mLoginResult.getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(
+                            JSONObject object,
+                            GraphResponse response) {
+                        // Application code
+                        //Log.wtf(TAG, response.toString());
+                        try {
+                            facebookID = object.get("id").toString();
+                            Log.wtf(TAG, "graph facebookID: "+ facebookID );
+                        } catch (JSONException e) {
+                            Log.wtf(TAG, "findFBuserID: "+e.getLocalizedMessage());
+                        }
+                    }
+                });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id");
+        request.setParameters(parameters);
+        //TODO
+
+        //request.executeBatchAsync();
+    }
+
     private void createFaceBookParseUser() {
-        Log.wtf(TAG, "createfbusr");
+        Log.wtf(TAG, "createfbusr"+ i);
+        i++;
         AccessToken accessToken = mLoginResult.getAccessToken();
 
         Date expirationDate = accessToken.getExpires();
@@ -319,11 +358,11 @@ public class StartActivity extends Activity {
         Set getRecentlyGrantedPermissions = mLoginResult.getRecentlyGrantedPermissions();
         Set getDeniedPermissions = mLoginResult.getRecentlyDeniedPermissions();
         Profile profile = Profile.getCurrentProfile();
-        String lastName = profile.getLastName();
-        String firstName = profile.getFirstName();
-        String facebookID = profile.getId();
-        Uri profileLink = profile.getLinkUri();
-        Uri profilePictureUri = profile.getProfilePictureUri(150, 150);
+        String lastName = Profile.getCurrentProfile().getLastName();
+        String firstName = Profile.getCurrentProfile().getFirstName();
+        //String facebookID =  Profile.getCurrentProfile().
+        //Uri profileLink = profile.getLinkUri();
+        //Uri profilePictureUri = profile.getProfilePictureUri(150, 150);
 
         String username = firstName +lastName;
         user = new ParseUser();
@@ -331,7 +370,7 @@ public class StartActivity extends Activity {
         user.put("name", firstName + " " + lastName);
         user.setPassword(username); //TODO create a more complex password
         //user.put("authData", facebookAuth);
-        user.setEmail(userEmail);
+        //user.setEmail(userEmail); //TODO SET EMAIL
         user.put("totalGames", 0);
         user.put("totalHugs", 0);
 
@@ -352,6 +391,8 @@ public class StartActivity extends Activity {
 //                me.saveInBackground();
 //            }
 //        });
+
+
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {//TODO incorporate multiple people with same name
                 if (e == null) {
