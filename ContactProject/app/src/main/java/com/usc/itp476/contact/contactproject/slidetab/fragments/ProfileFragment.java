@@ -2,6 +2,7 @@ package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -51,12 +52,14 @@ public class ProfileFragment extends Fragment {
     String tokenID = "";
     String un = "", ps = "";
     Activity mActivity;
+    private Context context;
+
     public void setName(String name){
         txvwTotal.setText(name);
     }
 
-    public void friendProfileTrue(String id, AllTabActivity parent){
-        mFriendProfile = true;
+    public void friendProfileTrue(String id, boolean isFriend, AllTabActivity parent){
+        mFriendProfile = isFriend;
         myParent = parent;
         friendID = id;
     }
@@ -85,22 +88,18 @@ public class ProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
-        String picLink = ParseUser.getCurrentUser().getString("picLink");
-        int totalHugs = ParseUser.getCurrentUser().getInt("totalHugs");
-        //String piclink = StartActivity.user.getString("pictureLink");
-        //int totalHugs = StartActivity.user.getInt("totalHugs");
-        PicassoTrustAll.getInstance(this.getActivity().getApplicationContext())
-                .load(picLink).into(imgPhoto);
-        //TODO WHY DOESNT THIS WORK???
-        Log.wtf(TAG + "totalH: ", ""+totalHugs);
-        txvwTotal.setText( String.valueOf(totalHugs) );
-
         if( mFriendProfile ) {
             imbnEdit.setVisibility(View.GONE);
             loadFriendSaveData();
         }else {
+            //Not a FRIENDDDDD
+            String picLink = ParseUser.getCurrentUser().getString("pictureLink");
+            int totalHugs = ParseUser.getCurrentUser().getInt("totalHugs");
+            String name = ParseUser.getCurrentUser().getString("name");
+            PicassoTrustAll.getInstance( context ).load(picLink).fit().into(imgPhoto);
+            txvwTotal.setText( String.valueOf(totalHugs) );
+            txvwName.setText( name );
             setListeners();
-            loadMySaveData();
         }
         return rootView;
     }
@@ -204,11 +203,9 @@ public class ProfileFragment extends Fragment {
 
         //PUT OLD PARSE IN NEW
         parms.put("facebookID", p.getId());
-        Log.wtf(TAG, p.getId() + " is my facebookID");
         try {
             tokenID = ParseCloud.callFunction("getUserSessionToken", parms);
             ParseUser.become(tokenID);
-            Log.wtf(TAG, tokenID + " is my token");
             //TODO merge old and new FB - dont do yet
         } catch (ParseException e) {
             Log.wtf(TAG, e.getLocalizedMessage());
@@ -223,6 +220,7 @@ public class ProfileFragment extends Fragment {
             if (friend != null){
                 txvwTotal.setText(String.valueOf(friend.getInt("totalHugs")));
                 txvwName.setText(friend.getString("name"));
+                PicassoTrustAll.getInstance( context ).load(friend.getString("pictureLink") ).fit().into(imgPhoto);
             }else{
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Could not find friend",
@@ -234,25 +232,6 @@ public class ProfileFragment extends Fragment {
                     "Could not find friend",
                     Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void loadMySaveData(){
-//        SharedPreferences sharedPreferences =
-//                getActivity().getSharedPreferences(GameMarker.PREFFILE, Context.MODE_PRIVATE);
-//
-//        String name = sharedPreferences.getString(GameMarker.FULL_NAME, null);
-//        int totalhugs = sharedPreferences.getInt(GameMarker.TOTAL_HUGS, -1);
-//
-//        if (name != null){
-//            txvwName.setText(name);
-//        }
-//
-//        if (totalhugs != -1){
-//            txvwTotal.setText(String.valueOf(totalhugs));
-//        }
-        ParseUser display = ParseUser.getCurrentUser();
-        txvwName.setText(display.getString("name"));
-        txvwTotal.setText(String.valueOf(display.getInt("totalHugs")));
     }
 
     private void switchIcon(){
@@ -268,24 +247,13 @@ public class ProfileFragment extends Fragment {
             edtxName.setVisibility(View.GONE);
             txvwName.setText(edtxName.getText());
 
-            //save a working name
-//            //TODO incorporate this for
-//            SharedPreferences sharedPreferences =
-//                    getActivity().getSharedPreferences(GameMarker.PREFFILE,
-//                            Context.MODE_PRIVATE);
-//            SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
-//
-//            sharedPrefEditor.putString(GameMarker.FULL_NAME,
-//                    txvwName.getText().toString());
-//
-//            sharedPrefEditor.commit();
             if (!mFriendProfile){
                 ParseUser update = ParseUser.getCurrentUser();
                 update.put("name", txvwName.getText().toString());
                 update.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast t = new Toast(getActivity().getApplicationContext());
+                        Toast t = new Toast( getActivity().getApplicationContext() );
                         t.setDuration(Toast.LENGTH_SHORT);
                         if (e != null){
                             Toast.makeText(getActivity().getApplicationContext(),
@@ -300,5 +268,9 @@ public class ProfileFragment extends Fragment {
                 });
             }
         }
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

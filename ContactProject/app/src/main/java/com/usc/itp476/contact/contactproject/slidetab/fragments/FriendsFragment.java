@@ -26,7 +26,6 @@ import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsFragment extends Fragment {
@@ -64,7 +63,7 @@ public class FriendsFragment extends Fragment {
             public void onClick(View view) {
                 // get prompts.xml view
                 LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
-                View promptView = layoutInflater.inflate(R.layout.prompts, null);
+                View promptView = layoutInflater.inflate(R.layout.prompt_add_friend, null);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
                 // set prompts.xml to be the layout file of the alertdialog builder
                 alertDialogBuilder.setView(promptView);

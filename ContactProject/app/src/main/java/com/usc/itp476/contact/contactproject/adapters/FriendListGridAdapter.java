@@ -2,6 +2,7 @@ package com.usc.itp476.contact.contactproject.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
+import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
 import java.util.ArrayList;
 
@@ -33,7 +36,7 @@ public class FriendListGridAdapter extends BaseAdapter {
         context=mainActivity;
         inflater=(LayoutInflater)context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        friendsList = null;
+        friendsList = ContactApplication.getFriendsList();
         mDisplayCheckBox = displayCheckBox;
         parent = parentActivity;
         isAllTabNotCreate = isAllTabActivity;
@@ -63,6 +66,7 @@ public class FriendListGridAdapter extends BaseAdapter {
         TextView points;
         TextView objectID;
         CheckBox invited;
+        String friendParseUserID;
     }
 
     @Override
@@ -78,15 +82,16 @@ public class FriendListGridAdapter extends BaseAdapter {
         holder.objectID = (TextView) rowView.findViewById(R.id.ObjectIdTextView);
         holder.img.setImageResource(R.mipmap.medium);
 
+        String pictureURL = ContactApplication.getFriendsList().get(position).getString("pictureLink");
+        String name = ContactApplication.getFriendsList().get(position).getString("name");
+        int points = ContactApplication.getFriendsList().get(position).getInt("totalHugs");
+        holder.points.setText( String.valueOf(points) );
+        holder.friendParseUserID = ContactApplication.getFriendsList().get(position).getString("objectId");
 
-        //PicassoTrustAll.getInstance(this.getActivity().getApplicationContext())
-        //        .load(picLink).into(imgPhoto);
+        PicassoTrustAll.getInstance( context )
+                .load(pictureURL).fit().into(holder.img);
 
-        holder.objectID.setText(
-                friendsList == null ?
-                        "" :
-                        friendsList.get(position).getObjectId());
-
+        holder.objectID.setText( friendsList == null ? "" : name );
         if(mDisplayCheckBox){
             holder.points.setVisibility(View.GONE);
             rowView.setOnClickListener(new View.OnClickListener() {
@@ -104,12 +109,18 @@ public class FriendListGridAdapter extends BaseAdapter {
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-            //This is where we handle pressing gridtiles
-                    TextView t = (TextView) view.findViewById(R.id.ObjectIdTextView);
-                    if (isAllTabNotCreate)
-                        ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(t.getText().toString());
-                    else
-                        ;//TODO fill this in
+                    //This is where we handle pressing gridtiles
+                    TextView name = (TextView) view.findViewById(R.id.ObjectIdTextView);
+                    //TextView score = (TextView) view.findViewById(R.id.ObjectIdTextView);
+                    if (isAllTabNotCreate) {
+                        //This is the stinkin friends list
+                        Log.wtf(TAG + "Clicked", holder.friendParseUserID );
+                        ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(holder.friendParseUserID);
+                    }
+                    else{
+                        //this is invite friends
+
+                    }
                 }
             });
         }

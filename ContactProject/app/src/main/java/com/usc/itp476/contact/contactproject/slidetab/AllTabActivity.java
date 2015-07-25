@@ -44,7 +44,7 @@ public class AllTabActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tab);
 
-        tabs = new ArrayList<Fragment>();
+        tabs = new ArrayList<>();
         titles = new ArrayList<>();
 
         // Instantiate a ViewPager and a PagerAdapter.
@@ -58,9 +58,10 @@ public class AllTabActivity extends FragmentActivity {
         tabs.add(new GameFragment());
         mFriendFragment = new FriendsFragment();
         mFriendFragment.setAllTabActivity(this);
-        tabs.add( mFriendFragment );
+        tabs.add(mFriendFragment);
 
         mProfileFragment = new ProfileFragment();
+        mProfileFragment.setContext( getApplicationContext() );
         tabs.add( mProfileFragment );
 
         mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
@@ -85,7 +86,7 @@ public class AllTabActivity extends FragmentActivity {
                     Toast.makeText(getApplicationContext(),
                             "Could not find friends", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.wtf(TAG, "list of friends is size: " + String.valueOf(list.size()));
+                    //Log.wtf(TAG, "list of friends is size: " + String.valueOf(list.size()));
                     grabRealFriends(list);
                     signalUpdateFriends();
                 }
@@ -116,7 +117,7 @@ public class AllTabActivity extends FragmentActivity {
     public void showFriendProfile(String id){
         //setting the middle tab to profile of a friend
         mProfileFragment = new ProfileFragment();
-        mProfileFragment.friendProfileTrue(id, this);
+        mProfileFragment.friendProfileTrue(id, true, this);
         tabs.set(1, mProfileFragment);
         mPagerAdapter.notifyDataSetChanged();
         mPager.setAdapter(mPagerAdapter);

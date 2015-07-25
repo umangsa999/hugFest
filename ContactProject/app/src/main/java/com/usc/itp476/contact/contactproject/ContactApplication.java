@@ -11,14 +11,12 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.parse.Parse;
 import com.parse.ParseACL;
-import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
-import com.parse.PushService;
 import com.parse.SaveCallback;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
@@ -34,7 +32,7 @@ public class ContactApplication extends Application {
 	// Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "Ai9qe71kw0YSzWrsOhsqOGzJB";
     private static final String TWITTER_SECRET = "VRYJY0hRozcEupHlTNus18RbSxiLE5ioKkVCRZmjUF4ErKqL59";
-    private ArrayList<ParseUser> friendList;
+    private static ArrayList<ParseUser> friendList;
 	
     private static ContactApplication singleton;
 
@@ -42,7 +40,7 @@ public class ContactApplication extends Application {
         return singleton;
     }
 
-    public ArrayList<ParseUser> getFriendsList(){
+    public static ArrayList<ParseUser> getFriendsList(){
         return friendList;
     }
 

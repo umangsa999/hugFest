@@ -284,7 +284,6 @@ public class StartActivity extends Activity {
                         facebookID = object.get("id").toString();
                         name = object.get("name").toString();
                         pictureURL = object.getJSONObject("picture").getJSONObject("data").getString("url");
-                        Log.wtf(TAG, pictureURL);
                     } catch (JSONException e) {
                     }
                     HashMap<String, Object> parms = new HashMap<String, Object>();
@@ -337,6 +336,7 @@ public class StartActivity extends Activity {
         user.put("totalHugs", 0);
         user.put("facebookID", facebookID);
         user.put("pictureLink", pictureURL);
+        user.put("inGame", false);
 
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {//TODO incorporate multiple people with same name
