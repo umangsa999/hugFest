@@ -39,6 +39,7 @@ public class ProfileFragment extends Fragment {
     private ImageButton imbnEdit;
     private Button btnLogout;
     private Button btnLink;
+    private Button btnViewFacebook;
     private TextView txvwName;
     private TextView txvwTotal;
     private EditText edtxName;
@@ -78,6 +79,14 @@ public class ProfileFragment extends Fragment {
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
         btnLink = (Button) rootView.findViewById(R.id.btnLink);
         btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
+        btnViewFacebook = (Button) rootView.findViewById(R.id.buttonViewFacebook);
+        btnViewFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO - implement
+                Log.wtf(TAG, "Do open facebook URI link with default browser");
+            }
+        });
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,10 +98,13 @@ public class ProfileFragment extends Fragment {
             }
         });
         if( mFriendProfile ) {
+            //We are viewing the friend with the profile fragment
             imbnEdit.setVisibility(View.GONE);
+            btnLogout.setVisibility(View.GONE);
+            btnLink.setVisibility(View.GONE);
             loadFriendSaveData();
         }else {
-            //Not a FRIENDDDDD
+            //Not a FRIEND, is the user himself
             String picLink = ParseUser.getCurrentUser().getString("pictureLink");
             int totalHugs = ParseUser.getCurrentUser().getInt("totalHugs");
             String name = ParseUser.getCurrentUser().getString("name");
@@ -143,7 +155,6 @@ public class ProfileFragment extends Fragment {
                                     });
 
                     // create an alert dialog
-                    //AlertDialog alertD = alertDialogBuilder.
                     alertDialogBuilder.show();
                 }else{
                     //TODO get user to sign in facebook, get their facebook id, and add to parse
@@ -217,6 +228,7 @@ public class ProfileFragment extends Fragment {
     private void loadFriendSaveData(){
         try {
             ParseUser friend = ParseUser.getQuery().get(friendID);
+            Log.wtf(TAG + "friend: ", friendID);
             if (friend != null){
                 txvwTotal.setText(String.valueOf(friend.getInt("totalHugs")));
                 txvwName.setText(friend.getString("name"));

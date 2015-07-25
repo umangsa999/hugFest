@@ -66,7 +66,6 @@ public class FriendListGridAdapter extends BaseAdapter {
         TextView points;
         TextView objectID;
         CheckBox invited;
-        String friendParseUserID;
     }
 
     @Override
@@ -86,12 +85,12 @@ public class FriendListGridAdapter extends BaseAdapter {
         String name = ContactApplication.getFriendsList().get(position).getString("name");
         int points = ContactApplication.getFriendsList().get(position).getInt("totalHugs");
         holder.points.setText( String.valueOf(points) );
-        holder.friendParseUserID = ContactApplication.getFriendsList().get(position).getString("objectId");
+        String objectID = ContactApplication.getFriendsList().get(position).getObjectId();
 
         PicassoTrustAll.getInstance( context )
                 .load(pictureURL).fit().into(holder.img);
 
-        holder.objectID.setText( friendsList == null ? "" : name );
+        holder.objectID.setText( friendsList == null ? "" : objectID);
         if(mDisplayCheckBox){
             holder.points.setVisibility(View.GONE);
             rowView.setOnClickListener(new View.OnClickListener() {
@@ -110,12 +109,13 @@ public class FriendListGridAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View view) {
                     //This is where we handle pressing gridtiles
-                    TextView name = (TextView) view.findViewById(R.id.ObjectIdTextView);
-                    //TextView score = (TextView) view.findViewById(R.id.ObjectIdTextView);
+                    TextView id = (TextView) view.findViewById(R.id.ObjectIdTextView);
                     if (isAllTabNotCreate) {
                         //This is the stinkin friends list
-                        Log.wtf(TAG + "Clicked", holder.friendParseUserID );
-                        ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(holder.friendParseUserID);
+                        Log.wtf(TAG + "Clicked", id.getText().toString() );
+                        ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(
+                                id.getText().toString()
+                        );
                     }
                     else{
                         //this is invite friends
