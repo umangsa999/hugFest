@@ -77,6 +77,11 @@ public class FriendListGridAdapter extends BaseAdapter {
         holder.invited = (CheckBox) rowView.findViewById(R.id.ckbxInvite);
         holder.objectID = (TextView) rowView.findViewById(R.id.ObjectIdTextView);
         holder.img.setImageResource(R.mipmap.medium);
+
+
+        //PicassoTrustAll.getInstance(this.getActivity().getApplicationContext())
+        //        .load(picLink).into(imgPhoto);
+
         holder.objectID.setText(
                 friendsList == null ?
                         "" :

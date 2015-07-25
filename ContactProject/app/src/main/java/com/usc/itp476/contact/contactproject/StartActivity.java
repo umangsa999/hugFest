@@ -103,7 +103,6 @@ public class StartActivity extends Activity {
 //            goToHome();
 //        }
 
-
         mProgress = (ProgressBar) findViewById(R.id.progressBar);
 
     if (ParseUser.getCurrentUser() != null) {

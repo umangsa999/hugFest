@@ -85,13 +85,15 @@ public class ProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
-        //ParseUser.getCurrentUser().get("picLink");
-        String piclink = StartActivity.user.getString("pictureLink");
-        int totalHugs = StartActivity.user.getInt("totalHugs");
+        String picLink = ParseUser.getCurrentUser().getString("picLink");
+        int totalHugs = ParseUser.getCurrentUser().getInt("totalHugs");
+        //String piclink = StartActivity.user.getString("pictureLink");
+        //int totalHugs = StartActivity.user.getInt("totalHugs");
         PicassoTrustAll.getInstance(this.getActivity().getApplicationContext())
-                .load(piclink).into(imgPhoto);
+                .load(picLink).into(imgPhoto);
         //TODO WHY DOESNT THIS WORK???
-        txvwTotal.setText( totalHugs );
+        Log.wtf(TAG + "totalH: ", ""+totalHugs);
+        txvwTotal.setText( String.valueOf(totalHugs) );
 
         if( mFriendProfile ) {
             imbnEdit.setVisibility(View.GONE);
