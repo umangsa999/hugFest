@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -37,14 +38,12 @@ public class CreateGameActivity extends Activity {
     private ListView lsvwInvite;
     private GridView gridView;
     private int maxPoints = -1;
+    private GameMarker gameBeingMade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
-
-        //mContext = getActivity().getApplicationContext();
-        //mActivity = getActivity();
 
         gridView = (GridView) findViewById(R.id.grid_view);
         btnCreate = (Button) findViewById(R.id.btnCreate);
@@ -55,7 +54,7 @@ public class CreateGameActivity extends Activity {
     }
 
     private void setGridAdapter(){
-        mFriendListAdapter = new FriendListGridAdapter( getApplicationContext(), true, null);
+        mFriendListAdapter = new FriendListGridAdapter( getApplicationContext(), true, this, false);
         gridView.setAdapter( mFriendListAdapter );
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
@@ -66,7 +65,7 @@ public class CreateGameActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Sending image id to FullScreenActivity
-                Toast.makeText( getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -114,22 +113,33 @@ public class CreateGameActivity extends Activity {
         marker.setHostName();
         marker.setPoints(maxPoints);
         marker.setPlayerCount(1);
+        gameBeingMade = marker;
         marker.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if (e == null) {
-                    Intent i = new Intent(
-                            CreateGameActivity.this.getApplicationContext(),
-                            TargetActivity.class);
-                    i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Could not make game.",
-                            Toast.LENGTH_SHORT).show();
+                if (e == null){
+                    createGame();
+                }else{
+                    gameBeingMade = null;
+                    Log.wtf(TAG, e.getLocalizedMessage());
                 }
+//                if (e == null) {
+//                    Intent i = new Intent(
+//                            CreateGameActivity.this.getApplicationContext(),
+//                            TargetActivity.class);
+//                    i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
+//                    startActivity(i);
+//                } else {
+//                    Toast.makeText(getApplicationContext(),
+//                            "Could not make game.",
+//                            Toast.LENGTH_SHORT).show();
+//                }
             }
         });
+    }
+
+    private void createGame(){
+
     }
 
     private void askUpdateFriends(){

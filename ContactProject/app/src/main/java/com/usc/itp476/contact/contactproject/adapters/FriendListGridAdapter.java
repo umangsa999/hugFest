@@ -1,5 +1,6 @@
 package com.usc.itp476.contact.contactproject.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,19 +23,20 @@ public class FriendListGridAdapter extends BaseAdapter {
     private ArrayList<ParseUser> friendsList;
     boolean mDisplayCheckBox = false;
     private static LayoutInflater inflater = null;
-    private static int staticPosition = 0;
-    private AllTabActivity mAllTabActivity = null;
+    private Activity parent = null;
+    private boolean isAllTabNotCreate = false;
 
     public FriendListGridAdapter(Context mainActivity,
                                  Boolean displayCheckBox,
-                                 AllTabActivity allTabActivity){
+                                 Activity parentActivity, boolean isAllTabActivity){
         // TODO Auto-generated constructor stub
         context=mainActivity;
         inflater=(LayoutInflater)context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         friendsList = null;
         mDisplayCheckBox = displayCheckBox;
-        this.mAllTabActivity = allTabActivity;
+        parent = parentActivity;
+        isAllTabNotCreate = isAllTabActivity;
     }
 
     public void setFriendsList(ArrayList<ParseUser> list){
@@ -65,8 +67,6 @@ public class FriendListGridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        staticPosition = position;
         final Holder holder = new Holder();
         View rowView;
         rowView = inflater.inflate(R.layout.grid_tile, null);
@@ -100,7 +100,10 @@ public class FriendListGridAdapter extends BaseAdapter {
                 public void onClick(View view) {
             //This is where we handle pressing gridtiles
                     TextView t = (TextView) view.findViewById(R.id.ObjectIdTextView);
-                    mAllTabActivity.showFriendProfile(t.getText().toString());
+                    if (isAllTabNotCreate)
+                        ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(t.getText().toString());
+                    else
+                        ;//TODO fill this in
                 }
             });
         }

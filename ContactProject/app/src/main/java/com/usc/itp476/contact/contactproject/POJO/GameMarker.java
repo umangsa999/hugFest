@@ -21,6 +21,10 @@ public class GameMarker extends ParseObject {
     public static final String FULL_NAME = "com.usc.itp476.contact.contactproject.POJO.GameMarker.FULL_NAME";
     public static final String TOTAL_HUGS = "com.usc.itp476.contact.contactproject.POJO.GameMarker.TOTAL_HUGS";
 
+    public String getMarerID(){
+        return get;
+    }
+
     public String getGameID(){
         return getString("game");
     }
