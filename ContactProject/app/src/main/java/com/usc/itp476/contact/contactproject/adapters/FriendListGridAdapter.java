@@ -71,6 +71,7 @@ public class FriendListGridAdapter extends BaseAdapter {
         View rowView;
         rowView = inflater.inflate(R.layout.grid_tile, null);
 
+        //SET FRIENDS NAME AND IMAGE HERE
         holder.img = (ImageView) rowView.findViewById(R.id.imageViewFriend);
         holder.points = (TextView) rowView.findViewById(R.id.imageViewScore);
         holder.invited = (CheckBox) rowView.findViewById(R.id.ckbxInvite);

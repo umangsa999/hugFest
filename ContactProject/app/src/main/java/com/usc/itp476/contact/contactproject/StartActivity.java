@@ -67,9 +67,9 @@ public class StartActivity extends Activity {
     private String pictureURL;
     private String pass;
     private HashMap<String, ArrayList<ParseUser>> parsefriendIDs;
-    int i = 1;
     private ProfileTracker mProfileTracker;
-    private ParseUser user;
+    public static ParseUser user = null;
+    //
     private String userEmail;
     private String facebookID = "0";
     private JSONArray facebookIDs = null;
@@ -134,13 +134,13 @@ public class StartActivity extends Activity {
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
                 if( oldProfile != null){
-                    Log.wtf("facebook - OLD profile", oldProfile.getFirstName());
-                    Log.wtf("facebook - profile", oldProfile.getId());
+//                    Log.wtf("facebook - OLD profile", oldProfile.getFirstName());
+//                    Log.wtf("facebook - profile", oldProfile.getId());
                 }
                 if( newProfile != null){
                     //There is a new profile, set this to the old one
-                    Log.wtf("facebook - NEW profile", newProfile.getFirstName());
-                    Log.wtf("facebook - profile", newProfile.getId());
+//                    Log.wtf("facebook - NEW profile", newProfile.getFirstName());
+//                    Log.wtf("facebook - profile", newProfile.getId());
                     Profile.setCurrentProfile(newProfile);
                 }
                 mProfileTracker.stopTracking();
@@ -221,7 +221,6 @@ public class StartActivity extends Activity {
                 /* TODO check if parseuser exists and just add FB to parse
                     TODO Just run this and check if it works - Chris */
                 //We have the accessToken, now we want to do a graphRequest to get the user data
-
                 findFacebookUserData();
 
             }
@@ -289,25 +288,21 @@ public class StartActivity extends Activity {
                         pictureURL = object.getJSONObject("picture").getJSONObject("data").getString("url");
                         Log.wtf(TAG, pictureURL);
                     } catch (JSONException e) {
-                        Log.wtf(TAG, "FindFBUSerData: "+e.getLocalizedMessage());
                     }
                     HashMap<String, Object> parms = new HashMap<String, Object>();
                     parms.put("facebookID", facebookID);
-                    Log.wtf(TAG, "FB id searching for is: "+ facebookID);
                     String tokenID = null;
                     try {
                         tokenID = ParseCloud.callFunction("getUserSessionToken", parms);
                     } catch (ParseException e) {
                         //New user, so we need to do another request to get friends
-                        Log.wtf(TAG, "Parseexception: "+ e.getMessage());
-                        Log.wtf(TAG, "No existing user, create a new one");
                         addFaceBookFriends();
                         return;
                     }
                     if (tokenID != null) {
                         try {
                             //OLD USER
-                            ParseUser.become(tokenID);
+                            user = ParseUser.become(tokenID);
                             goToHome();
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -316,7 +311,7 @@ public class StartActivity extends Activity {
                 }
             });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "name,id,email,picture");
+        parameters.putString("fields", "name,id,email,picture.width(300).height(300)");
         request.setParameters(parameters);
         request.executeAsync();
     }
@@ -343,6 +338,7 @@ public class StartActivity extends Activity {
         user.put("totalGames", 0);
         user.put("totalHugs", 0);
         user.put("facebookID", facebookID);
+        user.put("pictureLink", pictureURL);
 
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {//TODO incorporate multiple people with same name
@@ -351,16 +347,14 @@ public class StartActivity extends Activity {
                     ParseFacebookUtils.linkInBackground(user, mLoginResult.getAccessToken(), new SaveCallback() {
                         public void done(ParseException e) {
                             if (e == null) {
-                                Log.wtf(TAG, "Success save");//cannot add friends until after signed up
                                 ParseRelation<ParseUser> userFriends = user.getRelation("friends");
                                 ArrayList<ParseUser> friends;
                                 //Arrays in cloudcode are ArrayLists in Android
                                 friends = parsefriendIDs.get("friends");
                                 //add each friend individually and then save alltogether
-                                for (int i = 0; i < friends.size(); ++i){
+                                for (int i = 0; i < friends.size(); ++i) {
                                     userFriends.add(friends.get(i));
                                 }
-
                                 user.saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
@@ -372,7 +366,6 @@ public class StartActivity extends Activity {
                                     }
                                 });
                             } else {
-                                Log.wtf(TAG, "Not save");
                                 Log.wtf(TAG, e.getLocalizedMessage());
                             }
                         }
@@ -381,7 +374,7 @@ public class StartActivity extends Activity {
                 } else {
                     // Sign up didn't succeed. Look at the ParseException
                     // to figure out what went wrong
-                    Log.wtf(TAG, e.getLocalizedMessage() );
+                    Log.wtf(TAG, e.getLocalizedMessage());
                     Toast.makeText(getApplicationContext(),
                             "Could not sign you up", Toast.LENGTH_SHORT).show();
                 }

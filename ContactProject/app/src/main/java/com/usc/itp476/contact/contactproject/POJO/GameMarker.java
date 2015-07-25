@@ -1,17 +1,9 @@
 package com.usc.itp476.contact.contactproject.POJO;
 
-import com.parse.FindCallback;
 import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
 
 @ParseClassName("Marker")
 public class GameMarker extends ParseObject {
@@ -22,7 +14,8 @@ public class GameMarker extends ParseObject {
     public static final String TOTAL_HUGS = "com.usc.itp476.contact.contactproject.POJO.GameMarker.TOTAL_HUGS";
 
     public String getMarerID(){
-        return get;
+        //return get;
+        return "";
     }
 
     public String getGameID(){

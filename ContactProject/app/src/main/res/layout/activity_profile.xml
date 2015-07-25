@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:text="42"
             android:textSize="32dp"
-            android:id="@+id/txvwTotal"
+            android:id="@+id/textViewTotal"
             android:layout_marginRight="16dp"
             android:layout_alignParentRight="true" />
 

@@ -86,7 +86,7 @@ public class AllTabActivity extends FragmentActivity {
                     Toast.makeText(getApplicationContext(),
                             "Could not find friends", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.wtf(TAG, String.valueOf(list.size()));
+                    Log.wtf(TAG, "list of friends is size: " + String.valueOf(list.size()));
                     grabRealFriends(list);
                     signalUpdateFriends();
                 }

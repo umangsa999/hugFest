@@ -7,9 +7,9 @@ import com.parse.ParseObject;
 public class GameData extends ParseObject {
 	final String TAG = this.getClass().getSimpleName();
 	
-	public String getGameID(){
-		return get(
-	}
-	
-	public 
+//	public String getGameID(){
+//		return get(
+//	}
+//
+//	public
 }

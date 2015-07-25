@@ -3,6 +3,7 @@ package com.usc.itp476.contact.contactproject.slidetab.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.parse.FunctionCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseCloud;
@@ -68,10 +70,90 @@ public class ProfileFragment extends Fragment {
         imbnEdit = (ImageButton) rootView.findViewById(R.id.btnEdit);
         imgPhoto = (ImageView) rootView.findViewById(R.id.imvwPhoto);
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
-        txvwTotal = (TextView) rootView.findViewById(R.id.txvwTotal);
+        txvwTotal = (TextView) rootView.findViewById(R.id.textViewTotal);
         edtxName = (EditText) rootView.findViewById(R.id.edtxName);
         btnLink = (Button) rootView.findViewById(R.id.btnLink);
         btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseUser.logOut();
+                LoginManager.getInstance().logOut();
+                Intent i = new Intent();
+                getActivity().setResult(StartActivity.RESULT_LOGOUT);
+                getActivity().finish();
+            }
+        });
+
+        String piclink = StartActivity.user.getString("pictureLink");
+        int totalHugs = StartActivity.user.getInt("totalHugs");
+
+        PicassoTrustAll.getInstance(this.getActivity().getApplicationContext())
+                .load(piclink).into(imgPhoto);
+
+        //MEH
+//        try {
+//
+//            // Load CAs from an InputStream
+//            // (could be from a resource or ByteArrayInputStream or ...)
+//            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+//            InputStream caInput = new BufferedInputStream(this.getActivity().
+//                    getApplicationContext().getAssets().open("a248.e.akamai.net"));
+//
+//
+//            Certificate ca = cf.generateCertificate(caInput);
+//            //System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+//
+//            // Create a KeyStore containing our trusted CAs
+//            String keyStoreType = KeyStore.getDefaultType();
+//            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+//            keyStore.load(null, null);
+//            keyStore.setCertificateEntry("ca", ca);
+//
+//            // Create a TrustManager that trusts the CAs in our KeyStore
+//            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+//            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+//            tmf.init(keyStore);
+//
+//            // Create an SSLContext that uses our TrustManager
+//            SSLContext context = SSLContext.getInstance("TLS");
+//            context.init(null, tmf.getTrustManagers(), null);
+//
+//            // Tell the URLConnection to use a SocketFactory from our SSLContext
+//            URL url = new URL(piclink);
+//            HttpsURLConnection urlConnection = (HttpsURLConnection)url.openConnection();
+//            urlConnection.setSSLSocketFactory(context.getSocketFactory());
+
+        //KEY STORE
+
+//            KeyStore keyStore = KeyStore.getInstance( KeyStore.getDefaultType() );
+//            String algorithm = TrustManagerFactory.getDefaultAlgorithm();
+//            TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
+//            tmf.init(keyStore);
+//
+//            SSLContext context = SSLContext.getInstance("TLS");
+//            context.init(null, tmf.getTrustManagers(), null);
+//
+//            URL url = new URL(piclink);
+//            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+//            urlConnection.setSSLSocketFactory(context.getSocketFactory());
+//            InputStream in = urlConnection.getInputStream();
+//            Bitmap myBitmap = BitmapFactory.decodeStream(in);
+
+        //BITMAP
+//            InputStream in = urlConnection.getInputStream();
+//            Bitmap myBitmap = BitmapFactory.decodeStream(in);
+//            imgPhoto.setImageBitmap(myBitmap);
+//
+//        }catch( Exception e){
+//            e.printStackTrace();
+//            Log.wtf(TAG + "caught https error: ", e.getMessage());
+//            Log.wtf(TAG + "caught https error: ", e.toString() );
+//            Log.wtf(TAG + "caught https error: ", e.getLocalizedMessage() );
+//        }
+
+        //TODO WHY DOESNT THIS WORK???
+        //txvwTotal.setText( totalHugs );
 
         if( mFriendProfile ) {
             imbnEdit.setVisibility(View.GONE);
