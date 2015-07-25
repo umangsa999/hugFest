@@ -16,8 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +45,8 @@ public class TargetActivity extends Activity {
     private CameraManager manager;
     private Button buttonTakePicture;
     private String mCurrentPhotoPath;
+    private ParseFile currentPhoto;
+    private String mImageName;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
 
@@ -86,8 +93,25 @@ public class TargetActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //V only geta thumbnail
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
-            convertToBM();
+            Bitmap imageBitmap = convertToBM();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
             //TODO upload pic to server
+            currentPhoto = new ParseFile(mImageName, byteArray);
+            ParseUser.getCurrentUser().put("image", currentPhoto);
+            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Log.wtf(TAG, "could not save image: " + e.getLocalizedMessage());
+                        Toast.makeText(getApplicationContext(),
+                                "Could not upload image, try again", Toast.LENGTH_SHORT).show();
+                    }else{
+                        increasePoints();
+                    }
+                }
+            });
         }
         else if (resultCode == RETURN_FROM_RESULT) {
             finish();
@@ -116,7 +140,7 @@ public class TargetActivity extends Activity {
             // Create a media file name
             String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
             File mediaFile;
-            String mImageName = "MI_" + timeStamp + ".jpg";
+            mImageName = "MI_" + timeStamp + ".jpeg";
             mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
             mCurrentPhotoPath = mediaFile.getAbsolutePath();
             return mediaFile;

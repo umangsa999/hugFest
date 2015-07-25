@@ -99,7 +99,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void generateGridView(){
-        mFriendListAdapter = new FriendListGridAdapter( mContext, false, mAllTabActivity);
+        mFriendListAdapter = new FriendListGridAdapter( mContext, false, mAllTabActivity, true);
         gridView.setAdapter( mFriendListAdapter );
         mFriendListAdapter.setFriendsList(friendList);
 

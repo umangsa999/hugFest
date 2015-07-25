@@ -407,19 +407,6 @@ public class StartActivity extends Activity {
         }
     }
 
-    private void addAll(){
-        for (int i = 0; i < 50; ++i){
-            ParseUser.getQuery().whereEqualTo("name", "TestUser#" + i).getFirstInBackground(new GetCallback<ParseUser>() {
-                @Override
-                public void done(ParseUser parseUser, ParseException e) {
-                    ParseUser me = ParseUser.getCurrentUser();
-                    me.getRelation("friends").add(parseUser);
-                    me.saveInBackground();
-                }
-            });
-        }
-    }
-
     private void saveParse(){
         ParseUser user = new ParseUser();
         user.setUsername(name);
