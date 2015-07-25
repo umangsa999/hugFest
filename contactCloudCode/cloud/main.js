@@ -11,7 +11,6 @@ Parse.Cloud.define("getUserSessionToken", function(request, response) {
     query.equalTo("facebookID", facebookID);
     query.find({
         success: function(user) {
-            //response.success(user[0].getSessionToken());
             console.log(user.length);
             user[0].fetch({
                 success: function (user) {
@@ -71,6 +70,27 @@ Parse.Cloud.define("addFriendMutual", function(request, response){
 		},
 		error:function(err){
 			response.error(0); //0 means cannot obtain Helen
+		}
+	});
+});
+
+Parse.Cloud.define("deleteGameData", function(request, response){
+	var type = request.params.type;
+	var ID = request.params.ID;
+	var query = Parse.Query(Parse.Object.extend(type));
+	query.get(ID, {
+		success:function(data){
+			data.destroy({
+				success:function(object){
+					response.success("good");
+				},
+				error:function(error){
+					response.error(error.message);
+				}
+			});
+		},
+		error:function(error){
+			response.error(error.message);
 		}
 	});
 });

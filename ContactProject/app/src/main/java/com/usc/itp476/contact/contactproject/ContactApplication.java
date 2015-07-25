@@ -11,10 +11,17 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseAnalytics;
+import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.PushService;
+import com.parse.SaveCallback;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 
 import java.security.MessageDigest;
@@ -37,17 +44,29 @@ public class ContactApplication extends Application {
         super.onCreate();
         singleton = this;
         ParseObject.registerSubclass(GameMarker.class);
+        ParseObject.registerSubclass(GameData.class);
         Parse.enableLocalDatastore(this);
         Parse.initialize(this,
                 "ellChjDHP7hNM4CBQLHrBNWzDMoOzElwUgy3MpEc",
                 "aXSv9sdHcVcnjSIaqy8KuymGh16K5I53MiWXGgnN");
+        ParseInstallation.getCurrentInstallation().saveInBackground();
         ParseFacebookUtils.initialize(this); //For converting authenticated FB users to Parse users
-        //ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();
         ParseACL.setDefaultACL(defaultACL, true);
 
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         Fabric.with(this, new com.twitter.sdk.android.Twitter(authConfig), new Crashlytics(), new Twitter(authConfig));
+
+        ParsePush.subscribeInBackground("", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+        });
     }
 
     public static String printKeyHash(Activity context) {

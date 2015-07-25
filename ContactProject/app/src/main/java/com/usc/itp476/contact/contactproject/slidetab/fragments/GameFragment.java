@@ -104,7 +104,7 @@ public class GameFragment extends Fragment
         super.onResume();
         if (map != null) {
             createRadius();
-            findPoints();
+            //findPoints();
         }
     }
 

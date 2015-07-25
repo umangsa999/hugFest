@@ -28,7 +28,6 @@ import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
@@ -406,19 +405,6 @@ public class StartActivity extends Activity {
                     } else {
                         saveParse();
                     }
-                }
-            });
-        }
-    }
-
-    private void addAll(){
-        for (int i = 0; i < 50; ++i){
-            ParseUser.getQuery().whereEqualTo("name", "TestUser#" + i).getFirstInBackground(new GetCallback<ParseUser>() {
-                @Override
-                public void done(ParseUser parseUser, ParseException e) {
-                    ParseUser me = ParseUser.getCurrentUser();
-                    me.getRelation("friends").add(parseUser);
-                    me.saveInBackground();
                 }
             });
         }
