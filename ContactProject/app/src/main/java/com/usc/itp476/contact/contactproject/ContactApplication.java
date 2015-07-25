@@ -17,6 +17,7 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
+import com.parse.ParseUser;
 import com.parse.PushService;
 import com.parse.SaveCallback;
 import com.twitter.sdk.android.Twitter;
@@ -25,6 +26,7 @@ import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 
 import java.security.MessageDigest;
+import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -32,11 +34,20 @@ public class ContactApplication extends Application {
 	// Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "Ai9qe71kw0YSzWrsOhsqOGzJB";
     private static final String TWITTER_SECRET = "VRYJY0hRozcEupHlTNus18RbSxiLE5ioKkVCRZmjUF4ErKqL59";
+    private ArrayList<ParseUser> friendList;
 	
     private static ContactApplication singleton;
 
     public ContactApplication getSingleton(){
         return singleton;
+    }
+
+    public ArrayList<ParseUser> getFriendsList(){
+        return friendList;
+    }
+
+    public void setFriendsList(ArrayList<ParseUser> inList){
+        friendList = inList;
     }
 
     @Override
@@ -67,6 +78,7 @@ public class ContactApplication extends Application {
                 }
             }
         });
+        friendList = new ArrayList<>();
     }
 
     public static String printKeyHash(Activity context) {

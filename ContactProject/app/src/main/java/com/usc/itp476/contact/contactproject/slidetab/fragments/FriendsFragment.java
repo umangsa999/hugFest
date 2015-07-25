@@ -21,6 +21,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
@@ -30,7 +31,6 @@ import java.util.List;
 
 public class FriendsFragment extends Fragment {
     final String TAG = this.getClass().getSimpleName();
-    private ArrayList<ParseUser> friendList;
     private FriendListGridAdapter mFriendListAdapter;
     private ImageButton buttonAdd;
     private Context mContext;
@@ -54,9 +54,8 @@ public class FriendsFragment extends Fragment {
         return rootView;
     }
 
-    public void setAllTabActivity(AllTabActivity allTabActivity, ArrayList<ParseUser> f) {
+    public void setAllTabActivity(AllTabActivity allTabActivity) {
         this.mAllTabActivity = allTabActivity;
-        friendList = f;
     }
 
     private void setAddListener(){
@@ -96,8 +95,7 @@ public class FriendsFragment extends Fragment {
 
     private void generateGridView(){
         mFriendListAdapter = new FriendListGridAdapter( mContext, false, mAllTabActivity, true);
-        gridView.setAdapter( mFriendListAdapter );
-        mFriendListAdapter.setFriendsList(friendList);
+        gridView.setAdapter(mFriendListAdapter);
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 
@@ -134,9 +132,8 @@ public class FriendsFragment extends Fragment {
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Added " + friend.getUsername(), Toast.LENGTH_SHORT).show();
 
-                    friendList.add(friend);
-                    updateFriends(friendList);
-                    mFriendListAdapter.notifyDataSetChanged();
+                    ((ContactApplication) getActivity().getApplication()).getFriendsList().add(friend);
+                    updateFriends();
                     //TODO make a push notification from me to friend asking for permission
                     //TODO this is because we do not have ACL authority
                 }
@@ -148,9 +145,7 @@ public class FriendsFragment extends Fragment {
         mAllTabActivity.updateFriends();
     }
 
-    public void updateFriends(ArrayList<ParseUser> p){
-        friendList = p;
-        mFriendListAdapter.setFriendsList(friendList);
+    public void updateFriends(){
         mFriendListAdapter.notifyDataSetChanged(); //actually tell people to display
     }
 

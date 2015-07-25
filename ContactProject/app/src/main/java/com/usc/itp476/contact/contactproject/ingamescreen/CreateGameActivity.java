@@ -35,7 +35,6 @@ import java.util.HashMap;
 public class CreateGameActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private AllTabActivity mAllTabActivity;
-    private ArrayList<ParseUser> friendList;
     private FriendListGridAdapter mFriendListAdapter;
     private Button btnCreate;
     private TextView txvwMax;
@@ -255,9 +254,7 @@ public class CreateGameActivity extends Activity {
         mAllTabActivity.updateFriends();
     }
 
-    public void updateFriends(ArrayList<ParseUser> p){
-        friendList = p;
-        mFriendListAdapter.setFriendsList(friendList);
+    public void updateFriends(){
         mFriendListAdapter.notifyDataSetChanged(); //actually tell people to display
     }
 
