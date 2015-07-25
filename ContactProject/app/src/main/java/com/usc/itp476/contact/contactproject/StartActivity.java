@@ -31,6 +31,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -45,6 +46,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +64,7 @@ public class StartActivity extends Activity {
     private String name;
     private String pictureURL;
     private String pass;
-    private JSONArray parsefriendIDs;
+    private HashMap<String, ArrayList<ParseUser>> parsefriendIDs;
     int i = 1;
     private ProfileTracker mProfileTracker;
     private ParseUser user;
@@ -70,7 +72,6 @@ public class StartActivity extends Activity {
     private String facebookID = "0";
     private JSONArray facebookIDs = null;
     private LoginResult mLoginResult = null;
-    private boolean didGetNewProfile = false;
 
     private boolean hasParseAccount = false;
     //TODO -- if user has parseaccount and no facebook association, if they click fb, link it
@@ -137,25 +138,6 @@ public class StartActivity extends Activity {
         };
 
         mProfileTracker.startTracking();
-    }
-
-    private void createTestUsers(){
-        for (int i = 0; i < 50; ++i){
-            ParseUser u = new ParseUser();
-            u.setUsername("TestUser#" + i);
-            u.setPassword("TestUser#" + i);
-            u.put("name", "TestUser#" + i);
-            u.put("totalHugs", Math.random() * 2000);
-            u.signUpInBackground(new SignUpCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e != null){
-                        Log.wtf(TAG, "could not create test" + e.getLocalizedMessage());
-                        ParseUser.logOut();
-                    }
-                }
-            });
-        }
     }
 
     @Override
@@ -225,7 +207,6 @@ public class StartActivity extends Activity {
             public void onSuccess(LoginResult loginResult) {
                 Log.wtf(TAG, "Facebook success");
                 mLoginResult = loginResult;
-                Log.wtf( TAG, mLoginResult.toString() );
                 AccessToken accessToken = mLoginResult.getAccessToken();
                 /* TODO check if parseuser exists and just add FB to parse
                     TODO Just run this and check if it works - Chris */
@@ -263,6 +244,7 @@ public class StartActivity extends Activity {
                                     HashMap<String, Object> parms = new HashMap<String, Object>();
                                     parms.put("ids", facebookIDs);
                                     try {
+                                        //pass in a HashMap, get back a HashMap
                                         parsefriendIDs = ParseCloud.callFunction("getParseFriendsFromFBID", parms);
                                     } catch (Exception e) {
                                         Log.wtf(TAG, e.getMessage());
@@ -326,8 +308,6 @@ public class StartActivity extends Activity {
         parameters.putString("fields", "name,id,email,picture");
         request.setParameters(parameters);
         request.executeAsync();
-
-
     }
 
     private void createFaceBookParseUser() {
@@ -352,7 +332,6 @@ public class StartActivity extends Activity {
         user.put("totalGames", 0);
         user.put("totalHugs", 0);
         user.put("facebookID", facebookID);
-        user.put("friends",parsefriendIDs);
 
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {//TODO incorporate multiple people with same name
@@ -361,8 +340,26 @@ public class StartActivity extends Activity {
                     ParseFacebookUtils.linkInBackground(user, mLoginResult.getAccessToken(), new SaveCallback() {
                         public void done(ParseException e) {
                             if (e == null) {
-                                Log.wtf(TAG, "Success save");
-                                goToHome();
+                                Log.wtf(TAG, "Success save");//cannot add friends until after signed up
+                                ParseRelation<ParseUser> userFriends = user.getRelation("friends");
+                                ArrayList<ParseUser> friends;
+                                //Arrays in cloudcode are ArrayLists in Android
+                                friends = parsefriendIDs.get("friends");
+                                //add each friend individually and then save alltogether
+                                for (int i = 0; i < friends.size(); ++i){
+                                    userFriends.add(friends.get(i));
+                                }
+
+                                user.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (e == null) {
+                                            goToHome();
+                                        } else {
+                                            Log.wtf(TAG, e.getLocalizedMessage());
+                                        }
+                                    }
+                                });
                             } else {
                                 Log.wtf(TAG, "Not save");
                                 Log.wtf(TAG, e.getLocalizedMessage());

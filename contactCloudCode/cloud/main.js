@@ -78,46 +78,45 @@ Parse.Cloud.define("addFriendMutual", function(request, response){
 //GET FBID array
 //GIVE Parse array
 Parse.Cloud.define("getParseFriendsFromFBID", function(request, response){
-	var ids = request.ids;
-	console.log("id is: ");
-	console.log(ids);
+	var ids = request.params.ids;
 	var numIDs = ids.length;
-	console.log("number of ids is: ");
-	console.log(numIDs);
-	var queryArray;
+	console.log("number of ids is: " + numIDs);
+	var queryArray = [];
 	for (var i = 0; i < numIDs; ++i){
-		console.log("Processing number: " + i);
-		queryArray.push((new Parse.Query(Parse.User)).equalTo("facebookID", ids[i]).first());
+		console.log("Processing number: " + i); //create separate searches for each facebook friend
+		queryArray.push((new Parse.Query(Parse.User)).equalTo("facebookID", ids[i].id));
 	}
-	
-	console.log(numIDs + " friend search");
-	if (ids.length == 1){
+
+	if (numIDs == 1){ //when only one, no need for OR
 		queryArray[0].find({
 			success:function(user){
-				response.success([user]);
+				Parse.Cloud.useMasterKey();
+				response.success({friends:user});
 			},
 			error:function(error){
 				response.error(error.message);
 			}
 		});
-	}else if (ids.length == 2){
+	}else if (numIDs == 2){ //when 2, just OR once
 		var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
 		wholeQuery.find({
 			success:function(users){
-				response.success(users);
+				Parse.Cloud.useMasterKey();
+				response.success({friends:users});
 			},
 			error:function(error){
 				response.error(error.message);
 			}
 		});
-	}else{
+	}else{ //when more than 2, OR as many times as necessary
 		var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
 		for (var i = 2; i < numIDs.length; ++i){
 			wholeQuery = Parse.Query.or(wholeQuery, queryArray[i]);
 		}
 		wholeQuery.find({
 			success:function(users){
-				response.success(users);
+				Parse.Cloud.useMasterKey();
+				response.success({friends:users});
 			},
 			error:function(error){
 				response.error(error.message);
