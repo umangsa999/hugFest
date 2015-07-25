@@ -16,6 +16,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
@@ -34,7 +35,6 @@ public class AllTabActivity extends FragmentActivity {
     private SlidingTabLayout mSlidingTabLayout;
     private ArrayList<Fragment> tabs;
     private ArrayList<String> titles;
-    private ArrayList<ParseUser> friendList;
     public ProfileFragment mProfileFragment = null;
     public FriendsFragment mFriendFragment = null;
     //we need this ^ because we later need to check the profile fragment is a view of the friends or user
@@ -46,7 +46,6 @@ public class AllTabActivity extends FragmentActivity {
 
         tabs = new ArrayList<Fragment>();
         titles = new ArrayList<>();
-        friendList = new ArrayList<>();
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.viewPager);
@@ -58,7 +57,7 @@ public class AllTabActivity extends FragmentActivity {
 
         tabs.add(new GameFragment());
         mFriendFragment = new FriendsFragment();
-        mFriendFragment.setAllTabActivity(this, friendList);
+        mFriendFragment.setAllTabActivity(this);
         tabs.add( mFriendFragment );
 
         mProfileFragment = new ProfileFragment();
@@ -100,7 +99,7 @@ public class AllTabActivity extends FragmentActivity {
             try {
                 ParseUser friend = ParseUser.getQuery().get(u.getObjectId()); //get the rest
                 if (friend != null){
-                    friendList.add(friend); //add our friend locally
+                    ((ContactApplication) getApplication()).getFriendsList().add(friend); //add our friend locally
                 }else{
                     Log.wtf(TAG, "COULD NOT ADD: " + u.getObjectId());
                 }
@@ -111,7 +110,7 @@ public class AllTabActivity extends FragmentActivity {
     }
 
     private void signalUpdateFriends(){
-        mFriendFragment.updateFriends(friendList);
+        mFriendFragment.updateFriends();
     }
 
     public void showFriendProfile(String id){

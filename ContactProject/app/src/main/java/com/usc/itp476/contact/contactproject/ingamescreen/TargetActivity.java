@@ -242,10 +242,15 @@ public class TargetActivity extends Activity {
         if (TIME_INTERVAL + backPressedTime > System.currentTimeMillis()) {
             backToast.cancel();
             super.onBackPressed();
+            removeMeFromGame();
             return;
         }else{
             backToast.show();
         }
         backPressedTime = System.currentTimeMillis();
+    }
+
+    private void removeMeFromGame(){
+
     }
 }
