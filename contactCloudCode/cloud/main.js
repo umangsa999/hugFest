@@ -95,6 +95,68 @@ Parse.Cloud.define("deleteGameData", function(request, response){
 	});
 });
 
+Parse.Cloud.define("removeFromGame", function(request, response){
+	Parse.Cloud.useMasterKey();
+	var playerID = request.params.playerID;
+	console.log("searching for: " + playerID);
+	var userQuery = new Parse.Query(Parse.User);
+	userQuery.get(playerID, {
+		success:function(user){
+			var currentGame = user.get("currentGame").fetch({
+				success:function(game){
+					console.log(game.get("numberPlayers"));
+					console.log(Number(game.get("numberPlayers")) + " players before");
+					console.log("currentGame is: " + String(game));
+					var gamePlayers = game.relation("players");
+					gamePlayers.remove(user);
+					console.log(Number(game.get("numberPlayers")) + " players before");
+					var numPlayersLeft = Number(game.get("numberPlayers")) - 1;
+					console.log("Players left: " + numPlayersLeft);
+					
+					if (numPlayersLeft <= 2){
+						//TODO end game and display results
+						console.log("You stupid");
+						response.success(false);
+					}else{
+						game.set("numberPlayers", numPlayersLeft);
+						game.save({
+							success:function(something){
+								console.log("removed player from game");
+								Parse.Cloud.useMasterKey();
+								user.unset("currentGame");
+								user.set("inGame", false);
+								user.save({
+									success:function(something2){
+										console.log("removed game from player");
+										response.success(true);
+									},
+									error:function(error){
+										console.log("Cannot remove game from player");
+										//TODO add player back into game
+										response.error(error.message);
+									}
+								});
+							},
+							error:function(error){
+								console.log("Cannot remove user and save");
+								response.error(error.message);
+							}
+						});
+					}
+				},
+				error:function(error){
+					console.log("Could not find game");
+					response.error(error.message);
+				}
+			});
+		},
+		error:function(error){
+			console.log("Cannot find user");
+			response.error(error.message);
+		}
+	});
+});
+
 //GET FBID array
 //GIVE Parse array
 Parse.Cloud.define("getParseFriendsFromFBID", function(request, response){

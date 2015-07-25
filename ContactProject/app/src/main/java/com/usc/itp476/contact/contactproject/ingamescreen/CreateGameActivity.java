@@ -34,6 +34,8 @@ import java.util.HashMap;
 
 public class CreateGameActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
+    private static final int REQUEST_CODE_CREATE_GAME = -499;
+    public static final int RESULT_CODE_QUIT_GAME = -449;
     private AllTabActivity mAllTabActivity;
     private FriendListGridAdapter mFriendListAdapter;
     private Button btnCreate;
@@ -142,65 +144,21 @@ public class CreateGameActivity extends Activity {
         gameData.setHostName();
         gameData.setPointsToWin(maxPoints);
         gameData.setNumPlayers(1);
+        gameData.setMarker(gameMarkerBeingMade);
         gameBeingMade = gameData;
-        try {
-            gameData.setMarker(gameMarkerBeingMade.fetch().getObjectId());
-        } catch (ParseException e) {
-            Log.wtf(TAG, "find marker for game create bad: " + e.getLocalizedMessage());
-            Toast.makeText(getApplicationContext(),
-                    "Could not make game", Toast.LENGTH_SHORT).show();
-            HashMap<String, String> params = new HashMap<>();
-            params.put("ID", gameMarkerBeingMade.getMarkerID());
-            params.put("type", "Marker");
-            ParseCloud.callFunctionInBackground("deleteGameData", params, new FunctionCallback<String>() {
-                @Override
-                public void done(String s, ParseException e) {
-                    if (e != null){
-                        Log.wtf(TAG, "could not delete game when finding was bad");
-                        Log.wtf(TAG, e.getLocalizedMessage());
-                    }
-                }
-            });
-            return;
-        }
 
         gameData.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null){
-                    try {
-                        gameMarkerBeingMade.setGameID(gameBeingMade.fetch().getObjectId());
-                    } catch (ParseException ex) {
-                        Log.wtf(TAG, "save game good, set id on marker bad: " + ex.getLocalizedMessage());
-                        Toast.makeText(getApplicationContext(),
-                                "Could not make game", Toast.LENGTH_SHORT).show();
-                        HashMap<String, String> params = new HashMap<>();
-                        params.put("ID", gameMarkerBeingMade.getMarkerID());
-                        params.put("type", "Marker");
-                        ParseCloud.callFunctionInBackground("deleteGameData", params, new FunctionCallback<String>() {
-                            @Override
-                            public void done(String s, ParseException e) {
-                                if (e != null) {
-                                    Log.wtf(TAG, "could not delete marker when making game");
-                                    Log.wtf(TAG, e.getLocalizedMessage());
-                                }
-                            }
-                        });
-                        return;
-                    }
-                    ParseRelation<ParseUser> players = gameBeingMade.getRelation("players");
-                    players.add(ParseUser.getCurrentUser());
-                    gameBeingMade.saveInBackground(new SaveCallback() {
+                    gameMarkerBeingMade.setGameID(gameBeingMade);
+                    gameMarkerBeingMade.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
-                            if (e == null) {
-                                Intent i = new Intent(
-                                        CreateGameActivity.this.getApplicationContext(),
-                                        TargetActivity.class);
-                                i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
-                                startActivity(i);
-                            }else{
-                                Log.wtf(TAG, "trying to put player in game: " + e.getLocalizedMessage());
+                            if (e != null){
+                                Log.wtf(TAG, "save game good, set id on marker bad: " + e.getLocalizedMessage());
+                                Toast.makeText(getApplicationContext(),
+                                        "Could not make game", Toast.LENGTH_SHORT).show();
                                 HashMap<String, String> params = new HashMap<>();
                                 params.put("ID", gameMarkerBeingMade.getMarkerID());
                                 params.put("type", "Marker");
@@ -210,16 +168,83 @@ public class CreateGameActivity extends Activity {
                                         if (e != null) {
                                             Log.wtf(TAG, "could not delete marker when making game");
                                             Log.wtf(TAG, e.getLocalizedMessage());
+                                        }
+                                    }
+                                });
+                            }else{
+                                ParseRelation<ParseUser> players = gameBeingMade.getRelation("players");
+                                players.add(ParseUser.getCurrentUser());
+                                gameBeingMade.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (e == null) {
+                                            ParseUser me = ParseUser.getCurrentUser();
+                                            me.put("currentGame", gameBeingMade);
+                                            me.put("inGame", true);
+                                            me.put("currentHugs", 0);
+                                            me.saveInBackground(new SaveCallback() {
+                                                @Override
+                                                public void done(ParseException e) {
+                                                    if (e == null) {
+                                                        Intent i = new Intent(
+                                                                CreateGameActivity.this.getApplicationContext(),
+                                                                TargetActivity.class);
+                                                        i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
+                                                        startActivityForResult(i, REQUEST_CODE_CREATE_GAME);
+                                                    }else{
+                                                        Log.wtf(TAG, "trying to put game in player: " + e.getLocalizedMessage());
+                                                        HashMap<String, String> params = new HashMap<>();
+                                                        params.put("ID", gameMarkerBeingMade.getMarkerID());
+                                                        params.put("type", "Marker");
+                                                        ParseCloud.callFunctionInBackground("deleteGameData", params, new FunctionCallback<String>() {
+                                                            @Override
+                                                            public void done(String s, ParseException e) {
+                                                                if (e != null) {
+                                                                    Log.wtf(TAG, "could not delete marker when making game");
+                                                                    Log.wtf(TAG, e.getLocalizedMessage());
+                                                                }else{
+                                                                    HashMap<String, String> params = new HashMap<>();
+                                                                    params.put("ID", gameBeingMade.getGameID());
+                                                                    params.put("type", "Game");
+                                                                    ParseCloud.callFunctionInBackground("deleteGameData", params, new FunctionCallback<String>() {
+                                                                        @Override
+                                                                        public void done(String s, ParseException e) {
+                                                                            if (e != null) {
+                                                                                Log.wtf(TAG, "could not delete marker when making game");
+                                                                                Log.wtf(TAG, e.getLocalizedMessage());
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
                                         }else{
+                                            Log.wtf(TAG, "trying to put player in game: " + e.getLocalizedMessage());
                                             HashMap<String, String> params = new HashMap<>();
-                                            params.put("ID", gameBeingMade.getGameID());
-                                            params.put("type", "Game");
+                                            params.put("ID", gameMarkerBeingMade.getMarkerID());
+                                            params.put("type", "Marker");
                                             ParseCloud.callFunctionInBackground("deleteGameData", params, new FunctionCallback<String>() {
                                                 @Override
                                                 public void done(String s, ParseException e) {
                                                     if (e != null) {
                                                         Log.wtf(TAG, "could not delete marker when making game");
                                                         Log.wtf(TAG, e.getLocalizedMessage());
+                                                    }else{
+                                                        HashMap<String, String> params = new HashMap<>();
+                                                        params.put("ID", gameBeingMade.getGameID());
+                                                        params.put("type", "Game");
+                                                        ParseCloud.callFunctionInBackground("deleteGameData", params, new FunctionCallback<String>() {
+                                                            @Override
+                                                            public void done(String s, ParseException e) {
+                                                                if (e != null) {
+                                                                    Log.wtf(TAG, "could not delete marker when making game");
+                                                                    Log.wtf(TAG, e.getLocalizedMessage());
+                                                                }
+                                                            }
+                                                        });
                                                     }
                                                 }
                                             });

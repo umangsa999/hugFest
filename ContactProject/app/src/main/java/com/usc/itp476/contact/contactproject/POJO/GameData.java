@@ -43,14 +43,14 @@ public class GameData extends ParseObject {
     }
 
     public void setHostName(){
-        put("host", ParseUser.getCurrentUser().getUsername());
+        put("host", ParseUser.getCurrentUser());
     }
 
     public void setPointsToWin(int numPoints){
         put("pointsToWin", numPoints);
     }
 
-    public void setMarker(String m){
+    public void setMarker(GameMarker m){
         put("marker", m);
     }
 

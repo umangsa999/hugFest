@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -26,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 
 public class TargetActivity extends Activity {
@@ -241,7 +244,6 @@ public class TargetActivity extends Activity {
     public void onBackPressed() {
         if (TIME_INTERVAL + backPressedTime > System.currentTimeMillis()) {
             backToast.cancel();
-            super.onBackPressed();
             removeMeFromGame();
             return;
         }else{
@@ -251,6 +253,22 @@ public class TargetActivity extends Activity {
     }
 
     private void removeMeFromGame(){
-
+        HashMap<String, String> params = new HashMap<>();
+        params.put("playerID", ParseUser.getCurrentUser().getObjectId());
+        ParseCloud.callFunctionInBackground("removeFromGame", params, new FunctionCallback<Boolean>() {
+            @Override
+            public void done(Boolean isGood, ParseException e) {
+                if (e == null){
+                    Log.wtf(TAG, isGood.toString() + " returns back from call");
+                    Intent i = new Intent();
+                    setResult(CreateGameActivity.RESULT_CODE_QUIT_GAME);
+                    finish();
+                }else{
+                    Log.wtf(TAG, "Could not leave game: " + e.getLocalizedMessage());
+                    Toast.makeText(getApplicationContext(),
+                            "You cannot leave this game", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

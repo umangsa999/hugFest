@@ -21,8 +21,8 @@ public class GameMarker extends ParseObject {
         return getString("game");
     }
 
-    public void setGameID(String id){
-        put("game", id);
+    public void setGameID(GameData game){
+        put("game", game);
     }
 
     public void setHostName(){

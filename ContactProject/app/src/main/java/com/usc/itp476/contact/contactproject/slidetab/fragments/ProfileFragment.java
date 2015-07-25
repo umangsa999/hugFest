@@ -85,8 +85,8 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        String piclink = StartActivity.user.getString("pictureLink");
-        int totalHugs = StartActivity.user.getInt("totalHugs");
+        String piclink =ParseUser.getCurrentUser().getString("pictureLink");
+        int totalHugs = ParseUser.getCurrentUser().getInt("totalHugs");
 
         PicassoTrustAll.getInstance(this.getActivity().getApplicationContext())
                 .load(piclink).into(imgPhoto);
@@ -345,8 +345,6 @@ public class ProfileFragment extends Fragment {
                 update.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast t = new Toast(getActivity().getApplicationContext());
-                        t.setDuration(Toast.LENGTH_SHORT);
                         if (e != null){
                             Toast.makeText(getActivity().getApplicationContext(),
                                     "Could not update your name", Toast.LENGTH_SHORT).show();
@@ -355,7 +353,6 @@ public class ProfileFragment extends Fragment {
                             Toast.makeText(getActivity().getApplicationContext(),
                                     "Name updated!", Toast.LENGTH_SHORT).show();
                         }
-                        t.show();
                     }
                 });
             }
