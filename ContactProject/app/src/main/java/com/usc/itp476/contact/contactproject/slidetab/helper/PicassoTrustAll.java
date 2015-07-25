@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject.slidetab.fragments;
+package com.usc.itp476.contact.contactproject.slidetab.helper;
 
 import android.content.Context;
 import android.net.Uri;
@@ -20,7 +20,6 @@ import javax.net.ssl.X509TrustManager;
 public class PicassoTrustAll {
 
     private static Picasso mInstance = null;
-
     private PicassoTrustAll(Context context) {
         OkHttpClient client = new OkHttpClient();
         client.setHostnameVerifier(new HostnameVerifier() {
@@ -63,7 +62,6 @@ public class PicassoTrustAll {
                         Log.wtf("PICASSO", exception);
                     }
                 }).build();
-
     }
 
     public static Picasso getInstance(Context context) {

@@ -180,8 +180,8 @@ public class GameFragment extends Fragment
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e != null || list.size() < 1){
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Could find any games nearby", Toast.LENGTH_SHORT).show();
+                    //TODO FIX THIS, CRASHING
+                    //Toast.makeText(getActivity().getApplicationContext(),"Could find any games nearby", Toast.LENGTH_SHORT).show();
                 }else{
                     for (ParseObject p : list){
                         addPoint(p);
