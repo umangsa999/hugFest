@@ -3,10 +3,12 @@ package com.usc.itp476.contact.contactproject;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.digits.sdk.android.AuthCallback;
@@ -75,12 +77,17 @@ public class StartActivity extends Activity {
     private boolean hasParseAccount = false;
     //TODO -- if user has parseaccount and no facebook association, if they click fb, link it
 
-    final List<String> permissions = Arrays.asList("public_profile", "user_friends", "email");
+    public final static List<String> permissions = Arrays.asList("public_profile", "user_friends", "email");
     private LoginButton loginButtonFacebook;
     private CallbackManager mCallbackManager;
     private FacebookCallback<LoginResult> mCallback;
     private TwitterLoginButton loginButtonTwitter;
+    private static final int PROGRESS = 0x1;
 
+    private ProgressBar mProgress;
+    private int mProgressStatus = 0;
+
+    private Handler mHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +103,10 @@ public class StartActivity extends Activity {
 //            goToHome();
 //        }
 
-        if (ParseUser.getCurrentUser() != null) {
+
+        mProgress = (ProgressBar) findViewById(R.id.progressBar);
+
+    if (ParseUser.getCurrentUser() != null) {
             Log.wtf(TAG, "There IS a PU");
             ParseUser.logOut();
         }
@@ -230,7 +240,9 @@ public class StartActivity extends Activity {
                 /* TODO check if parseuser exists and just add FB to parse
                     TODO Just run this and check if it works - Chris */
                 //We have the accessToken, now we want to do a graphRequest to get the user data
+
                 findFacebookUserData();
+
             }
             @Override
             public void onCancel() {
@@ -321,13 +333,10 @@ public class StartActivity extends Activity {
                     }
                 }
             });
-
         Bundle parameters = new Bundle();
         parameters.putString("fields", "name,id,email,picture");
         request.setParameters(parameters);
         request.executeAsync();
-
-
     }
 
     private void createFaceBookParseUser() {

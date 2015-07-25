@@ -66,11 +66,8 @@ public class FriendsFragment extends Fragment {
             public void onClick(View view) {
                 // get prompts.xml view
                 LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
-
                 View promptView = layoutInflater.inflate(R.layout.prompts, null);
-
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-
                 // set prompts.xml to be the layout file of the alertdialog builder
                 alertDialogBuilder.setView(promptView);
                 final EditText input = (EditText) promptView.findViewById(R.id.userInput);

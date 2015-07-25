@@ -1,5 +1,8 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,20 +17,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Profile;
-import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.LogInCallback;
-import com.parse.ParseClassName;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class ProfileFragment extends Fragment {
     final String TAG = this.getClass().getSimpleName();
@@ -42,6 +43,11 @@ public class ProfileFragment extends Fragment {
     public boolean mFriendProfile = false;
     private AllTabActivity myParent = null;
     private String friendID = null;
+    private HashMap<String, Object> parms = new HashMap<String, Object>();
+    Profile p;
+    String tokenID = "";
+    String un = "", ps = "";
+    Activity mActivity;
     public void setName(String name){
         txvwTotal.setText(name);
     }
@@ -58,6 +64,7 @@ public class ProfileFragment extends Fragment {
         View rootView = (View) inflater.inflate(
                 R.layout.activity_profile, container, false);
 
+        mActivity = this.getActivity();
         imbnEdit = (ImageButton) rootView.findViewById(R.id.btnEdit);
         imgPhoto = (ImageView) rootView.findViewById(R.id.imvwPhoto);
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
@@ -73,7 +80,6 @@ public class ProfileFragment extends Fragment {
             setListeners();
             loadMySaveData();
         }
-
         return rootView;
     }
 
@@ -87,61 +93,106 @@ public class ProfileFragment extends Fragment {
         btnLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, Object> parms = new HashMap<>();
-                String tokenID;
-                Profile p = Profile.getCurrentProfile();
+                p = Profile.getCurrentProfile();
                 if (p != null) {
                     //GET OLD PARSE
-                    String un = "", ps = "";
-                    //TODO create a dialog for username and password
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put("ParseUsername", un);
-                    map.put("ParsePassword", ps);
-                    ParseCloud.callFunctionInBackground("mergeNewFBOldParse", map, new FunctionCallback<String>() {
-                        @Override
-                        public void done(String s, ParseException e) {
-                            if (e == null){
-                                //TODO update page or push back to gamesFragment somehow
-                                ParseUser.becomeInBackground(s, new LogInCallback() {
-                                    @Override
-                                    public void done(ParseUser parseUser, ParseException e) {
-                                        if (e != null) {
-                                            Log.wtf(TAG, e.getLocalizedMessage());
-                                            Toast.makeText(getActivity().getApplicationContext(),
-                                                    "Could not sign in as Facebook user after merge",
-                                                    Toast.LENGTH_SHORT).show();
+                    LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                    View promptView = layoutInflater.inflate(R.layout.prompts, null);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( getActivity() );
+                    // set prompts.xml to be the layout file of the alertdialog builder
+                    alertDialogBuilder.setView(promptView);
+                    final EditText inputUsername = (EditText) promptView.findViewById(R.id.userInput);
+                    final EditText inputPassword = (EditText) promptView.findViewById(R.id.editTextPass);
+                    // setup a dialog window
+                    alertDialogBuilder
+                            .setCancelable(true)
+                            .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // get user input and set it to result
+                                    un = inputUsername.getText().toString();
+                                    ps = inputPassword.getText().toString();
+                                    sendToParse();
+                                }
+                            })
+                            .setNegativeButton("Cancel",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
                                         }
-                                    }
-                                });
-                            }else{
-                                Log.wtf(TAG, e.getLocalizedMessage());
-                                Toast.makeText(getActivity().getApplicationContext(),
-                                        "Could not merge your accounts",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                                    });
 
-                    //PUT OLD PARSE IN NEW
-                    parms.put("facebookID", p.getId());
-                    Log.wtf(TAG, p.getId() + " is my facebookID");
-                    try {
-                        tokenID = ParseCloud.callFunction("getUserSessionToken", parms);
-                        ParseUser.become(tokenID);
-                        Log.wtf(TAG, tokenID + " is my token");
-                        //TODO merge old and new FB
-                    } catch (ParseException e) {
-                        Log.wtf(TAG, e.getLocalizedMessage());
-                        Toast.makeText(getActivity().getApplicationContext(),
-                                "Could not link accounts", Toast.LENGTH_SHORT).show();
-                    }
+                    // create an alert dialog
+                    //AlertDialog alertD = alertDialogBuilder.
+                    alertDialogBuilder.show();
                 }else{
                     //TODO get user to sign in facebook, get their facebook id, and add to parse
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Please login facebook", Toast.LENGTH_SHORT).show();
+
+                    ParseFacebookUtils.logInWithReadPermissionsInBackground(mActivity, StartActivity.permissions, new LogInCallback() {
+                        @Override
+                        public void done(ParseUser user, ParseException err) {
+                            if (user == null) {
+                                Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
+                            } else if (user.isNew()) {
+                                Log.d("MyApp", "User signed up and logged in through Facebook!");
+                                //TODO MERGE
+                                //AccessToken acessToken = AccessToken.getCurrentAccessToken();
+
+                            } else {
+                                //TODO - merge data
+                                Log.d("MyApp", "User logged in through Facebook!");
+                            }
+                        }
+                    });
+
                 }
             }
         });
+    }
+
+    private void sendToParse(){
+        HashMap<String, String> map = new HashMap<>();
+        map.put("ParseUsername", un);
+        map.put("ParsePassword", ps);
+        ParseCloud.callFunctionInBackground("mergeNewFBOldParse", map, new FunctionCallback<String>() {
+            @Override
+            public void done(String s, ParseException e) {
+                if (e == null) {
+                    //TODO update page or push back to gamesFragment somehow
+                    ParseUser.becomeInBackground(s, new LogInCallback() {
+                        @Override
+                        public void done(ParseUser parseUser, ParseException e) {
+                            if (e != null) {
+                                Log.wtf(TAG, e.getLocalizedMessage());
+                                Toast.makeText(getActivity().getApplicationContext(),
+                                        "Could not sign in as Facebook user after merge",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    Log.wtf(TAG, e.getLocalizedMessage());
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Could not merge your accounts",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        //PUT OLD PARSE IN NEW
+        parms.put("facebookID", p.getId());
+        Log.wtf(TAG, p.getId() + " is my facebookID");
+        try {
+            tokenID = ParseCloud.callFunction("getUserSessionToken", parms);
+            ParseUser.become(tokenID);
+            Log.wtf(TAG, tokenID + " is my token");
+            //TODO merge old and new FB - dont do yet
+        } catch (ParseException e) {
+            Log.wtf(TAG, e.getLocalizedMessage());
+            Toast.makeText(getActivity().getApplicationContext(),
+                    "Could not link accounts", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadFriendSaveData(){
