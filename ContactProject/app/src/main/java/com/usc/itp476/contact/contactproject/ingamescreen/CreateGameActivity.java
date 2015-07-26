@@ -43,7 +43,7 @@ public class CreateGameActivity extends Activity {
     private SeekBar skbrMax;
     private ListView lsvwInvite;
     private GridView gridView;
-    private int maxPoints = -1;
+    private int maxPoints = 10;
     private GameMarker gameMarkerBeingMade;
     private GameData gameBeingMade;
     private ParseGeoPoint pLoc;
@@ -121,7 +121,7 @@ public class CreateGameActivity extends Activity {
         marker.setLocation(pLoc);
         marker.setHostName();
         marker.setPoints(maxPoints);
-        marker.setPlayerCount(1);
+        marker.setPlayerCount(5);
         gameMarkerBeingMade = marker;
         marker.saveInBackground(new SaveCallback() {
             @Override
@@ -143,7 +143,7 @@ public class CreateGameActivity extends Activity {
         gameData.setLocation(pLoc);
         gameData.setHostName();
         gameData.setPointsToWin(maxPoints);
-        gameData.setNumPlayers(1);
+        gameData.setNumPlayers(5);
         gameData.setMarker(gameMarkerBeingMade);
         gameBeingMade = gameData;
 
