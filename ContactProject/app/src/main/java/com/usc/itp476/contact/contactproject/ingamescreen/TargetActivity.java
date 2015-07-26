@@ -52,6 +52,7 @@ public class TargetActivity extends Activity {
     private String mImageName;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
+    private String gameID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class TargetActivity extends Activity {
 
         Intent i = getIntent();
         max = i.getIntExtra(MAXPOINTS, -1);
+        gameID = i.getStringExtra("gameID");
         if (max == -1)
             max = 10;
 
@@ -230,6 +232,7 @@ public class TargetActivity extends Activity {
     private void checkWin(){
         if (current == max){
             Intent i = new Intent(getApplicationContext(), ResultActivity.class);
+            i.putExtra("gameID", gameID);
             startActivityForResult(i, REQUEST_ACKNOWLEDGE_RESULT);
         }
     }

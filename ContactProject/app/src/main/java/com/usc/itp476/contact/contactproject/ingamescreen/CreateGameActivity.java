@@ -208,6 +208,7 @@ public class CreateGameActivity extends Activity {
                                                                 CreateGameActivity.this.getApplicationContext(),
                                                                 TargetActivity.class);
                                                         i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
+                                                        i.putExtra("gameID", gameBeingMade.getGameID());
                                                         startActivityForResult(i, REQUEST_CODE_CREATE_GAME);
                                                     } else {
                                                         Log.wtf(TAG, "trying to put game in player: " + e.getLocalizedMessage());
