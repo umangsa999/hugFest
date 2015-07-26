@@ -37,7 +37,7 @@ public class CreateGameActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private static final int REQUEST_CODE_CREATE_GAME = -499;
     public static final int RESULT_CODE_QUIT_GAME = -449;
-    private static ArrayList<String> selectedFriendParseIDs = new ArrayList<>();
+    private static ArrayList<String> selectedFriendParseIDs;
     private AllTabActivity mAllTabActivity;
     private FriendListGridAdapter mFriendListAdapter;
     private Button btnCreate;
@@ -54,6 +54,8 @@ public class CreateGameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
+
+        selectedFriendParseIDs = new ArrayList<>();
 
         gridView = (GridView) findViewById(R.id.grid_view);
         btnCreate = (Button) findViewById(R.id.btnCreate);
@@ -90,12 +92,12 @@ public class CreateGameActivity extends Activity {
                             "Cannot detect location to start game",
                             Toast.LENGTH_SHORT).show();
                     finish();
-//                }
-//                else if( selectedFriendParseIDs.size() < 2 ){
-//                    Toast.makeText(getApplicationContext(),
-//                            "You need to invite at least two friends!",
-//                            Toast.LENGTH_SHORT).show();
-//                    finish();
+                }
+                else if( selectedFriendParseIDs.size() < 2 ){
+                    Toast.makeText(getApplicationContext(),
+                            "You need to invite at least two friends!",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
                 }else {
                     pLoc = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
                     createGameMarker();
