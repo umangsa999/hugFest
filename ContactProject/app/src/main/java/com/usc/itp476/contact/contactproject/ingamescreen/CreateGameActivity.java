@@ -90,12 +90,12 @@ public class CreateGameActivity extends Activity {
                             "Cannot detect location to start game",
                             Toast.LENGTH_SHORT).show();
                     finish();
-                }
-                else if( selectedFriendParseIDs.size() < 2 ){
-                    Toast.makeText(getApplicationContext(),
-                            "You need to invite at least two friends!",
-                            Toast.LENGTH_SHORT).show();
-                    finish();
+//                }
+//                else if( selectedFriendParseIDs.size() < 2 ){
+//                    Toast.makeText(getApplicationContext(),
+//                            "You need to invite at least two friends!",
+//                            Toast.LENGTH_SHORT).show();
+//                    finish();
                 }else {
                     pLoc = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
                     createGameMarker();
@@ -176,6 +176,7 @@ public class CreateGameActivity extends Activity {
                                         }
                                     }
                                 });
+                                selectedFriendParseIDs.clear();
                             } else {
                                 ParseRelation<ParseUser> players = gameBeingMade.getRelation("players");
                                 players.add(ParseUser.getCurrentUser());
@@ -200,6 +201,7 @@ public class CreateGameActivity extends Activity {
                                                         } catch (ParseException e2) {
                                                             Log.wtf(TAG + "addfriendtoGame: ", e2.getLocalizedMessage());
                                                         }
+                                                        selectedFriendParseIDs.clear();
                                                         Intent i = new Intent(
                                                                 CreateGameActivity.this.getApplicationContext(),
                                                                 TargetActivity.class);
@@ -232,6 +234,7 @@ public class CreateGameActivity extends Activity {
                                                                 }
                                                             }
                                                         });
+                                                        selectedFriendParseIDs.clear();
                                                     }
                                                 }
                                             });
@@ -260,6 +263,7 @@ public class CreateGameActivity extends Activity {
                                                             }
                                                         });
                                                     }
+                                                    selectedFriendParseIDs.clear();
                                                 }
                                             });
                                         }

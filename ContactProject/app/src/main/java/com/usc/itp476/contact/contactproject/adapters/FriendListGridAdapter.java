@@ -120,11 +120,13 @@ public class FriendListGridAdapter extends BaseAdapter {
                         CreateGameActivity.getSelectedFriendParseIDs().add(id.getText().toString());
                         Log.wtf(TAG + "size: ",
                                 "" + CreateGameActivity.getSelectedFriendParseIDs().size() );
+                    }else{
+                        CreateGameActivity.getSelectedFriendParseIDs().remove(id.getText().toString());
                     }
                 }
             });
         }else{
-            holder.points.setText(friendsList == null? "" : String.valueOf(me.getInt("totalHugs")));
+            holder.points.setText(friendsList == null ? "" : String.valueOf(me.getInt("totalHugs")));
             holder.invited.setVisibility(View.GONE);
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override

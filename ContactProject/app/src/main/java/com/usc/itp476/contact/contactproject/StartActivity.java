@@ -32,6 +32,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -439,6 +440,9 @@ public class StartActivity extends Activity {
     }
 
     private void goToHome(){
+        ParseInstallation pi = ParseInstallation.getCurrentInstallation();
+        pi.put("currentUser", ParseUser.getCurrentUser());
+        pi.saveInBackground();
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
         startActivityForResult(i, REQUEST_START_GAME);
     }
