@@ -193,19 +193,25 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 				console.log("Processing number: " + i); //create separate searches for each facebook friend
 				queryArray.push((new Parse.Query(Parse.User)).equalTo("id", friendIDs[i]));
 			}
+			console.log("start to union all queries");
 			var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
-			for (var i = 2; i < numIDs.length; ++i){
-					wholeQuery = Parse.Query.or(wholeQuery, queryArray[i]);
-				}
+			for (var i = 2; i < friendsLength.length; ++i){
+				console.log("union: " + i );
+				wholeQuery = Parse.Query.or(wholeQuery, queryArray[i]);
+			}
+			console.log("done union");
 			wholeQuery.find({
 				success:function(users){
+					console.log("friends found: " + users.length);
 					Parse.Cloud.useMasterKey();
 					var players = game.relation("players");
-					for (var j = 0; j < friendsLength; ++j){
+					for (var j = 0; j < users.length; ++j){
+						console.log("adding friend " + j + ": " + users[j]);
 						players.add(users[j]);
 					}
 					game.save({
 						success:function(something){
+							console.log("success");
 							response.success();
 						},
 						error:function(error){

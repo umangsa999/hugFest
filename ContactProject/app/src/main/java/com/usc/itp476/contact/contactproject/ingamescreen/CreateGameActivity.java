@@ -284,6 +284,7 @@ public class CreateGameActivity extends Activity {
                             }
                         }
                     });
+                    selectedFriendParseIDs.clear();
                 }
             }
         });
