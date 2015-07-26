@@ -284,7 +284,9 @@ public class StartActivity extends Activity {
                         facebookID = object.get("id").toString();
                         name = object.get("name").toString();
                         pictureURL = object.getJSONObject("picture").getJSONObject("data").getString("url");
+
                     } catch (JSONException e) {
+                        Log.wtf(TAG+"Graph request catch: ", e.getLocalizedMessage());
                     }
                     HashMap<String, Object> parms = new HashMap<String, Object>();
                     parms.put("facebookID", facebookID);

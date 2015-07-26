@@ -98,78 +98,16 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        //MEH
-//        try {
-//
-//            // Load CAs from an InputStream
-//            // (could be from a resource or ByteArrayInputStream or ...)
-//            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//            InputStream caInput = new BufferedInputStream(this.getActivity().
-//                    getApplicationContext().getAssets().open("a248.e.akamai.net"));
-//
-//
-//            Certificate ca = cf.generateCertificate(caInput);
-//            //System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-//
-//            // Create a KeyStore containing our trusted CAs
-//            String keyStoreType = KeyStore.getDefaultType();
-//            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-//            keyStore.load(null, null);
-//            keyStore.setCertificateEntry("ca", ca);
-//
-//            // Create a TrustManager that trusts the CAs in our KeyStore
-//            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-//            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-//            tmf.init(keyStore);
-//
-//            // Create an SSLContext that uses our TrustManager
-//            SSLContext context = SSLContext.getInstance("TLS");
-//            context.init(null, tmf.getTrustManagers(), null);
-//
-//            // Tell the URLConnection to use a SocketFactory from our SSLContext
-//            URL url = new URL(piclink);
-//            HttpsURLConnection urlConnection = (HttpsURLConnection)url.openConnection();
-//            urlConnection.setSSLSocketFactory(context.getSocketFactory());
-
-        //KEY STORE
-
-//            KeyStore keyStore = KeyStore.getInstance( KeyStore.getDefaultType() );
-//            String algorithm = TrustManagerFactory.getDefaultAlgorithm();
-//            TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
-//            tmf.init(keyStore);
-//
-//            SSLContext context = SSLContext.getInstance("TLS");
-//            context.init(null, tmf.getTrustManagers(), null);
-//
-//            URL url = new URL(piclink);
-//            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-//            urlConnection.setSSLSocketFactory(context.getSocketFactory());
-//            InputStream in = urlConnection.getInputStream();
-//            Bitmap myBitmap = BitmapFactory.decodeStream(in);
-
-        //BITMAP
-//            InputStream in = urlConnection.getInputStream();
-//            Bitmap myBitmap = BitmapFactory.decodeStream(in);
-//            imgPhoto.setImageBitmap(myBitmap);
-//
-//        }catch( Exception e){
-//            e.printStackTrace();
-//            Log.wtf(TAG + "caught https error: ", e.getMessage());
-//            Log.wtf(TAG + "caught https error: ", e.toString() );
-//            Log.wtf(TAG + "caught https error: ", e.getLocalizedMessage() );
-//        }
-
-        //TODO WHY DOESNT THIS WORK???
-        //txvwTotal.setText( totalHugs );
-
         if( mFriendProfile ) {
             //We are viewing the friend with the profile fragment
-            imbnEdit.setVisibility(View.GONE);
+            imbnEdit.setVisibility(View.INVISIBLE);
             btnLogout.setVisibility(View.GONE);
             btnLink.setVisibility(View.GONE);
             loadFriendSaveData();
+
         }else {
             //Not a FRIEND, is the user himself
+            btnViewFacebook.setVisibility(View.GONE);
             String picLink = ParseUser.getCurrentUser().getString("pictureLink");
             int totalHugs = ParseUser.getCurrentUser().getInt("totalHugs");
             String name = ParseUser.getCurrentUser().getString("name");
