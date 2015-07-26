@@ -90,6 +90,7 @@
             android:name="io.fabric.ApiKey"
             android:value="29a437cf5b5fa208d131545591e72bc70afabfaa" />
         <meta-data android:name="com.parse.push.notification_icon" android:resource="@mipmap/ic_launcher"/>
+        <!--TODO change this to better icon-->
 
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
@@ -107,7 +108,7 @@
                 <category android:name="com.usc.itp476.contact.contactproject" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.parse.ParsePushBroadcastReceiver" android:exported="false">
+        <receiver android:name=".CustomParsePushBroadcastReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
                 <action android:name="com.parse.push.intent.DELETE" />

@@ -24,8 +24,8 @@ import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -34,6 +34,7 @@ public class ContactApplication extends Application {
     private static final String TWITTER_KEY = "Ai9qe71kw0YSzWrsOhsqOGzJB";
     private static final String TWITTER_SECRET = "VRYJY0hRozcEupHlTNus18RbSxiLE5ioKkVCRZmjUF4ErKqL59";
     private static HashMap<String, ParseUser> friendList;
+    public final String TAG = this.getClass().getSimpleName();
 	
     private static ContactApplication singleton;
 
@@ -55,6 +56,7 @@ public class ContactApplication extends Application {
         singleton = this;
         ParseObject.registerSubclass(GameMarker.class);
         ParseObject.registerSubclass(GameData.class);
+
         Parse.enableLocalDatastore(this);
         Parse.initialize(this,
                 "ellChjDHP7hNM4CBQLHrBNWzDMoOzElwUgy3MpEc",
@@ -63,6 +65,25 @@ public class ContactApplication extends Application {
         ParseFacebookUtils.initialize(this); //For converting authenticated FB users to Parse users
         ParseACL defaultACL = new ParseACL();
         ParseACL.setDefaultACL(defaultACL, true);
+
+        // Save the current Installation to Parse.
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+        // subscribe to the channels
+        ParsePush.subscribeInBackground("", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if( e == null){
+                    Log.wtf(TAG, "Success done" );
+                }else{
+                    Log.wtf(TAG, e.getLocalizedMessage() );
+                }
+
+            }
+        });
+
+        //get set of channels subscribed to
+        List<String> subscribedChannels = ParseInstallation.getCurrentInstallation().getList("channels");
+        //TODO subscribe to more as necessary
 
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         Fabric.with(this, new com.twitter.sdk.android.Twitter(authConfig), new Crashlytics(), new Twitter(authConfig));

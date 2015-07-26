@@ -94,6 +94,7 @@ public class StartActivity extends Activity {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_start);
 
+
         //todo this might not be necessary with Parse local datastore
 //        SharedPreferences sharedPreferences = getSharedPreferences(GameMarker.PREFFILE, MODE_PRIVATE);
 //        String id = sharedPreferences.getString(GameMarker.USER_ID, null);
@@ -124,7 +125,22 @@ public class StartActivity extends Activity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                check();
+                //AUTO LOGIN
+                ParseUser.logInInBackground("Chris Lee", "cheese", new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        if (e == null) {
+                            Toast.makeText(getApplicationContext(),
+                                    "Welcome back,\n" + user.getUsername(),
+                                    Toast.LENGTH_SHORT).show();
+                            goToHome();
+                        } else {
+                            saveParse();
+                        }
+                    }
+                });
+
+                //check();
             }
         });
 

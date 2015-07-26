@@ -20,9 +20,6 @@ import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 public class FriendListGridAdapter extends BaseAdapter {
     final String TAG = this.getClass().getSimpleName();
@@ -102,8 +99,7 @@ public class FriendListGridAdapter extends BaseAdapter {
         holder.points.setText( String.valueOf(points) );
         String objectID = me.getObjectId();
 
-        PicassoTrustAll.getInstance( context )
-                .load(pictureURL).fit().into(holder.img);
+        PicassoTrustAll.getInstance( context ).load(pictureURL).fit().into(holder.img);
 
         holder.objectID.setText( friendsList == null ? "" : objectID);
         if(mDisplayCheckBox){
