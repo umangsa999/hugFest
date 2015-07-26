@@ -105,7 +105,7 @@ public class AllTabActivity extends FragmentActivity {
                 ParseUser friend = ParseUser.getQuery().get(u.getObjectId()); //get the rest
                 if (friend != null){
                     Log.wtf(TAG, friend.getObjectId() + " belongs to " + friend.get("name"));
-                    ContactApplication.getFriendsList().add(friend); //add our friend locally
+                    ContactApplication.getFriendsList().put(friend.getObjectId(), friend); //add our friend locally
                 }else{
                     Log.wtf(TAG, "COULD NOT ADD: " + u.getObjectId());
                 }

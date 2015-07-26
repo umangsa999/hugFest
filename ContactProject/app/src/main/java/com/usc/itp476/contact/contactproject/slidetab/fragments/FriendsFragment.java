@@ -131,7 +131,7 @@ public class FriendsFragment extends Fragment {
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Added " + friend.getUsername(), Toast.LENGTH_SHORT).show();
 
-                    ((ContactApplication) getActivity().getApplication()).getFriendsList().add(friend);
+                    ContactApplication.getFriendsList().put(friend.getObjectId(), friend);
                     updateFriends();
                     //TODO make a push notification from me to friend asking for permission
                     //TODO this is because we do not have ACL authority

@@ -36,7 +36,6 @@ public class CreateGameActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private static final int REQUEST_CODE_CREATE_GAME = -499;
     public static final int RESULT_CODE_QUIT_GAME = -449;
-    private AllTabActivity mAllTabActivity;
     private FriendListGridAdapter mFriendListAdapter;
     private Button btnCreate;
     private TextView txvwMax;
@@ -63,7 +62,6 @@ public class CreateGameActivity extends Activity {
 
     private void setGridAdapter(){
         mFriendListAdapter = new FriendListGridAdapter( getApplicationContext(), true, this, false);
-        mFriendListAdapter.setFriendsList(null);
         gridView.setAdapter( mFriendListAdapter );
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
@@ -275,16 +273,8 @@ public class CreateGameActivity extends Activity {
         });
     }
 
-    private void askUpdateFriends(){
-        mAllTabActivity.updateFriends();
-    }
-
     public void updateFriends(){
         mFriendListAdapter.notifyDataSetChanged(); //actually tell people to display
-    }
-
-    public void setAllTabActivity(AllTabActivity allTabActivity) {
-        this.mAllTabActivity = allTabActivity;
     }
 
     @Override

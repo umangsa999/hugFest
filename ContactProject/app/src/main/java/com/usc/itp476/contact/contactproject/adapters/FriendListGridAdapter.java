@@ -18,16 +18,21 @@ import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class FriendListGridAdapter extends BaseAdapter {
     final String TAG = this.getClass().getSimpleName();
     //private Context mContext;
     Context context;
-    private ArrayList<ParseUser> friendsList;
+    private HashMap<String, ParseUser> friendsList;
     boolean mDisplayCheckBox = false;
     private static LayoutInflater inflater = null;
     private Activity parent = null;
     private boolean isAllTabNotCreate = false;
+    private ArrayList<ParseUser> friendsArrayForm;
 
     public FriendListGridAdapter(Context mainActivity,
                                  Boolean displayCheckBox,
@@ -40,10 +45,7 @@ public class FriendListGridAdapter extends BaseAdapter {
         mDisplayCheckBox = displayCheckBox;
         parent = parentActivity;
         isAllTabNotCreate = isAllTabActivity;
-    }
-
-    public void setFriendsList(ArrayList<ParseUser> list){
-        friendsList = list;
+        friendsArrayForm = new ArrayList<>(friendsList.values());
     }
 
     @Override
@@ -53,12 +55,22 @@ public class FriendListGridAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return friendsList == null ? null : friendsList.get(i);
+        if (friendsArrayForm == null)
+            return null;
+        else{
+            return friendsArrayForm.get(i);
+        }
     }
 
     @Override
     public long getItemId(int i) {
         return i;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        friendsArrayForm = new ArrayList<>(friendsList.values());
     }
 
     public class Holder {
@@ -81,11 +93,13 @@ public class FriendListGridAdapter extends BaseAdapter {
         holder.objectID = (TextView) rowView.findViewById(R.id.ObjectIdTextView);
         holder.img.setImageResource(R.mipmap.medium);
 
-        String pictureURL = ContactApplication.getFriendsList().get(position).getString("pictureLink");
-        String name = ContactApplication.getFriendsList().get(position).getString("name");
-        int points = ContactApplication.getFriendsList().get(position).getInt("totalHugs");
+        ParseUser me = friendsArrayForm.get(position);
+
+        String pictureURL = me.getString("pictureLink");
+        String name = me.getString("name");
+        int points = me.getInt("totalHugs");
         holder.points.setText( String.valueOf(points) );
-        String objectID = ContactApplication.getFriendsList().get(position).getObjectId();
+        String objectID = me.getObjectId();
 
         PicassoTrustAll.getInstance( context )
                 .load(pictureURL).fit().into(holder.img);
@@ -103,7 +117,7 @@ public class FriendListGridAdapter extends BaseAdapter {
         }else{
             holder.points.setText( friendsList == null ?
                     "" :
-                    String.valueOf(friendsList.get(position).getInt("totalHugs")));
+                    String.valueOf(me.getInt("totalHugs")));
             holder.invited.setVisibility(View.GONE);
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
