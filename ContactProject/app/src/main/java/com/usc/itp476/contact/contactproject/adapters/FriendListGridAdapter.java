@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
@@ -119,7 +120,11 @@ public class FriendListGridAdapter extends BaseAdapter {
                     }
                     else{
                         //this is invite friends
-
+                        if ( holder.invited.isChecked()) {
+                            Log.wtf(TAG + "Tring to add freisfsdf", "CAT");
+                            CreateGameActivity.getSelectedFriendParseIDs().add(id.getText().toString());
+                            Log.wtf(TAG + "size: ", ""+CreateGameActivity.getSelectedFriendParseIDs().size() );
+                        }
                     }
                 }
             });

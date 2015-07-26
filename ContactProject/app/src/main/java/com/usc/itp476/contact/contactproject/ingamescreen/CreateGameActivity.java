@@ -23,6 +23,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
@@ -36,6 +37,7 @@ public class CreateGameActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private static final int REQUEST_CODE_CREATE_GAME = -499;
     public static final int RESULT_CODE_QUIT_GAME = -449;
+    private static ArrayList<String> selectedFriendParseIDs = new ArrayList<>();
     private AllTabActivity mAllTabActivity;
     private FriendListGridAdapter mFriendListAdapter;
     private Button btnCreate;
@@ -63,13 +65,10 @@ public class CreateGameActivity extends Activity {
 
     private void setGridAdapter(){
         mFriendListAdapter = new FriendListGridAdapter( getApplicationContext(), true, this, false);
-        mFriendListAdapter.setFriendsList(null);
+        mFriendListAdapter.setFriendsList( ContactApplication.getFriendsList() );
         gridView.setAdapter( mFriendListAdapter );
-
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
-
         // On Click event for Single Gridview Item
-
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -92,7 +91,13 @@ public class CreateGameActivity extends Activity {
                             "Cannot detect location to start game",
                             Toast.LENGTH_SHORT).show();
                     finish();
-                } else {
+                }
+                else if( selectedFriendParseIDs.size() < 2 ){
+                    Toast.makeText(getApplicationContext(),
+                            "You need to invite at least two friends!",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                }else {
                     pLoc = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
                     createGameMarker();
                 }
@@ -121,7 +126,7 @@ public class CreateGameActivity extends Activity {
         marker.setLocation(pLoc);
         marker.setHostName();
         marker.setPoints(maxPoints);
-        marker.setPlayerCount(1);
+        marker.setPlayerCount(getSelectedFriendParseIDs().size() + 1);
         gameMarkerBeingMade = marker;
         marker.saveInBackground(new SaveCallback() {
             @Override
@@ -139,23 +144,24 @@ public class CreateGameActivity extends Activity {
     }
 
     private void createGame(){
+
         GameData gameData = new GameData();
         gameData.setLocation(pLoc);
         gameData.setHostName();
         gameData.setPointsToWin(maxPoints);
-        gameData.setNumPlayers(1);
+        gameData.setNumPlayers(getSelectedFriendParseIDs().size() + 1);
         gameData.setMarker(gameMarkerBeingMade);
         gameBeingMade = gameData;
 
         gameData.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if (e == null){
+                if (e == null) {
                     gameMarkerBeingMade.setGameID(gameBeingMade);
                     gameMarkerBeingMade.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
-                            if (e != null){
+                            if (e != null) {
                                 Log.wtf(TAG, "save game good, set id on marker bad: " + e.getLocalizedMessage());
                                 Toast.makeText(getApplicationContext(),
                                         "Could not make game", Toast.LENGTH_SHORT).show();
@@ -171,7 +177,7 @@ public class CreateGameActivity extends Activity {
                                         }
                                     }
                                 });
-                            }else{
+                            } else {
                                 ParseRelation<ParseUser> players = gameBeingMade.getRelation("players");
                                 players.add(ParseUser.getCurrentUser());
                                 gameBeingMade.saveInBackground(new SaveCallback() {
@@ -186,12 +192,21 @@ public class CreateGameActivity extends Activity {
                                                 @Override
                                                 public void done(ParseException e) {
                                                     if (e == null) {
+                                                        //Call cloud code to send players to server
+                                                        HashMap<String, Object> params = new HashMap<String, Object>();
+                                                        params.put("friendIDs", selectedFriendParseIDs );
+                                                        params.put("gameID", gameBeingMade.getGameID() );
+                                                        try {
+                                                            ParseCloud.callFunction("addFriendsToGame", params);
+                                                        } catch (ParseException e2) {
+                                                            Log.wtf(TAG + "addfriendtoGame: ", e2.getLocalizedMessage());
+                                                        }
                                                         Intent i = new Intent(
                                                                 CreateGameActivity.this.getApplicationContext(),
                                                                 TargetActivity.class);
                                                         i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
                                                         startActivityForResult(i, REQUEST_CODE_CREATE_GAME);
-                                                    }else{
+                                                    } else {
                                                         Log.wtf(TAG, "trying to put game in player: " + e.getLocalizedMessage());
                                                         HashMap<String, String> params = new HashMap<>();
                                                         params.put("ID", gameMarkerBeingMade.getMarkerID());
@@ -202,7 +217,7 @@ public class CreateGameActivity extends Activity {
                                                                 if (e != null) {
                                                                     Log.wtf(TAG, "could not delete marker when making game");
                                                                     Log.wtf(TAG, e.getLocalizedMessage());
-                                                                }else{
+                                                                } else {
                                                                     HashMap<String, String> params = new HashMap<>();
                                                                     params.put("ID", gameBeingMade.getGameID());
                                                                     params.put("type", "Game");
@@ -221,7 +236,7 @@ public class CreateGameActivity extends Activity {
                                                     }
                                                 }
                                             });
-                                        }else{
+                                        } else {
                                             Log.wtf(TAG, "trying to put player in game: " + e.getLocalizedMessage());
                                             HashMap<String, String> params = new HashMap<>();
                                             params.put("ID", gameMarkerBeingMade.getMarkerID());
@@ -232,7 +247,7 @@ public class CreateGameActivity extends Activity {
                                                     if (e != null) {
                                                         Log.wtf(TAG, "could not delete marker when making game");
                                                         Log.wtf(TAG, e.getLocalizedMessage());
-                                                    }else{
+                                                    } else {
                                                         HashMap<String, String> params = new HashMap<>();
                                                         params.put("ID", gameBeingMade.getGameID());
                                                         params.put("type", "Game");
@@ -254,7 +269,7 @@ public class CreateGameActivity extends Activity {
                             }
                         }
                     });
-                }else{
+                } else {
                     Log.wtf(TAG, "fail to make game: " + e.getLocalizedMessage());
                     Toast.makeText(getApplicationContext(),
                             "Could not make game", Toast.LENGTH_SHORT).show();
@@ -291,5 +306,9 @@ public class CreateGameActivity extends Activity {
     public void onResume() {
         super.onResume();
 //        askUpdateFriends();
+    }
+
+    public static ArrayList<String> getSelectedFriendParseIDs() {
+        return selectedFriendParseIDs;
     }
 }
