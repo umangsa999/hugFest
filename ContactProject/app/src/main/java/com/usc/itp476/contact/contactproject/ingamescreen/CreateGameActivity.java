@@ -45,7 +45,7 @@ public class CreateGameActivity extends Activity {
     private SeekBar skbrMax;
     private ListView lsvwInvite;
     private GridView gridView;
-    private int maxPoints = -1;
+    private int maxPoints = 10;
     private GameMarker gameMarkerBeingMade;
     private GameData gameBeingMade;
     private ParseGeoPoint pLoc;

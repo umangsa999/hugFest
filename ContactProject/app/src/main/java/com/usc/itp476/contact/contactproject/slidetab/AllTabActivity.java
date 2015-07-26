@@ -87,6 +87,9 @@ public class AllTabActivity extends FragmentActivity {
                             "Could not find friends", Toast.LENGTH_SHORT).show();
                 } else {
                     //Log.wtf(TAG, "list of friends is size: " + String.valueOf(list.size()));
+                    for (int i = 0; i < list.size(); ++i){
+                        Log.wtf(TAG, list.get(i).toString());
+                    }
                     grabRealFriends(list);
                     signalUpdateFriends();
                 }
@@ -96,11 +99,13 @@ public class AllTabActivity extends FragmentActivity {
 
     private void grabRealFriends(List<ParseUser> list){
         //for each user in the relation, we only have the ObjectId and username
+        Log.wtf(TAG,"" + ContactApplication.getFriendsList().size());
         for (ParseUser u : list){
             try {
                 ParseUser friend = ParseUser.getQuery().get(u.getObjectId()); //get the rest
                 if (friend != null){
-                    ((ContactApplication) getApplication()).getFriendsList().add(friend); //add our friend locally
+                    Log.wtf(TAG, friend.getObjectId() + " belongs to " + friend.get("name"));
+                    ContactApplication.getFriendsList().add(friend); //add our friend locally
                 }else{
                     Log.wtf(TAG, "COULD NOT ADD: " + u.getObjectId());
                 }

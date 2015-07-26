@@ -96,7 +96,6 @@ Parse.Cloud.define("deleteGameData", function(request, response){
 });
 
 Parse.Cloud.define("removeFromGame", function(request, response){
-	Parse.Cloud.useMasterKey();
 	var playerID = request.params.playerID;
 	console.log("searching for: " + playerID);
 	var userQuery = new Parse.Query(Parse.User);
@@ -104,9 +103,6 @@ Parse.Cloud.define("removeFromGame", function(request, response){
 		success:function(user){
 			var currentGame = user.get("currentGame").fetch({
 				success:function(game){
-					console.log(game.get("numberPlayers"));
-					console.log(Number(game.get("numberPlayers")) + " players before");
-					console.log("currentGame is: " + String(game));
 					var gamePlayers = game.relation("players");
 					gamePlayers.remove(user);
 					console.log(Number(game.get("numberPlayers")) + " players before");
@@ -123,17 +119,40 @@ Parse.Cloud.define("removeFromGame", function(request, response){
 							success:function(something){
 								console.log("removed player from game");
 								Parse.Cloud.useMasterKey();
+								console.log("about to unset game");
 								user.unset("currentGame");
-								user.set("inGame", false);
-								user.save({
+								console.log("unset game");
+								user.save({inGame: false}, {
 									success:function(something2){
 										console.log("removed game from player");
-										response.success(true);
+										var currentGameMarker = game.get("marker").fetch({
+											success:function(marker){
+												var leftOver = Number(marker.get("numberPlayers")) - 1;
+												marker.save({numberPlayers: leftOver}, {
+													success:function(something3){
+														response.success(true);
+													},
+													error:function(error){
+														response.error(error.message);
+													}
+												});
+											},
+											error:function(error){
+												response.error(error.message);
+											}
+										});
 									},
 									error:function(error){
 										console.log("Cannot remove game from player");
-										//TODO add player back into game
-										response.error(error.message);
+										gamePlayers.add(user);
+										game.save({numberPlayers: numPlayersLeft + 1}, {
+											success:function(something4){
+												response.error({message:"stay in"});
+											},
+											error:function(error){
+												response.error({message:"worst case"});
+											}
+										});
 									}
 								});
 							},
@@ -152,6 +171,54 @@ Parse.Cloud.define("removeFromGame", function(request, response){
 		},
 		error:function(error){
 			console.log("Cannot find user");
+			response.error(error.message);
+		}
+	});
+});
+
+//GET array of ParseUser objectID
+//Give nothing
+Parse.Cloud.define("addFriendsToGame", function(request, response){
+	var gameID = request.params.gameID;
+	var friendIDs = request.params.friendIDs;
+	var friendsLength = friendIDs.length;
+	
+	var Game = Parse.Object.extend("Game");
+	var query = new Parse.Query(Game);
+	query.get(gameID, {
+		success:function(game){
+			console.log("Trying to add " + friendsLength + " people to game " + gameID);
+			var queryArray = [];
+			for (var i = 0; i < friendsLength; ++i){
+				console.log("Processing number: " + i); //create separate searches for each facebook friend
+				queryArray.push((new Parse.Query(Parse.User)).equalTo("id", friendIDs[i]));
+			}
+			var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
+			for (var i = 2; i < numIDs.length; ++i){
+					wholeQuery = Parse.Query.or(wholeQuery, queryArray[i]);
+				}
+			wholeQuery.find({
+				success:function(users){
+					Parse.Cloud.useMasterKey();
+					var players = game.relation("players");
+					for (var j = 0; j < friendsLength; ++j){
+						players.add(users[j]);
+					}
+					game.save({
+						success:function(something){
+							response.success();
+						},
+						error:function(error){
+							response.error(error);
+						}
+					});
+				},
+				error:function(error){
+					response.error(error.message);
+				}
+			});
+		},
+		error:function(error){
 			response.error(error.message);
 		}
 	});
@@ -179,25 +246,25 @@ Parse.Cloud.define("getParseFriendsFromFBID", function(request, response){
 				response.error(error.message);
 			}
 		});
-	}else if (numIDs == 2){ //when 2, just OR once
+	}else {
+		console.log("more than 1");
 		var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
-		wholeQuery.find({
-			success:function(users){
-				Parse.Cloud.useMasterKey();
-				response.success({friends:users});
-			},
-			error:function(error){
-				response.error(error.message);
+		if (numIDs > 2){ //for just two, no more than one or
+			console.log("more than 2");
+			for (var i = 2; i < numIDs.length; ++i){
+				console.log("joining " + i + " to past");
+				console.log("before: "+ wholeQuery.toJSON());
+				wholeQuery = Parse.Query.or(wholeQuery, queryArray[i]);
+				console.log("after: " + wholeQuery.toJSON());
 			}
-		});
-	}else{ //when more than 2, OR as many times as necessary
-		var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
-		for (var i = 2; i < numIDs.length; ++i){
-			wholeQuery = Parse.Query.or(wholeQuery, queryArray[i]);
 		}
+		console.log("about to find");
 		wholeQuery.find({
 			success:function(users){
 				Parse.Cloud.useMasterKey();
+				console.log("found: " + users.length);
+				for (var temp = 0; temp < users.length; ++temp)
+					console.log(users[temp].id);
 				response.success({friends:users});
 			},
 			error:function(error){
