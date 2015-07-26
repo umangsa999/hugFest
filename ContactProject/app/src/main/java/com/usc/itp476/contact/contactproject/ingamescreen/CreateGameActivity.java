@@ -37,7 +37,7 @@ public class CreateGameActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private static final int REQUEST_CODE_CREATE_GAME = -499;
     public static final int RESULT_CODE_QUIT_GAME = -449;
-    private static ArrayList<String> selectedFriendParseIDs = new ArrayList<>();
+    private static ArrayList<String> selectedFriendParseIDs;
     private AllTabActivity mAllTabActivity;
     private FriendListGridAdapter mFriendListAdapter;
     private Button btnCreate;
@@ -54,6 +54,8 @@ public class CreateGameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
+
+        selectedFriendParseIDs = new ArrayList<>();
 
         gridView = (GridView) findViewById(R.id.grid_view);
         btnCreate = (Button) findViewById(R.id.btnCreate);
@@ -176,6 +178,7 @@ public class CreateGameActivity extends Activity {
                                         }
                                     }
                                 });
+                                selectedFriendParseIDs.clear();
                             } else {
                                 ParseRelation<ParseUser> players = gameBeingMade.getRelation("players");
                                 players.add(ParseUser.getCurrentUser());
@@ -200,6 +203,7 @@ public class CreateGameActivity extends Activity {
                                                         } catch (ParseException e2) {
                                                             Log.wtf(TAG + "addfriendtoGame: ", e2.getLocalizedMessage());
                                                         }
+                                                        selectedFriendParseIDs.clear();
                                                         Intent i = new Intent(
                                                                 CreateGameActivity.this.getApplicationContext(),
                                                                 TargetActivity.class);
@@ -232,6 +236,7 @@ public class CreateGameActivity extends Activity {
                                                                 }
                                                             }
                                                         });
+                                                        selectedFriendParseIDs.clear();
                                                     }
                                                 }
                                             });
@@ -260,6 +265,7 @@ public class CreateGameActivity extends Activity {
                                                             }
                                                         });
                                                     }
+                                                    selectedFriendParseIDs.clear();
                                                 }
                                             });
                                         }
@@ -284,6 +290,7 @@ public class CreateGameActivity extends Activity {
                             }
                         }
                     });
+                    selectedFriendParseIDs.clear();
                 }
             }
         });

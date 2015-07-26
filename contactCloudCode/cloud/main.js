@@ -187,33 +187,62 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 	var query = new Parse.Query(Game);
 	query.get(gameID, {
 		success:function(game){
-			console.log("Trying to add " + friendsLength + " people to game " + gameID);
-			var queryArray = [];
-			for (var i = 0; i < friendsLength; ++i){
-				console.log("Processing number: " + i); //create separate searches for each facebook friend
-				queryArray.push((new Parse.Query(Parse.User)).equalTo("id", friendIDs[i]));
-			}
-			var wholeQuery = Parse.Query.or(queryArray[0], queryArray[1]);
-			for (var i = 2; i < numIDs.length; ++i){
-					wholeQuery = Parse.Query.or(wholeQuery, queryArray[i]);
-				}
-			wholeQuery.find({
-				success:function(users){
-					Parse.Cloud.useMasterKey();
-					var players = game.relation("players");
-					for (var j = 0; j < friendsLength; ++j){
-						players.add(users[j]);
+			console.log("Found game with id: " + gameID);
+			var host = game.get("host").fetch({
+				success: function(user){
+					console.log("found host");
+					var friendsAvailable = user.relation("friends");
+					var actualFriends = [];
+					var numNotAddable = 0;
+					console.log("begin processing");
+					for (var i = 0; i < friendsLength; ++i){
+						console.log("generating friend query " + i  + ": " + friendIDs[i]);
+						var tempQuery = friendsAvailable.query();
+						var holder = tempQuery.get(friendIDs[i], {
+							success:function(tempFriend){
+								console.log("found " + tempFriend.id);
+								if (tempFriend.get("inGame") == true){
+									++numNotAddable;
+									console.log("now " + numNotAddable + " not added");
+								}else{
+									console.log("before: " + actualFriends.length);
+									actualFriends.push(tempFriend);
+									console.log("after: " + actualFriends.length);
+									console.log("actual + not added: " + (actualFriends.length + numNotAddable));
+									if (Number(actualFriends.length + numNotAddable) == friendIDs.length){
+										console.log("found " + actualFriends.length + " users");
+										var gamePlayers = game.relation("players");
+										for (var j = 0; j < actualFriends.length; ++j){
+											console.log("adding user " + j + ": " + actualFriends[j]);
+											gamePlayers.add(actualFriends[j]);
+										}
+										console.log("saving");
+										for (var k = 0; k < actualFriends.length; ++k){
+											console.log("saving game to friend: " + k);
+											actualFriends[k].set("currentGame", game);
+											actualFriends[k].set("inGame", true);
+										}
+										actualFriends.push(game);
+										console.log("pushed together");
+										Parse.Object.saveAll(actualFriends,{
+											success:function(list){//TODO FIX THIS
+												response.success();
+											},
+											error:function(error){
+												response.error("GO HOME");
+											}
+										});
+									}
+								}
+							},
+							error:function(error){
+								response.error(error.message);
+							}
+						});
 					}
-					game.save({
-						success:function(something){
-							response.success();
-						},
-						error:function(error){
-							response.error(error);
-						}
-					});
+					console.log("started all gets");
 				},
-				error:function(error){
+				error: function(error){
 					response.error(error.message);
 				}
 			});

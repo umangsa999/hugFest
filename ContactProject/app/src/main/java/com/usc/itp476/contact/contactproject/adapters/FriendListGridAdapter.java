@@ -107,37 +107,34 @@ public class FriendListGridAdapter extends BaseAdapter {
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    TextView id = (TextView) view.findViewById(R.id.ObjectIdTextView);
                     CheckBox c = (CheckBox) view.findViewById(R.id.ckbxInvite);
                     c.setChecked(!c.isChecked());
+                    //this is invite friends
+                    if ( holder.invited.isChecked()) {
+                        Log.wtf(TAG + "Tring to add freisfsdf", "CAT");
+                        CreateGameActivity.getSelectedFriendParseIDs().add(id.getText().toString());
+                        Log.wtf(TAG + "size: ",
+                                "" + CreateGameActivity.getSelectedFriendParseIDs().size() );
+                    }else{
+                        CreateGameActivity.getSelectedFriendParseIDs().remove(id.getText().toString());
+                    }
                 }
             });
         }else{
-            holder.points.setText( friendsList == null ?
-                    "" :
-                    String.valueOf(me.getInt("totalHugs")));
+            holder.points.setText(friendsList == null ? "" : String.valueOf(me.getInt("totalHugs")));
             holder.invited.setVisibility(View.GONE);
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //This is where we handle pressing gridtiles
                     TextView id = (TextView) view.findViewById(R.id.ObjectIdTextView);
-                    if (isAllTabNotCreate) {
-                        //This is the stinkin friends list
-                        Log.wtf(TAG + "Clicked", id.getText().toString() );
-                        ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(
-                                id.getText().toString()
-                        );
+                    //This is the stinkin friends list
+                    Log.wtf(TAG + "Clicked", id.getText().toString() );
+                    ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(
+                            id.getText().toString());
                     }
-                    else{
-                        //this is invite friends
-                        if ( holder.invited.isChecked()) {
-                            Log.wtf(TAG + "Tring to add freisfsdf", "CAT");
-                            CreateGameActivity.getSelectedFriendParseIDs().add(id.getText().toString());
-                            Log.wtf(TAG + "size: ", ""+CreateGameActivity.getSelectedFriendParseIDs().size() );
-                        }
-                    }
-                }
-            });
+                });
         }
         return rowView;
     }
