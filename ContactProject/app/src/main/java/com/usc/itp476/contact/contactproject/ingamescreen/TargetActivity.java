@@ -226,6 +226,7 @@ public class TargetActivity extends Activity {
     private void increasePoints(){
         ++current;
         setPoints();
+        signalIncrease();
         checkWin();
     }
 
@@ -241,6 +242,10 @@ public class TargetActivity extends Activity {
         txvwCurrentPoints.setText(String.valueOf(current));
         if (txvwMaxPoints.getText().charAt(0) == '-')
             txvwMaxPoints.setText(String.valueOf(max));
+    }
+
+    private void signalIncrease(){
+
     }
 
     @Override
