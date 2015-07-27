@@ -83,6 +83,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="Link Profile"
             android:id="@+id/btnLink" />
     </LinearLayout>

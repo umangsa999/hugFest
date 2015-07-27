@@ -124,7 +124,7 @@ public class StartActivity extends Activity {
         createFacebookCallback();
 
         //TESTING AUTO LOG IN
-        ParseUser.logInInBackground("Ryan Zhou", "Ryan Zhou", new LogInCallback() {
+        ParseUser.logInInBackground("Chris Lee", "cheese", new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (e == null) {
@@ -272,34 +272,34 @@ public class StartActivity extends Activity {
 
     private void addFaceBookFriends(){
         new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me/friends",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        JSONObject tempArray = response.getJSONObject();
-                        try {
-                            if( tempArray!= null ){
-                                facebookIDs = tempArray.getJSONArray("data");
-                                if( facebookIDs.length() > 0 ) {
-                                    //actually have friends then proceed
-                                    HashMap<String, Object> parms = new HashMap<String, Object>();
-                                    parms.put("ids", facebookIDs);
-                                    try {
-                                        //pass in a HashMap, get back a HashMap
-                                        parsefriendIDs = ParseCloud.callFunction("getParseFriendsFromFBID", parms);
-                                    } catch (Exception e) {
-                                        Log.wtf(TAG, e.getMessage());
-                                    }
+            AccessToken.getCurrentAccessToken(),
+            "/me/friends",
+            null,
+            HttpMethod.GET,
+            new GraphRequest.Callback() {
+                public void onCompleted(GraphResponse response) {
+                    JSONObject tempArray = response.getJSONObject();
+                    try {
+                        if( tempArray!= null ){
+                            facebookIDs = tempArray.getJSONArray("data");
+                            if( facebookIDs.length() > 0 ) {
+                                //actually have friends then proceed
+                                HashMap<String, Object> parms = new HashMap<String, Object>();
+                                parms.put("ids", facebookIDs);
+                                try {
+                                    //pass in a HashMap, get back a HashMap
+                                    parsefriendIDs = ParseCloud.callFunction("getParseFriendsFromFBID", parms);
+                                } catch (Exception e) {
+                                    Log.wtf(TAG, e.getMessage());
                                 }
                             }
-                        } catch (JSONException e) {
-                            Log.wtf(TAG, e.getLocalizedMessage());
                         }
-                      createFaceBookParseUser();
+                    } catch (JSONException e) {
+                        Log.wtf(TAG, e.getLocalizedMessage());
                     }
+                  createFaceBookParseUser();
                 }
+            }
         ).executeAsync();
     }
 

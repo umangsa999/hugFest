@@ -164,7 +164,7 @@ public class GameFragment extends Fragment
         Location loc = LocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         //only when we have location access
-        if (loc != null) {
+        if (loc != null && map != null) {
             Log.wtf(TAG, "loc is not null");
             myLoc = new LatLng(loc.getLatitude(), loc.getLongitude());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 14.0f)); //old = 15
@@ -263,7 +263,7 @@ public class GameFragment extends Fragment
                 .center(myLoc)
                 .radius(maxDistanceDraw).fillColor(backgroundColor)
                 .strokeWidth(5).strokeColor(backgroundColor);
-//        radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
+        radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
     }
 
     private void setLocationListener() {
@@ -281,7 +281,8 @@ public class GameFragment extends Fragment
                 } else {
                     //create the radius!
                     createRadius();
-                    findPoints();
+                    if (map != null)
+                        findPoints();
                 }
             }
 
