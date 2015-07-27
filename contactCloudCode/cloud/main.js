@@ -10,13 +10,16 @@ Parse.Cloud.define("getPlayerEndScores", function(request, response){
 			userQuery.equalTo("currentGame", game);
 			userQuery.addDescending("currentHugs");
 			userQuery.limit(4);
-			console.log("Starting promise");
 			var promise = userQuery.find({
 				success:function(users){
 					console.log("results found! \n" + users);
 					var usersData = [];
 					for (var i = 0; i < users.length; ++i){
-						var userObject = {"id": users[i].id, "name": users[i].get("name"), "pictureLink": users[i].get("pictureLink"), "hugs": users[i].get("currentHugs")};
+						var userObject =
+						{"id": users[i].id,
+						"name": users[i].get("name"),
+						"pictureLink": users[i].get("pictureLink"),
+						"hugs": users[i].get("currentHugs")};
 						usersData.push(userObject);
 					}
 					console.log(usersData);
@@ -43,8 +46,8 @@ Parse.Cloud.define("getUserSessionToken", function(request, response) {
     var facebookID = request.params.facebookID;
 
     var query = new Parse.Query(Parse.User);
-    query.equalTo("facebookID", facebookID);
-    query.find({
+    query.equalTo("facebookID", facebookFriendIDsD);
+    query.first({
         success: function(user) {
             console.log(user.length);
             user[0].fetch({
@@ -62,44 +65,67 @@ Parse.Cloud.define("getUserSessionToken", function(request, response) {
     });
 });
 
-Parse.Cloud.define("addFriendFacebookMutual", function(request, response){
-	Parse.Cloud.useMasterKey();
-	
-	var hostHelen = request.hostHelen;
-	var facebookFriendIDs = request.params.friends;
-	
-	
+Parse.Cloud.define("addFriendUNMutual", function(request, response){
+	var hostHelenID = request.params.hostHelenID;
+	var targetTomUN = request.params.friendUN;
+	console.log("hostHelenID: " + hostHelenID);
+	console.log("targetTomUN: " + targetTomUN);
+	var tomQuery = new Parse.Query(Parse.User);
+	tomQuery.equalTo("username", targetTomUN);
+	tomQuery.first({
+		success:function(tom){
+			console.log(tom);
+			var promise = Parse.Cloud.run("addFriendMutual",
+				{"hostHelen": hostHelenID, "targetTom": tom.id});
+			promise.then(
+				function(results){
+					console.log("result is:\n\t" + results);
+					if (results[0].id == hostHelenID)
+						response.success(results[1]);
+					else
+						response.success(results[0]);
+				},
+				function(error){
+					response.error(error.message);
+				}
+			);
+		},
+		error:function(error){
+			response.error(error.message);
+		}
+	});
 });
 
 Parse.Cloud.define("addFriendMutual", function(request, response){
-	var targetTom = request.targetTom;
-	var hostHelen = request.hostHelen;
-	
+	var targetTom = request.params.targetTom;
+	var hostHelen = request.params.hostHelen;
+	console.log("targetTom: " + targetTom);
+	console.log("hostHelen: " + hostHelen);
 	var query = new Parse.Query(Parse.User);
 	query.get(hostHelen, {
 		success:function(Helen){
-			var HelenFriends = hostHelen.relation("friends");
-			var helenFriendQuery = HelenFriends.query();
-			helenFriendQuery.equalTo("username", targetTom);
-			helenFriendQuery.find({
-				success:function(HelenFindTom){
-					response.error(1); //1 means friend exists
-				},
-				error:function(e){
-					var friendQuery = new Parse.Query(Parse.User);
-					friendQuery.equalTo("username", targetTom);
-					friendQuery.find({
-						success:function(Tom){
-							Parse.Cloud.useMasterKey();
-							var TomFriends = Tom.relation("friends");
-							TomFriends.add(Helen);
-							HelenFriends.add(Tom);
-							Parse.Object.saveAll([Helen, Tom]);
-						},
-						error:function(er){
-							response.error(2); //2 means cannot obtain Tom
+			console.log("Found helen!");
+			var HelenFriends = Helen.relation("friends");
+			var friendQuery = new Parse.Query(Parse.User);
+			friendQuery.get(targetTom, {
+				success:function(Tom){
+					console.log("Found tom!");
+					Parse.Cloud.useMasterKey();
+					var TomFriends = Tom.relation("friends");
+					TomFriends.add(Helen);
+					HelenFriends.add(Tom);
+					console.log("just added friends");
+					Parse.Object.saveAll([Helen, Tom]).then(
+						function(list){
+							console.log("now we friends");
+							response.success(list);
+						}, function(error){
+							response.error(2);//2 means cannot save
 						}
-					});
+					);
+				},
+				error:function(er){
+					response.error(1); //1 means cannot obtain Tom
 				}
 			});
 		},
@@ -140,7 +166,8 @@ Parse.Cloud.define("removeFromGame", function(request, response){
 				success:function(game){
 					var gamePlayers = game.relation("players");
 					gamePlayers.remove(user);
-					console.log(Number(game.get("numberPlayers")) + " players before");
+					console.log(Number(game.get("numberPlayers")) +
+						" players before");
 					var numPlayersLeft = Number(game.get("numberPlayers")) - 1;
 					console.log("Players left: " + numPlayersLeft);
 					
@@ -160,9 +187,11 @@ Parse.Cloud.define("removeFromGame", function(request, response){
 								user.save({inGame: false}, {
 									success:function(something2){
 										console.log("removed game from player");
-										var currentGameMarker = game.get("marker").fetch({
+										var currentGameMarker =
+										game.get("marker").fetch({
 											success:function(marker){
-												var leftOver = Number(marker.get("numberPlayers")) - 1;
+												var leftOver =
+												Number(marker.get("numberPlayers")) - 1;
 												marker.save({numberPlayers: leftOver}, {
 													success:function(something3){
 														response.success(true);
@@ -231,7 +260,8 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 					var numNotAddable = 0;
 					console.log("begin processing");
 					for (var i = 0; i < friendsLength; ++i){
-						console.log("generating friend query " + i  + ": " + friendIDs[i]);
+						console.log("generating friend query " +
+							i  + ": " + friendIDs[i]);
 						var tempQuery = friendsAvailable.query();
 						var holder = tempQuery.get(friendIDs[i], {
 							success:function(tempFriend){

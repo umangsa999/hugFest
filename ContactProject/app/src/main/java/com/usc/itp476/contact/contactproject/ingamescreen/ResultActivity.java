@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,10 +14,6 @@ import com.parse.ParseException;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,7 +21,6 @@ public class ResultActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private ImageView images[] = new ImageView[4];
     private TextView names[] = new TextView[4];
-    private TextView winnerName, leftName, middleName, rightName;
     private ArrayList<HashMap<String, Object>> topPlayersList;
 
     @Override

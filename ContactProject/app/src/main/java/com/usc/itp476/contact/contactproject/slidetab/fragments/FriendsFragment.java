@@ -17,6 +17,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
@@ -26,6 +29,7 @@ import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class FriendsFragment extends Fragment {
@@ -110,31 +114,23 @@ public class FriendsFragment extends Fragment {
 
     //TODO make this code more server heavy
     private void addFriend(String inputFriendUsername){
-        ParseQuery<ParseUser> findFriend = ParseUser.getQuery();
-        findFriend.whereEqualTo("username", inputFriendUsername);
-        findFriend.findInBackground(new FindCallback<ParseUser>() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("hostHelenID", ParseUser.getCurrentUser().getObjectId());
+        params.put("friendUN", inputFriendUsername);
+        ParseCloud.callFunctionInBackground("addFriendUNMutual", params,
+                new FunctionCallback<ParseUser>() {
             @Override
-            public void done(List<ParseUser> list, ParseException e) {
-                if (e != null) {
-                    Log.wtf(TAG, e.getLocalizedMessage());
-                } else if (list.size() != 1) {
+            public void done(ParseUser parseUser, ParseException e) {
+                if (e == null){
                     Toast.makeText(getActivity().getApplicationContext(),
-                            "Could not find user.", Toast.LENGTH_SHORT).show();
-                } else {
-                    ParseUser friend = list.get(0);
-                    ParseUser me = ParseUser.getCurrentUser();
-                    ParseRelation<ParseUser> myFriends = me.getRelation("friends");
-                    //TODO need to check for duplicates before adding
-                    myFriends.add(friend);
-                    me.saveInBackground();
+                            "Added " + parseUser.get("username").toString(),
+                            Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Added " + friend.getUsername(), Toast.LENGTH_SHORT).show();
-
-                    ContactApplication.getFriendsList().put(friend.getObjectId(), friend);
+                    ContactApplication.getFriendsList()
+                            .put(parseUser.getObjectId(), parseUser);
                     updateFriends();
-                    //TODO make a push notification from me to friend asking for permission
-                    //TODO this is because we do not have ACL authority
+                }else {
+                    Log.wtf(TAG, e.getLocalizedMessage());
                 }
             }
         });
