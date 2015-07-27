@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,12 +28,12 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.CountCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
@@ -50,18 +51,18 @@ public class GameFragment extends Fragment
     private View rootView;
     private Circle radiusCircle = null;
     private final int maxDistanceDraw = 700;
-    private final double maxDistance = 0.0075;
+    private final double maxDistance = 0.1; //old = 0.0075;
     public static final int MAX_PLAYERS = 20;
     private final int backgroundColor = Color.argb(128, 0, 128, 128);
     private HashMap<Marker, GameMarker> markerToGame;
+    private final String TAG = this.getClass().getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         markerToGame = new HashMap<>();
         mapFragment = SupportMapFragment.newInstance();
-        FragmentTransaction fragmentTransaction =
-                getChildFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.mapHolder, mapFragment);
         fragmentTransaction.commit();
         mapFragment.getMapAsync(this);
@@ -138,6 +139,12 @@ public class GameFragment extends Fragment
             @Override
             public boolean onMarkerClick(Marker marker) {
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
+                try {
+                    GameMarker gm = (GameMarker) markerToGame.get(marker).fetchIfNeeded();
+                    markerToGame.put(marker, gm);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 marker.showInfoWindow();
                 return true; //done processing user press so don't have Google do any work
             }
@@ -158,12 +165,14 @@ public class GameFragment extends Fragment
 
         //only when we have location access
         if (loc != null) {
+            Log.wtf(TAG, "loc is not null");
             myLoc = new LatLng(loc.getLatitude(), loc.getLongitude());
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 15));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 14.0f)); //old = 15
 
             findPoints(); //do a server call for all games
             createRadius();
         }else{
+            Log.wtf(TAG, "No zoom becauses can't find games");
             Toast.makeText(GameFragment.this.getActivity().getApplicationContext(),
                     "No connection to find games.", Toast.LENGTH_SHORT).show();
         }
@@ -171,24 +180,48 @@ public class GameFragment extends Fragment
 
     //this method is suppose to do server call to find games
     private void findPoints() {
+        Log.wtf(TAG, "find Points called");
         ParseGeoPoint myLocParse = new ParseGeoPoint(myLoc.latitude, myLoc.longitude);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Marker");
-        query.whereNotEqualTo("host", ParseUser.getCurrentUser() );
-        query.whereLessThan("numberPlayers", MAX_PLAYERS);
-        query.whereWithinRadians("start", myLocParse, maxDistance);
-        query.findInBackground(new FindCallback<ParseObject>() {
+
+        query.countInBackground(new CountCallback() {
+            public void done(int count, ParseException e) {
+                if (e == null) {
+                    Log.wtf(TAG, "Count: "+ count);
+                } else {
+                    Log.wtf(TAG, "Failz, lawls");
+                }
+            }
+        });
+
+        ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Marker");
+        query2.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                if (e != null || list.size() < 1){
-                    //TODO FIX THIS, CRASHING
-                    //Toast.makeText(getActivity().getApplicationContext(),"Could find any games nearby", Toast.LENGTH_SHORT).show();
-                }else{
-                    for (ParseObject p : list){
+                if (e == null && list.size() < 1) {
+                    //If there is no done Parse error but we found no games
+                    Log.wtf(TAG, "Could not find any games, size: " + list.size());
+                    Toast.makeText(GameFragment.this.getActivity().getApplicationContext(),
+                            "Could find any games nearby", Toast.LENGTH_SHORT).show();
+                } else if (e != null) {
+                    //We found games but there is a parse error
+                    Toast.makeText(GameFragment.this.getActivity().getApplicationContext(),
+                            "Please check internet connection", Toast.LENGTH_SHORT).show();
+                    Log.wtf(TAG, e.getLocalizedMessage());
+                } else {
+                    //There is no done parse error and we found games
+                    Log.wtf(TAG, "Found games size: " + list.size());
+                    for (ParseObject p : list) {
                         addPoint(p);
                     }
                 }
             }
         });
+
+        //query.whereNotEqualTo("host", ParseUser.getCurrentUser() );
+        //query.whereLessThan("numberPlayers", MAX_PLAYERS);
+        //query.whereWithinRadians("start", myLocParse, maxDistance);
+
     }
 
     //this may switch to taking in a LatLng depending on API
@@ -225,6 +258,7 @@ public class GameFragment extends Fragment
     }
 
     private void createRadius(){
+        Log.wtf(TAG, "Trying to create radius ");
         CircleOptions circleOptions = new CircleOptions()
                 .center(myLoc)
                 .radius(maxDistanceDraw).fillColor(backgroundColor)

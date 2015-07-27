@@ -106,10 +106,9 @@ public class StartActivity extends Activity {
 //        }
 
         mProgress = (ProgressBar) findViewById(R.id.progressBar);
-
-    if (ParseUser.getCurrentUser() != null) {
+        if(ParseUser.getCurrentUser() != null) {
             Log.wtf(TAG, "There IS a PU");
-            ParseUser.logOut();
+            //ParseUser.logOut();
         }
 
         btnStart = (Button) findViewById(R.id.btnStart);
@@ -123,11 +122,27 @@ public class StartActivity extends Activity {
         createTwitterCallback();
         createFacebookCallback();
 
+        //TESTING AUTO LOG IN
+        ParseUser.logInInBackground("Ryan Zhou", "Ryan Zhou", new LogInCallback() {
+            @Override
+            public void done(ParseUser user, ParseException e) {
+                if (e == null) {
+                    Toast.makeText(getApplicationContext(),
+                            "Welcome back,\n" + user.getUsername(),
+                            Toast.LENGTH_SHORT).show();
+                    goToHome();
+                } else {
+                    saveParse();
+                }
+            }
+        });
+
+
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //AUTO LOGIN
-                ParseUser.logInInBackground("Chris Lee", "cheese", new LogInCallback() {
+                //AUTO LOGIN TESTING
+                ParseUser.logInInBackground("Ryan Zhou", "Ryan Zhou", new LogInCallback() {
                     @Override
                     public void done(ParseUser user, ParseException e) {
                         if (e == null) {
@@ -141,6 +156,7 @@ public class StartActivity extends Activity {
                     }
                 });
 
+                //uncomment
                 //check();
             }
         });

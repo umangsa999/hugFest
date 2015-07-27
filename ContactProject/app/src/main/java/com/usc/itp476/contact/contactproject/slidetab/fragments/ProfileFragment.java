@@ -73,6 +73,10 @@ public class ProfileFragment extends Fragment {
 
         mActivity = this.getActivity();
         imbnEdit = (ImageButton) rootView.findViewById(R.id.btnEdit);
+
+        //v1.0 do not allow for edits from user profile
+        imbnEdit.setVisibility(View.GONE);
+
         imgPhoto = (ImageView) rootView.findViewById(R.id.imvwPhoto);
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
         txvwTotal = (TextView) rootView.findViewById(R.id.textViewTotal);
@@ -80,6 +84,12 @@ public class ProfileFragment extends Fragment {
         btnLink = (Button) rootView.findViewById(R.id.btnLink);
         btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
         btnViewFacebook = (Button) rootView.findViewById(R.id.buttonViewFacebook);
+
+        //v1.0 no viewing on faceook functionality
+        //When Perry makes profile, perry saves his own facebook URI so when his friends add him his
+        //friends can access Perry's FB link
+        btnViewFacebook.setVisibility(View.GONE);
+
         btnViewFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
