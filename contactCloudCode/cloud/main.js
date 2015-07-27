@@ -253,6 +253,20 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 	});
 });
 
+
+Parse.Cloud.define("increaseScore", function( request, response){
+
+	//Someone has scored, I will get the ParseUser himself, increase his score & alert all player in game
+	//1. I want to increase the score for a single player
+	var parseUser = request.parseUser;
+	//no problemo, I got the parseUser itself
+	var currentHugs = parseUser.get("currentHugs");
+	parseUser.set( "currentHugs", ++currentHugs);
+	parseUser.save
+
+
+});
+
 //GET FBID array
 //GIVE Parse array
 Parse.Cloud.define("getParseFriendsFromFBID", function(request, response){
