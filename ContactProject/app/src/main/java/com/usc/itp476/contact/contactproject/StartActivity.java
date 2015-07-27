@@ -106,7 +106,8 @@ public class StartActivity extends Activity {
 //        }
 
         mProgress = (ProgressBar) findViewById(R.id.progressBar);
-        if(ParseUser.getCurrentUser() != null) {
+
+        if (ParseUser.getCurrentUser() != null) {
             Log.wtf(TAG, "There IS a PU");
             //ParseUser.logOut();
         }

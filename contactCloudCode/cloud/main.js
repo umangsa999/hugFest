@@ -1,3 +1,38 @@
+Parse.Cloud.define("getPlayerEndScores", function(request, response){
+	var gameID = request.params.gameID;
+	console.log("Trying to find players end scores with game ID: " + gameID);
+	var Game = Parse.Object.extend("Game");
+	var gameQuery = new Parse.Query(Game);
+	var gameHolder = gameQuery.get(gameID, {
+		success:function(game){
+			console.log("Found game: " + game.id);
+			var userQuery = new Parse.Query(Parse.User);
+			userQuery.equalTo("currentGame", game);
+			userQuery.addDescending("currentHugs");
+			userQuery.limit(4);
+			console.log("Starting promise");
+			var promise = userQuery.find({
+				success:function(users){
+					console.log("results found! \n" + users);
+					var usersData = [];
+					for (var i = 0; i < users.length; ++i){
+						var userObject = {"id": users[i].id, "name": users[i].get("name"), "pictureLink": users[i].get("pictureLink"), "hugs": users[i].get("currentHugs")};
+						usersData.push(userObject);
+					}
+					console.log(usersData);
+					response.success(usersData);
+				},
+				error:function(error){
+					response.error(error.message);
+				}
+			});
+		},
+		error:function(error){
+			response.error(error.message);
+		}
+	});
+});
+
 //Get sessionToken
 //Input: facebookID
 //Output: session token
