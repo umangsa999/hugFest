@@ -23,7 +23,6 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
@@ -111,7 +110,6 @@ public class CreateGameActivity extends Activity {
                 maxPoints = 1 + progress;
                 txvwMax.setText(String.valueOf(maxPoints));
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
@@ -207,6 +205,7 @@ public class CreateGameActivity extends Activity {
                                                         Intent i = new Intent(
                                                                 CreateGameActivity.this.getApplicationContext(),
                                                                 TargetActivity.class);
+                                                        i.putExtra(TargetActivity.JOINEDGAME,true);
                                                         i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
                                                         i.putExtra("gameID", gameBeingMade.getGameID());
                                                         startActivityForResult(i, REQUEST_CODE_CREATE_GAME);
