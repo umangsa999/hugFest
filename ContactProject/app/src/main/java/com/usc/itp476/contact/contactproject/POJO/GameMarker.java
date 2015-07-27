@@ -1,6 +1,7 @@
 package com.usc.itp476.contact.contactproject.POJO;
 
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -12,6 +13,7 @@ public class GameMarker extends ParseObject {
     public static final String USER_ID = "com.usc.itp476.contact.contactproject.POJO.GameMarker.USER_ID";
     public static final String FULL_NAME = "com.usc.itp476.contact.contactproject.POJO.GameMarker.FULL_NAME";
     public static final String TOTAL_HUGS = "com.usc.itp476.contact.contactproject.POJO.GameMarker.TOTAL_HUGS";
+    private String hostName = null;
 
     public String getMarkerID(){
         return getGameID();
@@ -38,11 +40,25 @@ public class GameMarker extends ParseObject {
     }
 
     public String getHostName(){
-        return getParseUser("host").getUsername();
+        if (hostName == null){
+            ParseUser obj = (ParseUser) get("host");
+            try {
+                obj.fetch();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            hostName = (String) obj.get("name");
+        }
+        return hostName;
     }
 
     public String getPlayerCount(){
-        return String.valueOf(getInt("numberPlayers"));
+        try {
+            return String.valueOf(fetch().getInt("numberPlayers"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public String getPoints(){

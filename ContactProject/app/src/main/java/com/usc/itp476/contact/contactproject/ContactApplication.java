@@ -35,6 +35,7 @@ public class ContactApplication extends Application {
     private static final String TWITTER_SECRET = "VRYJY0hRozcEupHlTNus18RbSxiLE5ioKkVCRZmjUF4ErKqL59";
     private static HashMap<String, ParseUser> friendList;
     public final String TAG = this.getClass().getSimpleName();
+    public static ParseACL defaultACL;
 	
     private static ContactApplication singleton;
 
@@ -63,7 +64,8 @@ public class ContactApplication extends Application {
                 "aXSv9sdHcVcnjSIaqy8KuymGh16K5I53MiWXGgnN");
         ParseInstallation.getCurrentInstallation().saveInBackground();
         ParseFacebookUtils.initialize(this); //For converting authenticated FB users to Parse users
-        ParseACL defaultACL = new ParseACL();
+        defaultACL = new ParseACL();
+        defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
 
         // Save the current Installation to Parse.
