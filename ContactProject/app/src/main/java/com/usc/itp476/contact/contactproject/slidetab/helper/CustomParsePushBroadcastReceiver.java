@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject;
+package com.usc.itp476.contact.contactproject.slidetab.helper;
 
 import android.app.Activity;
 import android.app.Notification;

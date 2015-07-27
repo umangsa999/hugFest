@@ -108,7 +108,7 @@
                 <category android:name="com.usc.itp476.contact.contactproject" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".CustomParsePushBroadcastReceiver" android:exported="false">
+        <receiver android:name=".slidetab.helper.CustomParsePushBroadcastReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
                 <action android:name="com.parse.push.intent.DELETE" />

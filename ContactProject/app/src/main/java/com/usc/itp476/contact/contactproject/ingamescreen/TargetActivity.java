@@ -32,7 +32,9 @@ import java.util.HashMap;
 
 
 public class TargetActivity extends Activity {
-    public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject";
+    public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject.MAXPOINTS";
+    public static final String JOINEDGAME = "com.usc.itp476.contact.contactproject.JOINEDGAME";
+
     final String TAG = this.getClass().getSimpleName();
     public static final int RETURN_FROM_RESULT = 80085;
     public static final int REQUEST_ACKNOWLEDGE_RESULT = 7236;
@@ -50,6 +52,7 @@ public class TargetActivity extends Activity {
     private String mCurrentPhotoPath;
     private ParseFile currentPhoto;
     private String mImageName;
+    private boolean joinedGame = true;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     private String gameID;
@@ -61,6 +64,7 @@ public class TargetActivity extends Activity {
 
         Intent i = getIntent();
         max = i.getIntExtra(MAXPOINTS, -1);
+        joinedGame = i.getBooleanExtra(JOINEDGAME, true);
         gameID = i.getStringExtra("gameID");
         if (max == -1)
             max = 10;
@@ -87,11 +91,20 @@ public class TargetActivity extends Activity {
             }
         });
 
+        //if joinedGame means that user pressed the game marker to get here
+        //TODO better assignment system
+        if(joinedGame){
+            //jerry just joined the game
+            //put him into the parse db of players
+            //give jerry a target
+        }else {
+            //This is a new game, get this person a target
+            g
+        }
         setPoints();
         backToast = Toast.makeText(getApplicationContext(),
                 "Press back again to leave game.",
                 Toast.LENGTH_SHORT);
-
     }
 
     @Override
