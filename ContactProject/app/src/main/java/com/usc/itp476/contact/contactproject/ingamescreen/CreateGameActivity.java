@@ -29,6 +29,8 @@ import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,8 +39,6 @@ public class CreateGameActivity extends Activity {
     private static final int REQUEST_CODE_CREATE_GAME = -499;
     public static final int RESULT_CODE_QUIT_GAME = -449;
     private static ArrayList<String> selectedFriendParseIDs;
-    private AllTabActivity mAllTabActivity;
-    private FriendListGridAdapter mFriendListAdapter;
     private Button btnCreate;
     private TextView txvwMax;
     private SeekBar skbrMax;
@@ -65,8 +65,7 @@ public class CreateGameActivity extends Activity {
     }
 
     private void setGridAdapter(){
-        mFriendListAdapter = new FriendListGridAdapter( getApplicationContext(), true, this, false);
-        gridView.setAdapter( mFriendListAdapter );
+        gridView.setAdapter( new FriendListGridAdapter( getApplicationContext(), true, this, false) );
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
         // On Click event for Single Gridview Item
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,6 +109,7 @@ public class CreateGameActivity extends Activity {
                 maxPoints = 1 + progress;
                 txvwMax.setText(String.valueOf(maxPoints));
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
@@ -185,9 +185,10 @@ public class CreateGameActivity extends Activity {
                                     public void done(ParseException e) {
                                         if (e == null) {
                                             ParseUser me = ParseUser.getCurrentUser();
-                                            me.put("currentGame", gameBeingMade);
                                             me.put("inGame", true);
+                                            me.put("currentGame", gameBeingMade);
                                             me.put("currentHugs", 0);
+                                            me.put("currentTarget", JSONObject.NULL);
                                             me.saveInBackground(new SaveCallback() {
                                                 @Override
                                                 public void done(ParseException e) {
@@ -195,11 +196,11 @@ public class CreateGameActivity extends Activity {
                                                         //Call cloud code to send players to server
                                                         HashMap<String, Object> params = new HashMap<>();
                                                         Log.wtf(TAG, "sending: " + selectedFriendParseIDs.size());
-                                                        for (int i = 0; i < selectedFriendParseIDs.size(); ++i){
+                                                        for (int i = 0; i < selectedFriendParseIDs.size(); ++i) {
                                                             Log.wtf(TAG, "friend: " + selectedFriendParseIDs.get(i));
                                                         }
-                                                        params.put("friendIDs", selectedFriendParseIDs );
-                                                        params.put("gameID", gameBeingMade.getGameID() );
+                                                        params.put("friendIDs", selectedFriendParseIDs);
+                                                        params.put("gameID", gameBeingMade.getGameID());
                                                         try {
                                                             ParseCloud.callFunction("addFriendsToGame", params);
                                                         } catch (ParseException e2) {
@@ -209,7 +210,7 @@ public class CreateGameActivity extends Activity {
                                                         Intent i = new Intent(
                                                                 CreateGameActivity.this.getApplicationContext(),
                                                                 TargetActivity.class);
-                                                        i.putExtra(TargetActivity.JOINEDGAME,true);
+                                                        i.putExtra(TargetActivity.JOINEDGAME, true);
                                                         i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
                                                         i.putExtra("gameID", gameBeingMade.getGameID());
                                                         startActivityForResult(i, REQUEST_CODE_CREATE_GAME);
@@ -298,10 +299,6 @@ public class CreateGameActivity extends Activity {
                 }
             }
         });
-    }
-
-    public void updateFriends(){
-        mFriendListAdapter.notifyDataSetChanged(); //actually tell people to display
     }
 
     @Override

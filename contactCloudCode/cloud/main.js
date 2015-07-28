@@ -31,12 +31,11 @@ Parse.Cloud.define("getTarget", function(request, response){
 
 							var oldTarget = harry.get("currentTarget");
 							console.log("list size: "+withoutHarryList.length);
-							if (oldTarget !== undefined){
+							if (oldTarget !== null){
 								console.log("remove: " + oldTarget.id);
 								var currIndex = idList.indexOf(oldTarget.id);
 								console.log("found to remove at " + currIndex);
 								withoutHarryList.splice(currIndex, 1);
-								harry.set("previousTarget", oldTarget);
 							}
 
 							for (var i = 0; i < withoutHarryList.length; ++i){
@@ -381,6 +380,8 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 										for (var k = 0; k < actualFriends.length; ++k){
 											console.log("saving game to friend: " + k);
 											actualFriends[k].set("currentGame", game);
+											actualFriends[k].set("currentHugs", 0);
+											actualFriends[k].set("currentTarget", null);
 											actualFriends[k].set("inGame", true);
 										}
 										actualFriends.push(game);
@@ -419,13 +420,43 @@ Parse.Cloud.define("increaseScore", function( request, response){
 
 	//Someone has scored, I will get the ParseUser himself, increase his score & alert all player in game
 	//1. I want to increase the score for a single player
-	var parseUser = request.parseUser;
+	var userID = request.params.userID;
+	console.log("For user: " + userID);
 	//no problemo, I got the parseUser itself
-	var currentHugs = parseUser.get("currentHugs");
-	parseUser.set( "currentHugs", ++currentHugs);
-	parseUser.save
 
-
+	var parseUserQuery = new Parse.Query(Parse.User);
+	parseUserQuery.get(userID).then(
+		function(parseUser){
+			parseUser.get("currentGame").fetch({
+				success:function(game){
+					var currentHugs = parseUser.get("currentHugs");
+					console.log("hugs are: " + currentHugs);
+					parseUser.set( "currentHugs", ++currentHugs);
+					parseUser.save().then(
+						function(parseUser){
+							//TODO notify all users here
+							console.log("hugs are now: "+parseUser.get("currentHugs"));
+							if (currentHugs == game.get("pointsToWin")){
+								//TODO push notification to end game sent to all
+								response.success(true);
+							}else{
+								response.success(false);
+							}
+						},
+						function(error){
+							response.error(error);
+						}
+					);
+				},
+				error:function(error){
+					response.error(error.message);
+				}
+			});
+		},
+		function(error){
+			response.error(error.message);
+		}
+	);
 });
 
 

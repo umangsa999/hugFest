@@ -47,7 +47,7 @@ public class TargetActivity extends Activity {
     private int current = 0;
     private long backPressedTime = 0;
     private final long TIME_INTERVAL = 2000;
-    private Toast backToast;
+//    private Toast backToast;
     private CameraManager manager;
     private Button buttonTakePicture;
     private String mCurrentPhotoPath;
@@ -106,9 +106,9 @@ public class TargetActivity extends Activity {
             //This is a new game, get this person a target
         }
         setPoints();
-        backToast = Toast.makeText(getApplicationContext(),
-                "Press back again to leave game.",
-                Toast.LENGTH_SHORT);
+//        backToast = Toast.makeText(getApplicationContext(),
+//                "Press back again to leave game.",
+//                Toast.LENGTH_SHORT);
     }
 
     private void getTarget(){
@@ -140,21 +140,8 @@ public class TargetActivity extends Activity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
-            //TODO upload pic to server
             currentPhoto = new ParseFile(mImageName, byteArray);
-            ParseUser.getCurrentUser().put("image", currentPhoto);
-            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e != null) {
-                        Log.wtf(TAG, "could not save image: " + e.getLocalizedMessage());
-                        Toast.makeText(getApplicationContext(),
-                                "Could not upload image, try again", Toast.LENGTH_SHORT).show();
-                    }else{
-                        increasePoints();
-                    }
-                }
-            });
+            signalIncrease();
         }
         else if (resultCode == RETURN_FROM_RESULT) {
             finish();
@@ -213,8 +200,6 @@ public class TargetActivity extends Activity {
         bmOptions.inSampleSize = scaleFactor;
         bmOptions.inPurgeable = true;
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        mImageView.setImageBitmap(bitmap);
-        imvwTarget.setVisibility(View.GONE);
 
         return bitmap;
     }
@@ -266,14 +251,6 @@ public class TargetActivity extends Activity {
         setPoints();
     }
 
-    private void checkWin(){
-        if (current == max){
-            Intent i = new Intent(getApplicationContext(), ResultActivity.class);
-            i.putExtra("gameID", gameID);
-            startActivityForResult(i, REQUEST_ACKNOWLEDGE_RESULT);
-        }
-    }
-
     private void setPoints(){
         txvwCurrentPoints.setText(String.valueOf(current));
         if (txvwMaxPoints.getText().charAt(0) == '-')
@@ -281,37 +258,68 @@ public class TargetActivity extends Activity {
     }
 
     private void signalIncrease(){
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (TIME_INTERVAL + backPressedTime > System.currentTimeMillis()) {
-            backToast.cancel();
-            removeMeFromGame();
-            return;
-        }else{
-            backToast.show();
-        }
-        backPressedTime = System.currentTimeMillis();
-    }
-
-    private void removeMeFromGame(){
-        HashMap<String, String> params = new HashMap<>();
-        params.put("playerID", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("removeFromGame", params, new FunctionCallback<Boolean>() {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("userID", ParseUser.getCurrentUser().getObjectId());
+        ParseCloud.callFunctionInBackground("increaseScore", params, new FunctionCallback<Boolean>() {
             @Override
-            public void done(Boolean isGood, ParseException e) {
-                if (e == null){
-                    Log.wtf(TAG, isGood.toString() + " returns back from call");
-                    Intent i = new Intent();
-                    setResult(CreateGameActivity.RESULT_CODE_QUIT_GAME);
-                    finish();
-                }else{
-                    Log.wtf(TAG, "Could not leave game: " + e.getLocalizedMessage());
+            public void done(Boolean didWin, ParseException e) {
+                if (e == null) {
+                    Log.wtf(TAG, didWin.toString());
+                    if (!didWin){
+                        increasePoints();
+                        getTarget();
+                    }else{
+                        increasePoints();
+                        Log.wtf(TAG, "DONE");
+                    }
+                } else {
+                    Log.wtf(TAG, "cannot increase score " + e.getLocalizedMessage());
+                }
+            }
+        });
+        ParseUser.getCurrentUser().put("image", currentPhoto);
+        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.wtf(TAG, "could not save image: " + e.getLocalizedMessage());
                     Toast.makeText(getApplicationContext(),
-                            "You cannot leave this game", Toast.LENGTH_SHORT).show();
+                            "Could not upload image, try again", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(getApplicationContext(), "No back for you", Toast.LENGTH_SHORT).show();
+//        if (TIME_INTERVAL + backPressedTime > System.currentTimeMillis()) {
+//            backToast.cancel();
+//            removeMeFromGame();
+//            return;
+//        }else{
+//            backToast.show();
+//        }
+//        backPressedTime = System.currentTimeMillis();
+    }
+
+//    private void removeMeFromGame(){
+//        HashMap<String, String> params = new HashMap<>();
+//        params.put("playerID", ParseUser.getCurrentUser().getObjectId());
+//        ParseCloud.callFunctionInBackground("removeFromGame", params, new FunctionCallback<Boolean>() {
+//            @Override
+//            public void done(Boolean isGood, ParseException e) {
+//                if (e == null){
+//                    Log.wtf(TAG, isGood.toString() + " returns back from call");
+//                    Intent i = new Intent();
+//                    setResult(CreateGameActivity.RESULT_CODE_QUIT_GAME);
+//                    finish();
+//                }else{
+//                    Log.wtf(TAG, "Could not leave game: " + e.getLocalizedMessage());
+//                    Toast.makeText(getApplicationContext(),
+//                            "You cannot leave this game", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//    }
 }
