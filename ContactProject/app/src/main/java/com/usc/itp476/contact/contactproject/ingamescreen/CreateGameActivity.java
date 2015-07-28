@@ -205,7 +205,7 @@ public class CreateGameActivity extends Activity {
                                                         Intent i = new Intent(
                                                                 CreateGameActivity.this.getApplicationContext(),
                                                                 TargetActivity.class);
-                                                        i.putExtra(TargetActivity.JOINEDGAME,true);
+                                                        i.putExtra(TargetActivity.JOINEDGAME, false);
                                                         i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
                                                         i.putExtra("gameID", gameBeingMade.getGameID());
                                                         startActivityForResult(i, REQUEST_CODE_CREATE_GAME);

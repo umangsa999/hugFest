@@ -51,7 +51,7 @@
         android:layout_alignParentRight="true"
         android:scaleType="centerInside"
         android:layout_below="@+id/relativeLayout"
-        android:layout_above="@+id/btnEdit" />
+        android:layout_above="@+id/holdingButtons" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -73,7 +73,9 @@
         android:id="@+id/holdingButtons"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
