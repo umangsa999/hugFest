@@ -193,7 +193,11 @@ public class CreateGameActivity extends Activity {
                                                 public void done(ParseException e) {
                                                     if (e == null) {
                                                         //Call cloud code to send players to server
-                                                        HashMap<String, Object> params = new HashMap<String, Object>();
+                                                        HashMap<String, Object> params = new HashMap<>();
+                                                        Log.wtf(TAG, "sending: " + selectedFriendParseIDs.size());
+                                                        for (int i = 0; i < selectedFriendParseIDs.size(); ++i){
+                                                            Log.wtf(TAG, "friend: " + selectedFriendParseIDs.get(i));
+                                                        }
                                                         params.put("friendIDs", selectedFriendParseIDs );
                                                         params.put("gameID", gameBeingMade.getGameID() );
                                                         try {

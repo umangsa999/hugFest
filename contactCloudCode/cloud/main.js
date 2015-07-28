@@ -1,3 +1,83 @@
+Parse.Cloud.define("getTarget", function(request, response){
+	Parse.Cloud.useMasterKey();
+	var hunterHarry = request.params.hunter;
+	console.log("Hunter is: " + hunterHarry);
+
+	var harryQuery = new Parse.Query(Parse.User);
+	harryQuery.include("currentTarget");
+	var harryQueryPromise = harryQuery.get(hunterHarry);
+	harryQueryPromise.then(
+		function(harry){
+
+			console.log("found harry: " + harry);
+			var gamePointer = harry.get("currentGame");
+			var gameFetchPromise = gamePointer.fetch();
+			gameFetchPromise.then(
+				function(game){
+
+					console.log("found game: " + game.id);
+					var gamePlayers = game.relation("players");
+					var removeHarryQuery = gamePlayers.query();
+					removeHarryQuery.notEqualTo("objectId", harry.id);
+					var removeHarryPromise = removeHarryQuery.find();
+					removeHarryPromise.then(
+						function(withoutHarryList){
+
+							var idList = [];
+							for (var i = 0; i < withoutHarryList.length; ++i){
+								console.log(i + ": " + withoutHarryList[i].id);
+								idList.push(withoutHarryList[i].id);
+							}
+
+							var oldTarget = harry.get("currentTarget");
+							console.log("list size: "+withoutHarryList.length);
+							if (oldTarget !== undefined){
+								console.log("remove: " + oldTarget.id);
+								var currIndex = idList.indexOf(oldTarget.id);
+								console.log("found to remove at " + currIndex);
+								withoutHarryList.splice(currIndex, 1);
+								harry.set("previousTarget", oldTarget);
+							}
+
+							for (var i = 0; i < withoutHarryList.length; ++i){
+								console.log(i + ": " + withoutHarryList[i].id);
+							}
+							var yourTargetNum = Math.floor(
+								withoutHarryList.length * Math.random() );
+							console.log("your new targetnum: " + yourTargetNum);
+							var target = withoutHarryList[yourTargetNum];
+							console.log("found target: " + target.id);
+							harry.set("currentTarget", target);
+							var harrySavePromise = harry.save();
+							harrySavePromise.then(
+								function(harryAgain){
+
+									console.log("success!");
+									response.success(target);
+								},
+								function(error){
+
+									response.error(error);
+								}
+							);
+						}
+					);
+				},
+				function(error){
+
+					response.error(error.message);
+				}
+			);
+		},
+		function(error){
+
+			response.error(error.message);
+		}
+	);
+});
+
+
+
 Parse.Cloud.define("getPlayerEndScores", function(request, response){
 	var gameID = request.params.gameID;
 	console.log("Trying to find players end scores with game ID: " + gameID);
@@ -36,6 +116,8 @@ Parse.Cloud.define("getPlayerEndScores", function(request, response){
 	});
 });
 
+
+
 //Get sessionToken
 //Input: facebookID
 //Output: session token
@@ -64,6 +146,8 @@ Parse.Cloud.define("getUserSessionToken", function(request, response) {
         }
     });
 });
+
+
 
 Parse.Cloud.define("addFriendUNMutual", function(request, response){
 	var hostHelenID = request.params.hostHelenID;
@@ -95,6 +179,8 @@ Parse.Cloud.define("addFriendUNMutual", function(request, response){
 		}
 	});
 });
+
+
 
 Parse.Cloud.define("addFriendMutual", function(request, response){
 	var targetTom = request.params.targetTom;
@@ -135,6 +221,8 @@ Parse.Cloud.define("addFriendMutual", function(request, response){
 	});
 });
 
+
+
 Parse.Cloud.define("deleteGameData", function(request, response){
 	var type = request.params.type;
 	var ID = request.params.ID;
@@ -155,6 +243,8 @@ Parse.Cloud.define("deleteGameData", function(request, response){
 		}
 	});
 });
+
+
 
 Parse.Cloud.define("removeFromGame", function(request, response){
 	var playerID = request.params.playerID;
@@ -240,13 +330,19 @@ Parse.Cloud.define("removeFromGame", function(request, response){
 	});
 });
 
+
+
 //GET array of ParseUser objectID
 //Give nothing
 Parse.Cloud.define("addFriendsToGame", function(request, response){
 	var gameID = request.params.gameID;
 	var friendIDs = request.params.friendIDs;
 	var friendsLength = friendIDs.length;
-	
+	console.log(friendsLength);
+	for (var counter = 0; counter < friendsLength; ++counter){
+		console.log("Adding friend: " + friendIDs[counter]);
+	}
+
 	var Game = Parse.Object.extend("Game");
 	var query = new Parse.Query(Game);
 	query.get(gameID, {
@@ -331,6 +427,8 @@ Parse.Cloud.define("increaseScore", function( request, response){
 
 
 });
+
+
 
 //GET FBID array
 //GIVE Parse array

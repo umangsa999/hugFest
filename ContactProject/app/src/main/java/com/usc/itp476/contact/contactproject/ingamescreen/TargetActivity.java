@@ -23,6 +23,7 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,6 +57,7 @@ public class TargetActivity extends Activity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     private String gameID;
+    private ParseUser target;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class TargetActivity extends Activity {
         tempPoints.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getTarget();
                 increasePoints();
             }
         });
@@ -82,6 +85,7 @@ public class TargetActivity extends Activity {
         txvwMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
         imvwTarget = (ImageView) findViewById(R.id.imvwTarget);
         buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
+        getTarget();
 
         buttonTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,12 +103,33 @@ public class TargetActivity extends Activity {
             //give jerry a target
         }else {
             //This is a new game, get this person a target
-            g
+            //This is a new game, get this person a target
         }
         setPoints();
         backToast = Toast.makeText(getApplicationContext(),
                 "Press back again to leave game.",
                 Toast.LENGTH_SHORT);
+    }
+
+    private void getTarget(){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("hunter", ParseUser.getCurrentUser().getObjectId());
+        ParseCloud.callFunctionInBackground("getTarget", params,
+                new FunctionCallback<ParseUser>() {
+                    @Override
+                    public void done(ParseUser parseUser, ParseException e) {
+                        if (e == null) {
+                            target = parseUser;
+                            updateTarget();
+                        } else {
+                            Log.wtf(TAG, "bad!: " + e.getLocalizedMessage());
+                        }
+                    }
+                });
+    }
+
+    private void updateTarget(){
+        PicassoTrustAll.getInstance(getApplicationContext()).load(target.getString("pictureLink")).fit().into(mImageView);
     }
 
     @Override
@@ -239,8 +264,6 @@ public class TargetActivity extends Activity {
     private void increasePoints(){
         ++current;
         setPoints();
-        signalIncrease();
-        checkWin();
     }
 
     private void checkWin(){
@@ -258,7 +281,6 @@ public class TargetActivity extends Activity {
     }
 
     private void signalIncrease(){
-
     }
 
     @Override
