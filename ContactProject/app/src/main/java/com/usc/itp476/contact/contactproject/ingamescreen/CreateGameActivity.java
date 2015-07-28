@@ -125,7 +125,6 @@ public class CreateGameActivity extends Activity {
         marker.setLocation(pLoc);
         marker.setHostName();
         marker.setPoints(maxPoints);
-        marker.setPlayerCount(getSelectedFriendParseIDs().size() + 1);
         gameMarkerBeingMade = marker;
         marker.saveInBackground(new SaveCallback() {
             @Override
@@ -148,7 +147,6 @@ public class CreateGameActivity extends Activity {
         gameData.setLocation(pLoc);
         gameData.setHostName();
         gameData.setPointsToWin(maxPoints);
-        gameData.setNumPlayers(getSelectedFriendParseIDs().size() + 1);
         gameData.setMarker(gameMarkerBeingMade);
         gameBeingMade = gameData;
 

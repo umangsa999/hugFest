@@ -223,6 +223,7 @@ Parse.Cloud.define("addFriendMutual", function(request, response){
 
 
 Parse.Cloud.define("deleteGameData", function(request, response){
+	Parse.Cloud.useMasterKey();
 	var type = request.params.type;
 	var ID = request.params.ID;
 	var query = Parse.Query(Parse.Object.extend(type));
@@ -246,6 +247,7 @@ Parse.Cloud.define("deleteGameData", function(request, response){
 
 
 Parse.Cloud.define("removeFromGame", function(request, response){
+	Parse.Cloud.useMasterKey();
 	var playerID = request.params.playerID;
 	console.log("searching for: " + playerID);
 	var userQuery = new Parse.Query(Parse.User);
@@ -337,87 +339,113 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 	var gameID = request.params.gameID;
 	var friendIDs = request.params.friendIDs;
 	var friendsLength = friendIDs.length;
-	console.log(friendsLength);
-	for (var counter = 0; counter < friendsLength; ++counter){
-		console.log("Adding friend: " + friendIDs[counter]);
+
+	console.log("Friends to add to game: " + friendsLength);
+	console.log("game to add to: " + gameID);
+	for (var i = 0; i < friendsLength; ++i){
+		console.log("friend " + i + ": " + friendIDs[i]);
 	}
 
+	Parse.Cloud.useMasterKey();
 	var Game = Parse.Object.extend("Game");
-	var query = new Parse.Query(Game);
-	query.get(gameID, {
-		success:function(game){
-			console.log("Found game with id: " + gameID);
-			var host = game.get("host").fetch({
-				success: function(user){
-					console.log("found host");
-					var friendsAvailable = user.relation("friends");
-					var actualFriends = [];
-					var numNotAddable = 0;
-					console.log("begin processing");
-					for (var i = 0; i < friendsLength; ++i){
-						console.log("generating friend query " +
-							i  + ": " + friendIDs[i]);
-						var tempQuery = friendsAvailable.query();
-						var holder = tempQuery.get(friendIDs[i], {
-							success:function(tempFriend){
-								console.log("found " + tempFriend.id);
-								if (tempFriend.get("inGame") == true){
-									++numNotAddable;
-									console.log("now " + numNotAddable + " not added");
-								}else{
-									console.log("before: " + actualFriends.length);
-									actualFriends.push(tempFriend);
-									console.log("after: " + actualFriends.length);
-									console.log("actual + not added: " + (actualFriends.length + numNotAddable));
-									if (Number(actualFriends.length + numNotAddable) == friendIDs.length){
-										console.log("found " + actualFriends.length + " users");
-										var gamePlayers = game.relation("players");
-										for (var j = 0; j < actualFriends.length; ++j){
-											console.log("adding user " + j + ": " + actualFriends[j]);
-											gamePlayers.add(actualFriends[j]);
-										}
-										console.log("saving");
-										for (var k = 0; k < actualFriends.length; ++k){
-											console.log("saving game to friend: " + k);
-											actualFriends[k].set("currentGame", game);
-											actualFriends[k].set("currentHugs", 0);
-											actualFriends[k].set("currentTarget", null);
-											actualFriends[k].set("inGame", true);
-										}
-										actualFriends.push(game);
-										console.log("pushed together");
-										Parse.Object.saveAll(actualFriends,{
-											success:function(list){//TODO FIX THIS
-												response.success();
-											},
-											error:function(error){
-												response.error("GO HOME");
-											}
-										});
-									}
-								}
-							},
-							error:function(error){
-								response.error(error.message);
+	var gameQuery = new Parse.Query(Game);
+	gameQuery.include("marker");
+	var gameQueryPromise = gameQuery.get(gameID);
+	gameQueryPromise.then(
+		function(game){
+
+			var actualInvitedPlayers = [];
+			var numNotAddable = 0;
+			console.log("begin processing");
+			for (var i = 0; i < friendsLength; ++i){
+				console.log("Process invitee #" + i);
+				var invitedQuery = new Parse.Query(Parse.User);
+				var promise = invitedQuery.get(friendIDs[i]);
+				promise.then(
+					function(friend){
+
+						if (friend.get("inGame") == true){
+							console.log("friend " + friend.get("username") + " is already in a game");
+							numNotAddable++;
+							console.log(numNotAddable);
+						}else{
+							actualInvitedPlayers.push(friend);
+							console.log(actualInvitedPlayers.length + " are to join");
+						}
+
+						if (numNotAddable + actualInvitedPlayers.length == friendsLength){
+							console.log("We got everyone!");
+							for (var j = 0; j < actualInvitedPlayers.length; ++j){
+								console.log("now setting player #" + j);
+								actualInvitedPlayers[j].set("inGame", true);
+								actualInvitedPlayers[j].set("currentGame", game);
+								actualInvitedPlayers[j].set("currentHugs", 0);
+								actualInvitedPlayers[j].set("currentTarget", null);
 							}
-						});
+							console.log("all players ready to save");
+
+							Parse.Object.saveAll(actualInvitedPlayers, {
+								success:function(list){
+
+									console.log("Everyone saved successfully");
+									var gamePlayers = game.relation("players");
+									for (var j = 0; j < actualInvitedPlayers.length; ++j){
+										console.log("Adding player " + j + " to game");
+										gamePlayers.add(actualInvitedPlayers[j]);
+									}
+									console.log("Added all players to game");
+									game.set("numberPlayers", actualInvitedPlayers.length);
+
+									var gameSavePromise = game.save();
+									gameSavePromise.then(
+										function(gameAgain){
+
+											console.log("successfully saved game");
+											var marker = game.get("marker");
+											marker.set("numberPlayers", 1 + actualInvitedPlayers.length);
+											var markerPromise = marker.save();
+											markerPromise.then(
+												function(markerAgain){
+
+													console.log("marker saved");
+													response.success();
+												},
+												function(error){
+													response.error(error.message);
+												}
+											);
+										},
+										function(error){
+
+											response.error(error.message);
+										}
+									);
+								},
+								error:function(error){
+
+									response.error(error.message);
+								}
+							})
+						}
+					},
+					function(error){
+
+						response.error(error.message);
 					}
-					console.log("started all gets");
-				},
-				error: function(error){
-					response.error(error.message);
-				}
-			});
+				);
+			}
 		},
-		error:function(error){
+		function(error){
+
 			response.error(error.message);
 		}
-	});
+	);
 });
 
 
-Parse.Cloud.define("increaseScore", function( request, response){
 
+Parse.Cloud.define("increaseScore", function( request, response){
+	Parse.Cloud.useMasterKey();
 	//Someone has scored, I will get the ParseUser himself, increase his score & alert all player in game
 	//1. I want to increase the score for a single player
 	var userID = request.params.userID;
