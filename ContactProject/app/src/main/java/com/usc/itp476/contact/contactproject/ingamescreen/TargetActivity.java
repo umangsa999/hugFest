@@ -66,17 +66,15 @@ public class TargetActivity extends Activity {
         setContentView(R.layout.activity_in_game);
 
         Intent i = getIntent();
-        max = i.getIntExtra(MAXPOINTS, -1);
+        max = i.getIntExtra(MAXPOINTS, 10);
         joinedGame = i.getBooleanExtra(JOINEDGAME, true);
         gameID = i.getStringExtra(GAMEID);
-        if (max == -1)
-            max = 10;
 
         Button tempPoints = (Button) findViewById(R.id.btnPlus);
         tempPoints.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getTarget();
+                getNewTarget();
                 increasePoints();
             }
         });
@@ -86,7 +84,8 @@ public class TargetActivity extends Activity {
         txvwMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
         imvwTarget = (ImageView) findViewById(R.id.imvwTarget);
         buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
-        getTarget();
+
+        getNewTarget();
 
         buttonTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,10 +111,10 @@ public class TargetActivity extends Activity {
 //                Toast.LENGTH_SHORT);
     }
 
-    private void getTarget(){
+    private void getNewTarget(){
         HashMap<String, String> params = new HashMap<>();
         params.put("hunter", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("getTarget", params,
+        ParseCloud.callFunctionInBackground("getNewTarget", params,
                 new FunctionCallback<ParseUser>() {
                     @Override
                     public void done(ParseUser parseUser, ParseException e) {
@@ -268,7 +267,7 @@ public class TargetActivity extends Activity {
                     Log.wtf(TAG, didWin.toString());
                     if (!didWin){
                         increasePoints();
-                        getTarget();
+                        getNewTarget();
                     }else{
                         increasePoints();
                         Log.wtf(TAG, "DONE");

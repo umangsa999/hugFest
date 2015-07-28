@@ -30,14 +30,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.CountCallback;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
+import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
 import java.util.HashMap;
 import java.util.List;
@@ -128,13 +132,33 @@ public class GameFragment extends Fragment
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
-                        TargetActivity.class);
-                i.putExtra(TargetActivity.JOINEDGAME, true);
-                i.putExtra(TargetActivity.MAXPOINTS, markerToGame.get(marker).getPoints() );
-                i.putExtra(TargetActivity.GAMEID, markerToGame.get(marker).getGameID() );
-                markerToGame.clear();
-                startActivity(i);
+                HashMap<String, Object> params = new HashMap<>();
+                params.put("userID", ParseUser.getCurrentUser().getObjectId());
+                params.put("gameID", markerToGame.get(marker).getGameID());
+                ParseCloud.callFunctionInBackground("joinGame", params, new FunctionCallback<HashMap<String, Object>>() {
+                    @Override
+                    public void done(HashMap<String, Object> map, ParseException e) {
+                        if (e == null) {
+                            Intent i = new Intent(
+                                    GameFragment.this.getActivity().getApplicationContext(),
+                                    TargetActivity.class);
+                            i.putExtra(TargetActivity.JOINEDGAME, true);
+                            i.putExtra(TargetActivity.MAXPOINTS, (Integer) map.get("points"));
+                            i.putExtra(TargetActivity.GAMEID, (String) map.get("gameID"));
+                            markerToGame.clear();
+                            startActivity(i);
+                        } else if (e.getCode() == 20) {
+                            Log.wtf(TAG, "maxed out");
+                            Toast.makeText(getActivity().getApplicationContext(),
+                                    "That game is full", Toast.LENGTH_SHORT).show();
+                            //TODO it would be cool to update map here
+                        }else{
+                            Log.wtf(TAG, "no join game:\n" + e.getLocalizedMessage());
+                            Toast.makeText(getActivity().getApplicationContext(),
+                                    "Could not join game", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
 
@@ -220,11 +244,6 @@ public class GameFragment extends Fragment
                 }
             }
         });
-
-        //query.whereNotEqualTo("host", ParseUser.getCurrentUser() );
-        //query.whereLessThan("numberPlayers", MAX_PLAYERS);
-        //query.whereWithinRadians("start", myLocParse, maxDistance);
-
     }
 
     //this may switch to taking in a LatLng depending on API
@@ -324,7 +343,11 @@ public class GameFragment extends Fragment
         name.setText(data.getHostName());
         points.setText(String.valueOf(data.getPoints()));
         players.setText(String.valueOf(data.getPlayerCount()));
-        //TODO make images dynamic
+
+        String picLink = data.getHost().getString("pictureLink");
+        Log.wtf(TAG, "HOST IMAGE LINK: " + picLink);
+        PicassoTrustAll.getInstance(getActivity().getApplicationContext())
+                .load(picLink).fit().into(image);
 
         return view;
     }

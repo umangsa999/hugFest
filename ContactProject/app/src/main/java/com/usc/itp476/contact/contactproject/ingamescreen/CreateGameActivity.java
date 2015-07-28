@@ -202,6 +202,10 @@ public class CreateGameActivity extends Activity {
                                                         try {
                                                             ParseCloud.callFunction("addFriendsToGame", params);
                                                         } catch (ParseException e2) {
+                                                            if (e2.getCode() == -20){
+                                                                Toast.makeText(getApplicationContext(),
+                                                                        "Could not invite enough players", Toast.LENGTH_SHORT).show();
+                                                            }
                                                             Log.wtf(TAG + "addfriendtoGame: ", e2.getLocalizedMessage());
                                                         }
                                                         selectedFriendParseIDs.clear();

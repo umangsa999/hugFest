@@ -1,5 +1,7 @@
 package com.usc.itp476.contact.contactproject.POJO;
 
+import android.util.Log;
+
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -13,14 +15,23 @@ public class GameMarker extends ParseObject {
     public static final String USER_ID = "com.usc.itp476.contact.contactproject.POJO.GameMarker.USER_ID";
     public static final String FULL_NAME = "com.usc.itp476.contact.contactproject.POJO.GameMarker.FULL_NAME";
     public static final String TOTAL_HUGS = "com.usc.itp476.contact.contactproject.POJO.GameMarker.TOTAL_HUGS";
-    private String hostName = null;
+    private ParseUser host = null;
+    private GameData game = null;
 
     public String getMarkerID(){
         return getGameID();
     }
 
     public String getGameID(){
-        return getString("game");
+        if (game == null){
+            game = (GameData) get("game");
+            try{
+                game.fetch();
+            }catch(ParseException pe){
+                Log.wtf(TAG, pe);
+            }
+        }
+        return game.getObjectId();
     }
 
     public void setGameID(GameData game){
@@ -40,16 +51,25 @@ public class GameMarker extends ParseObject {
     }
 
     public String getHostName(){
-        if (hostName == null){
+        fetchHost();
+        return host.getString("name");
+    }
+
+    public ParseUser getHost(){
+        fetchHost();
+        return host;
+    }
+
+    private void fetchHost(){
+        if (host == null){
             ParseUser obj = (ParseUser) get("host");
             try {
                 obj.fetch();
             } catch (ParseException e) {
-                e.printStackTrace();
+                Log.wtf(TAG, e.getLocalizedMessage());
             }
-            hostName = (String) obj.get("name");
+            host =  obj;
         }
-        return hostName;
     }
 
     public String getPlayerCount(){

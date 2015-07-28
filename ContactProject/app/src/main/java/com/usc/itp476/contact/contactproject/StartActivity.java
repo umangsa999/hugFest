@@ -124,7 +124,7 @@ public class StartActivity extends Activity {
         createFacebookCallback();
 
         //TESTING AUTO LOG IN
-        ParseUser.logInInBackground("Catt Whiskerr", "Catt Whiskerr", new LogInCallback() {
+        ParseUser.logInInBackground("Chris Lee", "cheese", new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (e == null) {
