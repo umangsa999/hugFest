@@ -1,4 +1,93 @@
-Parse.Cloud.define("getTarget", function(request, response){
+Parse.Cloud.define("joinGame", function(request, response){
+	Parse.Cloud.useMasterKey();
+	var gameID = request.params.gameID;
+	var joinerJerryID = request.params.userID;
+
+	console.log("Trying to add " + joinerJerryID + " to game " + gameID);
+	var userQuery = new Parse.Query(Parse.User);
+	var userQueryPromise = userQuery.get(joinerJerryID);
+	userQueryPromise.then(
+		function(joinerJerry){
+
+			console.log("Found " + joinerJerry.get("name"));
+			var Game = Parse.Object.extend("Game");
+			var gameQuery = new Parse.Query(Game);
+			gameQuery.include("marker");
+			var gameQueryPromise = gameQuery.get(gameID);
+			gameQueryPromise.then(
+				function(game){
+
+					console.log("Found: " + game.id);
+					var numPlayers = game.get("numberPlayers");
+					if ( numPlayers == 20 ){
+						console.log("game already maxed");
+						response.error({"message": "Player limit reached for game", "code":20});
+					}else{
+						console.log("Adding player to game");
+						var gamePlayers = game.relation("players");
+						gamePlayers.add(joinerJerry);
+						game.set("numberPlayers", numPlayers + 1);
+
+						var gameSavePromise = game.save();
+						gameSavePromise.then(
+							function(gameAgain){
+
+								console.log("Added player to game");
+								joinerJerry.set("currentGame", game);
+								joinerJerry.set("currentTarget", null);
+								joinerJerry.set("currentHugs", 0);
+								joinerJerry.set("inGame", true);
+
+								var joinerJerryPromise = joinerJerry.save();
+								joinerJerryPromise.then(
+									function(joinerJerryAgain){
+
+										console.log("time to edit marker");
+										var marker = game.get("marker");
+										marker.set("numberPlayers", numPlayers + 1);
+
+										var markerPromise = marker.save();
+										markerPromise.then(
+											function(markerAgain){
+												console.log("Added player to game! enjoy");
+												var resultObject =
+													{"points": game.get("pointsToWin"), "gameID": game.id};
+												response.success(resultObject);
+											},
+											function(error){
+												response.error(error.message);
+											}
+										);
+									},
+									function(error){
+
+										reponse.error(error.message);
+									}
+								);
+							},
+							function(error){
+
+								response.error(error.message);
+							}
+						);
+					}
+				},
+				function(error){
+
+					response.error(error.message);
+				}
+			);
+		},
+		function(error){
+
+			response.error(error.message);
+		}
+	);
+});
+
+
+
+Parse.Cloud.define("getNewTarget", function(request, response){
 	Parse.Cloud.useMasterKey();
 	var hunterHarry = request.params.hunter;
 	console.log("Hunter is: " + hunterHarry);
@@ -22,6 +111,10 @@ Parse.Cloud.define("getTarget", function(request, response){
 					var removeHarryPromise = removeHarryQuery.find();
 					removeHarryPromise.then(
 						function(withoutHarryList){
+
+							if (withoutHarryList.length == 0){
+								response.error("NO PLAYERS");
+							}
 
 							var idList = [];
 							for (var i = 0; i < withoutHarryList.length; ++i){
@@ -374,6 +467,9 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 						}
 
 						if (numNotAddable + actualInvitedPlayers.length == friendsLength){
+							if (numNotAddable == friendsLength){
+								response.error({"code":-20, "message":"Not enough players can join"});
+							}
 							console.log("We got everyone!");
 							for (var j = 0; j < actualInvitedPlayers.length; ++j){
 								console.log("now setting player #" + j);
