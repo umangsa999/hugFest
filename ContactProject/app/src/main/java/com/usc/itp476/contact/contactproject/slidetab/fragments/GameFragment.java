@@ -128,9 +128,12 @@ public class GameFragment extends Fragment
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                markerToGame.clear();
                 Intent i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
                         TargetActivity.class);
+                i.putExtra(TargetActivity.JOINEDGAME, true);
+                i.putExtra(TargetActivity.MAXPOINTS, markerToGame.get(marker).getPoints() );
+                i.putExtra(TargetActivity.GAMEID, markerToGame.get(marker).getGameID() );
+                markerToGame.clear();
                 startActivity(i);
             }
         });

@@ -35,6 +35,7 @@ import java.util.HashMap;
 public class TargetActivity extends Activity {
     public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject.MAXPOINTS";
     public static final String JOINEDGAME = "com.usc.itp476.contact.contactproject.JOINEDGAME";
+    public static final String GAMEID = "com.usc.itp476.contact.contactproject.GAMEID";
 
     final String TAG = this.getClass().getSimpleName();
     public static final int RETURN_FROM_RESULT = 80085;
@@ -67,7 +68,7 @@ public class TargetActivity extends Activity {
         Intent i = getIntent();
         max = i.getIntExtra(MAXPOINTS, -1);
         joinedGame = i.getBooleanExtra(JOINEDGAME, true);
-        gameID = i.getStringExtra("gameID");
+        gameID = i.getStringExtra(GAMEID);
         if (max == -1)
             max = 10;
 
@@ -103,7 +104,7 @@ public class TargetActivity extends Activity {
             //give jerry a target
         }else {
             //This is a new game, get this person a target
-            //This is a new game, get this person a target
+
         }
         setPoints();
 //        backToast = Toast.makeText(getApplicationContext(),

@@ -13,15 +13,19 @@ import org.json.JSONObject;
 
 public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver {
 
+    public final String PACKAGE = getClass().getPackage().toString();
     public static final String RECEIVE = "com.parse.push.intent.RECEIVE";
-    public static  final String OPEN ="com.parse.push.intent.OPEN";
+    public static final String OPEN ="com.parse.push.intent.OPEN";
     public static final String PARSE_EXTRA_DATA_KEY = "com.parse.Data";
     public static final String PARSE_JSON_CHANNEL_KEY = "com.parse.Channel";
     public static final String EVENT = "EVENT";
     public static final String HIT = "HIT";
     public static final String END = "END";
+    public static final String INVITE = "EVENT";
     public static final String FRIEND = "FRIEND";
     public static final String RESULTS = "RESULTS";
+    public static final String URI = "URI";
+
     public final String TAG = this.getClass().getSimpleName();
     //The notification's contentIntent and deleteIntent are com.parse.push.intent.OPEN
     //com.parse.push.intent.DELETE respectively.
@@ -32,24 +36,19 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
 
         //Called when the push notification is received.
         //tell if its the game ending or you got hugged
-        String channel = intent.getExtras().getString(PARSE_JSON_CHANNEL_KEY);
+        Intent i;
         try {
             JSONObject json = new JSONObject(intent.getExtras().getString(PARSE_EXTRA_DATA_KEY));
-            String event = json.getString(EVENT);
-            if( event.equals(HIT) ){
-                Log.wtf(TAG, "OPR HIT");
-                //you just got tagged by another player
-                //get the player's name and display it
-            }else if(event.equals(END) ){
-                //game has ended, display results
-                //Get URI to results screen
-                Log.wtf(TAG, "OPR END");
-            }
-            super.onPushReceive(context, intent);
+            String uri = PACKAGE + json.get(URI);
+            i = new Intent( context, Class.forName(uri));
+            i.putExtras( intent.getExtras() );
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(i);
+
         }catch (Exception e){
-            Log.wtf(TAG, e.getLocalizedMessage());
+            Log.wtf(TAG + " on push receive, then: ", e.getLocalizedMessage());
         }
-        //http://stackoverflow.com/questions/28959811/how-to-override-onpushreceive-of-parsepushbroadcastreceiver
+
     }
 
     //change reaction
@@ -68,20 +67,7 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
         //Called when the push notification is opened by the user.
         //TODO - bring user to the results page/friend profile page
         Log.wtf(TAG, "OPO");
-        try {
-            JSONObject json = new JSONObject(intent.getExtras().getString(PARSE_EXTRA_DATA_KEY));
-            String event = json.getString(EVENT);
-            if( event.equals(FRIEND) ){
-                //get the URI to go to the friend's profile pic page
-                Log.wtf(TAG, "OPO friend");
-            }else if(event.equals(RESULTS) ){
-                Log.wtf(TAG, "OPO results");
-                //game has ended, display results
-                //Get URI to results screen
-            }
-        }catch (Exception e){
-            Log.wtf(TAG, e.getLocalizedMessage());
-        }
+
     }
 
     @Override
