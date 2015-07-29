@@ -1,6 +1,7 @@
 package com.usc.itp476.contact.contactproject.slidetab;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -19,15 +20,20 @@ import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.StartActivity;
+import com.usc.itp476.contact.contactproject.ingamescreen.ResultActivity;
+import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.GameFragment;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileFragment;
+import com.usc.itp476.contact.contactproject.slidetab.helper.CustomParsePushBroadcastReceiver;
 import com.usc.itp476.contact.contactproject.slidetab.helper.SlidingTabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AllTabActivity extends FragmentActivity {
+
+    public static final String MY_PREFS_NAME = "MyPrefsFile";
     final String TAG = this.getClass().getSimpleName();
     private static final int NUM_PAGES = 3;
     private ViewPager mPager;
@@ -37,10 +43,13 @@ public class AllTabActivity extends FragmentActivity {
     private ArrayList<String> titles;
     public ProfileFragment mProfileFragment = null;
     public FriendsFragment mFriendFragment = null;
+    private String scorerID = "";
+    private String action = "";
     //we need this ^ because we later need to check the profile fragment is a view of the friends or user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tab);
 
@@ -96,7 +105,7 @@ public class AllTabActivity extends FragmentActivity {
 
     private void grabRealFriends(List<ParseUser> list){
         //for each user in the relation, we only have the ObjectId and username
-        Log.wtf(TAG,"" + ContactApplication.getFriendsList().size());
+        Log.wtf(TAG, "" + ContactApplication.getFriendsList().size());
         for (ParseUser u : list){
             try {
                 ParseUser friend = ParseUser.getQuery().get(u.getObjectId()); //get the rest
@@ -178,5 +187,26 @@ public class AllTabActivity extends FragmentActivity {
         public int getCount() {
             return mTabs.size();
         }
+    }
+
+    @Override
+    public void onResume(){
+        SharedPreferences prefs = (SharedPreferences) getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        String restoredText = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
+        if (restoredText != null) {
+            action = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
+            if(action.equals(CustomParsePushBroadcastReceiver.INVITE)){
+                Intent i = new Intent(this.getApplicationContext(), TargetActivity.class);
+                startActivity(i);
+            }else if(action.equals(CustomParsePushBroadcastReceiver.END)){
+                Intent i = new Intent(this.getApplicationContext(), ResultActivity.class);
+                startActivity(i);
+            }
+        }
+        SharedPreferences.Editor editor = this.getApplicationContext().getSharedPreferences(
+                AllTabActivity.MY_PREFS_NAME,
+                this.getApplicationContext().MODE_PRIVATE).edit();
+        editor.clear().commit();
+
     }
 }

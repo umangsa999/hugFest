@@ -2,6 +2,7 @@ package com.usc.itp476.contact.contactproject.ingamescreen;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.CameraManager;
@@ -23,10 +24,13 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
+import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
+import com.usc.itp476.contact.contactproject.slidetab.helper.CustomParsePushBroadcastReceiver;
 import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +40,7 @@ public class TargetActivity extends Activity {
     public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject.MAXPOINTS";
     public static final String JOINEDGAME = "com.usc.itp476.contact.contactproject.JOINEDGAME";
     public static final String GAMEID = "com.usc.itp476.contact.contactproject.GAMEID";
+    public static final String SCORERID = "com.usc.itp476.contact.contactproject.SCORERID";
 
     final String TAG = this.getClass().getSimpleName();
     public static final int RETURN_FROM_RESULT = 80085;
@@ -291,6 +296,23 @@ public class TargetActivity extends Activity {
     }
 
     @Override
+    public void onResume(){
+        SharedPreferences prefs = getSharedPreferences(AllTabActivity.MY_PREFS_NAME, MODE_PRIVATE);
+        String restoredText = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
+        if (restoredText != null) {
+            String action = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
+            if(action.equals(CustomParsePushBroadcastReceiver.SCORE)){
+                String name = prefs.getString(CustomParsePushBroadcastReceiver.SCORERNAME, null);
+                Toast.makeText(this.getApplicationContext(), name, Toast.LENGTH_LONG ).show();
+            }
+        }
+        SharedPreferences.Editor editor = this.getApplicationContext().getSharedPreferences(
+                AllTabActivity.MY_PREFS_NAME,
+                this.getApplicationContext().MODE_PRIVATE).edit();
+        editor.clear().commit();
+    }
+
+    @Override
     public void onBackPressed() {
         Toast.makeText(getApplicationContext(), "No back for you", Toast.LENGTH_SHORT).show();
 //        if (TIME_INTERVAL + backPressedTime > System.currentTimeMillis()) {
@@ -301,6 +323,34 @@ public class TargetActivity extends Activity {
 //            backToast.show();
 //        }
 //        backPressedTime = System.currentTimeMillis();
+
+    }
+
+    public static Activity getActivity() {
+        Class activityThreadClass = null;
+        try {
+            activityThreadClass = Class.forName("TargetActivity.java");
+            Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+            Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
+            activitiesField.setAccessible(true);
+            HashMap activities = (HashMap) activitiesField.get(activityThread);
+            for(Object activityRecord:activities.values()){
+                Class activityRecordClass = activityRecord.getClass();
+                Field pausedField = activityRecordClass.getDeclaredField("paused");
+                pausedField.setAccessible(true);
+                if(!pausedField.getBoolean(activityRecord)) {
+                    Field activityField = activityRecordClass.getDeclaredField("activity");
+                    activityField.setAccessible(true);
+                    Activity activity = (Activity) activityField.get(activityRecord);
+                    return activity;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return null;
     }
 
 //    private void removeMeFromGame(){
