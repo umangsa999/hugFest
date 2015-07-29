@@ -120,6 +120,5 @@ public class ResultActivity extends Activity {
         Intent intent = new Intent();
         setResult(TargetActivity.RETURN_FROM_RESULT, intent);
         this.finish();
-        startActivity(intent);
     }
 }

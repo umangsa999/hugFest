@@ -291,6 +291,7 @@ public class TargetActivity extends Activity {
                         getNewTarget();
                     }else{
                         Intent i = new Intent( getApplicationContext(), ResultActivity.class);
+                        i.putExtra(GAMEID, gameID);
                         startActivity(i);
                         Log.wtf(TAG, "DONE");
                     }
