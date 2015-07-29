@@ -16,6 +16,8 @@ import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,9 +39,9 @@ public class ResultActivity extends Activity {
         Intent i = getIntent();
         //expect gameID from somewhere before, may be push notification
         String gameID = null;
-        gameID = i.getStringExtra("gameID");
-        if( !gameID.equals(null) ){
-            ParsePush.unsubscribeInBackground(gameID);
+        gameID = i.getStringExtra(TargetActivity.GAMEID);
+        if( gameID != null ){
+            ParsePush.unsubscribeInBackground("game"+gameID);
         }
 
         images[0] = (ImageView) findViewById(R.id.resultsWinnerImage);
@@ -110,9 +112,9 @@ public class ResultActivity extends Activity {
     public void onBackPressed() {
         HashMap<String, String> params = new HashMap<>();
         params.put("playerID", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("removePlayerFromGame", params, new FunctionCallback<Void>() {
+        ParseCloud.callFunctionInBackground("removePlayerFromGame", params, new FunctionCallback<JSONObject>() {
             @Override
-            public void done(Void v, ParseException e) {
+            public void done(JSONObject obj, ParseException e) {
                 if (e != null){
                     Log.wtf(TAG, e.getLocalizedMessage());
                 }
@@ -120,6 +122,7 @@ public class ResultActivity extends Activity {
         });
         Intent intent = new Intent();
         setResult(TargetActivity.RETURN_FROM_RESULT, intent);
-        finish();
+        this.finish();
+        startActivity(intent);
     }
 }

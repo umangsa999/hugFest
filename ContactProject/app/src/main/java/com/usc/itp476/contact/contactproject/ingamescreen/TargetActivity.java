@@ -77,7 +77,7 @@ public class TargetActivity extends Activity {
         max = i.getIntExtra(MAXPOINTS, 10);
         joinedGame = i.getBooleanExtra(JOINEDGAME, true);
         gameID = i.getStringExtra(GAMEID);
-        ParsePush.subscribeInBackground(gameID, new SaveCallback() {
+        ParsePush.subscribeInBackground("game"+gameID, new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
@@ -154,6 +154,7 @@ public class TargetActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //V only geta thumbnail
+        Log.wtf(TAG, "Result code is: " + resultCode);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
             Bitmap imageBitmap = convertToBM();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
