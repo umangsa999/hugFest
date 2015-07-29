@@ -191,7 +191,8 @@ public class AllTabActivity extends FragmentActivity {
 
     @Override
     public void onResume(){
-        SharedPreferences prefs = (SharedPreferences) getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        super.onResume();
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         String restoredText = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
         if (restoredText != null) {
             action = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
