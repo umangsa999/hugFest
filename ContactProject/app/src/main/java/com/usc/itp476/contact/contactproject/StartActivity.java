@@ -95,16 +95,6 @@ public class StartActivity extends Activity {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_start);
 
-
-        //todo this might not be necessary with Parse local datastore
-//        SharedPreferences sharedPreferences = getSharedPreferences(GameMarker.PREFFILE, MODE_PRIVATE);
-//        String id = sharedPreferences.getString(GameMarker.USER_ID, null);
-//
-//        //the user has already logged in before
-//        if (id != null){
-//            goToHome();
-//        }
-
         mProgress = (ProgressBar) findViewById(R.id.progressBar);
 
         if (ParseUser.getCurrentUser() != null) {
@@ -112,15 +102,15 @@ public class StartActivity extends Activity {
             //ParseUser.logOut();
         }
 
-        btnStart = (Button) findViewById(R.id.btnStart);
-        edtxFirst = (EditText) findViewById(R.id.edtxFirst);
-        edtxLast = (EditText) findViewById(R.id.edtxLast);
-        edtxPass = (EditText) findViewById(R.id.edtxPassword);
-        loginButtonTwitter = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
+//        btnStart = (Button) findViewById(R.id.btnStart);
+//        edtxFirst = (EditText) findViewById(R.id.edtxFirst);
+//        edtxLast = (EditText) findViewById(R.id.edtxLast);
+//        edtxPass = (EditText) findViewById(R.id.edtxPassword);
+//        loginButtonTwitter = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
         loginButtonFacebook = (LoginButton) findViewById(R.id.login_button);
 
-        createDigitButton();
-        createTwitterCallback();
+//        createDigitButton();
+//        createTwitterCallback();
         createFacebookCallback();
 
         //TESTING AUTO LOG IN
@@ -139,28 +129,28 @@ public class StartActivity extends Activity {
         });
 
 
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //AUTO LOGIN TESTING
-                ParseUser.logInInBackground("Ryan Zhou", "Ryan Zhou", new LogInCallback() {
-                    @Override
-                    public void done(ParseUser user, ParseException e) {
-                        if (e == null) {
-                            Toast.makeText(getApplicationContext(),
-                                    "Welcome back,\n" + user.getUsername(),
-                                    Toast.LENGTH_SHORT).show();
-                            goToHome();
-                        } else {
-                            saveParse();
-                        }
-                    }
-                });
-
-                //uncomment
-                //check();
-            }
-        });
+//        btnStart.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //AUTO LOGIN TESTING
+//                ParseUser.logInInBackground("Ryan Zhou", "Ryan Zhou", new LogInCallback() {
+//                    @Override
+//                    public void done(ParseUser user, ParseException e) {
+//                        if (e == null) {
+//                            Toast.makeText(getApplicationContext(),
+//                                    "Welcome back,\n" + user.getUsername(),
+//                                    Toast.LENGTH_SHORT).show();
+//                            goToHome();
+//                        } else {
+//                            saveParse();
+//                        }
+//                    }
+//                });
+//
+//                //uncomment
+//                //check();
+//            }
+//        });
 
         mProfileTracker = new ProfileTracker() {
             @Override
@@ -250,8 +240,6 @@ public class StartActivity extends Activity {
                 Log.wtf(TAG, "Facebook success");
                 mLoginResult = loginResult;
                 AccessToken accessToken = mLoginResult.getAccessToken();
-                /* TODO check if parseuser exists and just add FB to parse
-                    TODO Just run this and check if it works - Chris */
                 //We have the accessToken, now we want to do a graphRequest to get the user data
                 findFacebookUserData();
 
@@ -353,14 +341,6 @@ public class StartActivity extends Activity {
         //TODO - see if user granted all permissions
         Set getRecentlyGrantedPermissions = mLoginResult.getRecentlyGrantedPermissions();
         Set getDeniedPermissions = mLoginResult.getRecentlyDeniedPermissions();
-
-        //Profile profile = Profile.getCurrentProfile();
-        //V this method does not work ATM
-        //String lastName = Profile.getCurrentProfile().getLastName();
-        //String firstName = Profile.getCurrentProfile().getFirstName();
-        //String facebookID =  Profile.getCurrentProfile().
-        //Uri profileLink = profile.getLinkUri();
-        //Uri profilePictureUri = profile.getProfilePictureUri(150, 150);
 
         //String username = firstName +lastName;
         user = new ParseUser();
@@ -475,6 +455,7 @@ public class StartActivity extends Activity {
     private void goToHome(){
         ParseInstallation pi = ParseInstallation.getCurrentInstallation();
         pi.put("currentUser", ParseUser.getCurrentUser());
+        pi.put("currentUserID", ParseUser.getCurrentUser().getObjectId());
         pi.saveInBackground();
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
         startActivityForResult(i, REQUEST_START_GAME);

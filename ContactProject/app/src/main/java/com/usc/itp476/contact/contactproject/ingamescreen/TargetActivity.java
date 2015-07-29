@@ -270,11 +270,11 @@ public class TargetActivity extends Activity {
             public void done(Boolean didWin, ParseException e) {
                 if (e == null) {
                     Log.wtf(TAG, didWin.toString());
+                    increasePoints();
                     if (!didWin){
-                        increasePoints();
+                        Log.wtf(TAG, "not done yet");
                         getNewTarget();
                     }else{
-                        increasePoints();
                         Log.wtf(TAG, "DONE");
                     }
                 } else {

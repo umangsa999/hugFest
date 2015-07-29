@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 
@@ -98,6 +99,16 @@ public class ResultActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("playerID", ParseUser.getCurrentUser().getObjectId());
+        ParseCloud.callFunctionInBackground("removePlayerFromGame", params, new FunctionCallback<Void>() {
+            @Override
+            public void done(Void v, ParseException e) {
+                if (e != null){
+                    Log.wtf(TAG, e.getLocalizedMessage());
+                }
+            }
+        });
         Intent intent = new Intent();
         setResult(TargetActivity.RETURN_FROM_RESULT, intent);
         finish();
