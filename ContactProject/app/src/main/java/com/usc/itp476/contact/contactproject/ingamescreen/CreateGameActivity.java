@@ -27,7 +27,6 @@ import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
-import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 import org.json.JSONObject;
 
@@ -96,7 +95,13 @@ public class CreateGameActivity extends Activity {
                             "You need to invite at least two friends!",
                             Toast.LENGTH_SHORT).show();
                     finish();
-                }else {
+                }else if( selectedFriendParseIDs.size() > 19 ){
+                    Toast.makeText(getApplicationContext(),
+                            "Maximum number game is 19(+ you)!",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                else {
                     pLoc = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
                     createGameMarker();
                 }
