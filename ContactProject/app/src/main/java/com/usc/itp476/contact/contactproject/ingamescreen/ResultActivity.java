@@ -19,6 +19,8 @@ import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import retrofit.http.HEAD;
+
 public class ResultActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private ImageView images[] = new ImageView[4];
