@@ -82,7 +82,7 @@ public class StartActivity extends Activity {
     private LoginButton loginButtonFacebook;
     private CallbackManager mCallbackManager;
     private FacebookCallback<LoginResult> mCallback;
-    private TwitterLoginButton loginButtonTwitter;
+//    private TwitterLoginButton loginButtonTwitter;
     private static final int PROGRESS = 0x1;
 
     private ProgressBar mProgress;
@@ -195,43 +195,43 @@ public class StartActivity extends Activity {
             finish();
         }else{
             mCallbackManager.onActivityResult( requestCode, resultCode, data);
-            loginButtonTwitter.onActivityResult(requestCode, resultCode, data);
+//            loginButtonTwitter.onActivityResult(requestCode, resultCode, data);
             ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private void createDigitButton(){
-        DigitsAuthButton digitsButton = (DigitsAuthButton) findViewById(R.id.auth_button);
-        digitsButton.setCallback(new AuthCallback() {
-            @Override
-            public void success(DigitsSession session, String phoneNumber) {
-                // Do something with the session and phone number
-                Log.wtf(TAG, "DigitsAuth success");
-            }
-
-            @Override
-            public void failure(DigitsException exception) {
-                // Do something on failure
-                Log.wtf(TAG, "DigitsAuth Fail");
-            }
-        });
-    }
-
-    private void createTwitterCallback() {
-        loginButtonTwitter.setCallback(new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                // Do something with result, which provides a TwitterSession for making API calls
-                Log.wtf(TAG, "Twitter success");
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                // Do something on failure
-                Log.wtf(TAG, "Twitter fail");
-            }
-        });
-    }
+//    private void createDigitButton(){
+//        DigitsAuthButton digitsButton = (DigitsAuthButton) findViewById(R.id.auth_button);
+//        digitsButton.setCallback(new AuthCallback() {
+//            @Override
+//            public void success(DigitsSession session, String phoneNumber) {
+//                // Do something with the session and phone number
+//                Log.wtf(TAG, "DigitsAuth success");
+//            }
+//
+//            @Override
+//            public void failure(DigitsException exception) {
+//                // Do something on failure
+//                Log.wtf(TAG, "DigitsAuth Fail");
+//            }
+//        });
+//    }
+//
+//    private void createTwitterCallback() {
+//        loginButtonTwitter.setCallback(new Callback<TwitterSession>() {
+//            @Override
+//            public void success(Result<TwitterSession> result) {
+//                // Do something with result, which provides a TwitterSession for making API calls
+//                Log.wtf(TAG, "Twitter success");
+//            }
+//
+//            @Override
+//            public void failure(TwitterException exception) {
+//                // Do something on failure
+//                Log.wtf(TAG, "Twitter fail");
+//            }
+//        });
+//    }
 
     private void createFacebookCallback(){
         mCallback = new FacebookCallback<LoginResult>() {
@@ -397,33 +397,33 @@ public class StartActivity extends Activity {
         //user.setPassword(pass); //TODO random password generator
     }
 
-    private void check(){
-        //name is incompatible
-        name = edtxFirst.getText().toString() + " " + edtxLast.getText().toString();
-        pass = edtxPass.getText().toString();
-        if (edtxFirst.getText().length() == 0 ||
-                edtxLast.getText().length() == 0 ||
-                edtxPass.getText().length() == 0){
-                    Toast.makeText(getApplicationContext(),
-                            "Please enter a valid name.",
-                            Toast.LENGTH_SHORT).show();
-        }else{
-            //TODO incorporate multiple people with same name
-            ParseUser.logInInBackground(name, pass, new LogInCallback() {
-                @Override
-                public void done(ParseUser user, ParseException e) {
-                    if (e == null) {
-                        Toast.makeText(getApplicationContext(),
-                                "Welcome back,\n" + user.getUsername(),
-                                Toast.LENGTH_SHORT).show();
-                        goToHome();
-                    } else {
-                        saveParse();
-                    }
-                }
-            });
-        }
-    }
+//    private void check(){
+//        //name is incompatible
+//        name = edtxFirst.getText().toString() + " " + edtxLast.getText().toString();
+//        pass = edtxPass.getText().toString();
+//        if (edtxFirst.getText().length() == 0 ||
+//                edtxLast.getText().length() == 0 ||
+//                edtxPass.getText().length() == 0){
+//                    Toast.makeText(getApplicationContext(),
+//                            "Please enter a valid name.",
+//                            Toast.LENGTH_SHORT).show();
+//        }else{
+//            //TODO incorporate multiple people with same name
+//            ParseUser.logInInBackground(name, pass, new LogInCallback() {
+//                @Override
+//                public void done(ParseUser user, ParseException e) {
+//                    if (e == null) {
+//                        Toast.makeText(getApplicationContext(),
+//                                "Welcome back,\n" + user.getUsername(),
+//                                Toast.LENGTH_SHORT).show();
+//                        goToHome();
+//                    } else {
+//                        saveParse();
+//                    }
+//                }
+//            });
+//        }
+//    }
 
     private void saveParse(){
         ParseUser user = new ParseUser();
