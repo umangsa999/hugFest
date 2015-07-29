@@ -1,4 +1,5 @@
 Parse.Cloud.define("sendInvitePush", function(request, response){
+	Parse.Cloud.useMasterKey();
 	var gameID = request.params.gameID;
 	var maxPoints = request.params.maxPoints;
 	var hostHelenName = request.params.name;
@@ -47,13 +48,19 @@ Parse.Cloud.define("sendInvitePush", function(request, response){
 });
 
 Parse.Cloud.define("sendScorePush", function(request, response){
+	Parse.Cloud.useMasterKey();
+	console.log("START OF SENDSCOREPUSH");
 	var gameID = request.params.gameID;
 	var hunterHarryName = request.params.hunter;
 	var hunterHarryID = request.params.hunterID;
 	var targetTomName = request.params.targetName;
+	console.log(hunterHarryName + " with id " + hunterHarryID + " just got " + targetTomName + " in " + gameID);
+
+	var gameChannel = "game" + gameID;
+	console.log("game channel is: " + gameChannel);
 
 	var installationQuery = new Parse.Query(Parse.Installation);
-	installationQuery.equalTo("channels", gameID);
+	installationQuery.equalTo("channels", gameChannel);
 
 	Parse.Push.send(
 		{
@@ -61,7 +68,7 @@ Parse.Cloud.define("sendScorePush", function(request, response){
 			data:{
 				title:"Contact has been made!",
 				alert:hunterHarryName + " has contacted " + targetTomName,
-				SCORERID:hunterID,
+				SCORERID:hunterHarryID,
 				NAME:hunterHarryName,
 				SCOREEENAME:targetTomName,
 				action:"SCORE"
@@ -78,10 +85,14 @@ Parse.Cloud.define("sendScorePush", function(request, response){
 });
 
 Parse.Cloud.define("sendEndPush", function(request, response){
+	Parse.Cloud.useMasterKey();
+	console.log("START SENDENDPUSH");
+	var winnerWallyID = request.params.winnerID;
 	var gameID = request.params.gameID;
-
+	console.log("ENDING GAME " + gameID);
 	var installationQuery = new Parse.Query(Parse.Installation);
-	installationQuery.equalTo("channels", gameID);
+	installationQuery.equalTo("channels", "game"+gameID);
+	installationQuery.notEqualTo("currentUserID", winnerWallyID);
 
 	Parse.Push.send(
 		{
@@ -89,6 +100,7 @@ Parse.Cloud.define("sendEndPush", function(request, response){
 			data:{
 				title: "We have a winner!",
 				alert: "Click to see who won!",
+				GAMEID:gameID,
 				action:"END"
 			}
 		},{
@@ -451,10 +463,10 @@ Parse.Cloud.define("deleteGameData", function(request, response){
 
 
 
-Parse.Cloud.define("removeFromGame", function(request, response){
+Parse.Cloud.define("removePlayerFromGame", function(request, response){
 	Parse.Cloud.useMasterKey();
 	var doneDianaID = request.params.playerID;
-	console.log("searching for: " + playerID);
+	console.log("searching for: " + doneDianaID);
 	
 	var userQuery = new Parse.Query(Parse.User);
 	var userQueryPromise = userQuery.get(doneDianaID);
@@ -640,7 +652,7 @@ Parse.Cloud.define("increaseScore", function( request, response){
 							//TODO notify all users here
 							console.log("hugs are now: "+parseUser.get("currentHugs"));
 							if (currentHugs == game.get("pointsToWin")){
-								Parse.Cloud.run("sendEndPush", {"gameID":game.id});
+								Parse.Cloud.run("sendEndPush", {"gameID":game.id, "winnerID":parseUser.id});
 								response.success(true);
 							}else{
 								response.success(false);
