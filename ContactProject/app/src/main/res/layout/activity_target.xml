@@ -1,0 +1,112 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="16dp"
+    tools:context="com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scoreLayout"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" >
+
+        <TextView android:text="Score:" android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txstatic"
+            android:textSize="24sp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp" />
+
+        <TextView android:text="0" android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txvwPoints"
+            android:textSize="24sp"
+            android:minWidth="30dp"
+            android:maxWidth="30dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:id="@+id/textView2"
+            android:textSize="24sp"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-1"
+            android:id="@+id/txvwMaxScore"
+            android:textSize="24sp"
+            android:minWidth="30dp"
+            android:maxWidth="30dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nameLayout"
+        android:layout_below="@+id/scoreLayout"
+        android:layout_centerHorizontal="true" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FIND"
+            android:id="@+id/textView"
+            android:textSize="28sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="NAME"
+            android:id="@+id/txvwName"
+            android:layout_marginLeft="8dp"
+            android:textSize="32sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imvwTarget"
+        android:src="@mipmap/large"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:layout_below="@+id/nameLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageViewFriend"
+        android:src="@mipmap/large"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:layout_below="@+id/nameLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take Picture"
+        android:id="@+id/buttonTakePicture"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/imvwTarget"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

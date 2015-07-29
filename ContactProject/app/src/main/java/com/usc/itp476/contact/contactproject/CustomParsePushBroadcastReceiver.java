@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject.slidetab.helper;
+package com.usc.itp476.contact.contactproject;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -53,8 +53,9 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
         We saved this data into shared preferences for when the activity is resumed*/
 
         //TODO - set that user has NOT dismissed, so load the results screen
-        SharedPreferences.Editor editor = context.getSharedPreferences(AllTabActivity.MY_PREFS_NAME,
-                context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor =
+                context.getSharedPreferences(ContactApplication.SHARED_PREF_FILE,
+                Context.MODE_PRIVATE).edit();
         editor.putString(ACTION, action);
         Bundle mBundle = intent.getExtras();
         JSONObject json = null;

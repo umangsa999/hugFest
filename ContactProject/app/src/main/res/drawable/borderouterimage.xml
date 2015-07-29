@@ -6,7 +6,7 @@
     <solid
         android:color="#00FFFFFF" />
 
-    <!--<corners android:radius="10px"/>-->
+    <corners android:radius="20px"/>
 
     <padding
         android:left="2dip"

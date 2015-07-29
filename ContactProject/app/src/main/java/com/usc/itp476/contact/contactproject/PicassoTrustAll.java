@@ -1,4 +1,4 @@
-package com.usc.itp476.contact.contactproject.slidetab.helper;
+package com.usc.itp476.contact.contactproject;
 
 import android.content.Context;
 import android.net.Uri;

@@ -40,12 +40,12 @@ import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
-import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
+import com.usc.itp476.contact.contactproject.PicassoTrustAll;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class GameFragment extends Fragment
+public class MapDisplayFragment extends Fragment
         implements GoogleMap.InfoWindowAdapter, OnMapReadyCallback {
     private GoogleMap map;
     private ImageButton btnGame = null;
@@ -77,7 +77,7 @@ public class GameFragment extends Fragment
                              Bundle savedInstanceState) {
 
         rootView = (View) inflater.inflate(
-                R.layout.activity_home, container, false);
+                R.layout.activity_map_display, container, false);
 
         btnGame = (ImageButton) rootView.findViewById(R.id.btnGame);
 
@@ -139,7 +139,7 @@ public class GameFragment extends Fragment
                     public void done(HashMap<String, Object> map, ParseException e) {
                         if (e == null) {
                             Intent i = new Intent(
-                                    GameFragment.this.getActivity().getApplicationContext(),
+                                    MapDisplayFragment.this.getActivity().getApplicationContext(),
                                     TargetActivity.class);
                             i.putExtra(TargetActivity.JOINEDGAME, true);
                             i.putExtra(TargetActivity.MAXPOINTS, (Integer) map.get("points"));
@@ -197,7 +197,7 @@ public class GameFragment extends Fragment
             findPoints(); //do a server call for all games
             createRadius();
         }else{
-            Toast.makeText(GameFragment.this.getActivity().getApplicationContext(),
+            Toast.makeText(MapDisplayFragment.this.getActivity().getApplicationContext(),
                     "No connection to find games.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -211,11 +211,11 @@ public class GameFragment extends Fragment
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null && list.size() < 1) {
                     //If there is no done Parse error but we found no games
-                    Toast.makeText(GameFragment.this.getActivity().getApplicationContext(),
+                    Toast.makeText(MapDisplayFragment.this.getActivity().getApplicationContext(),
                             "Could find any games nearby", Toast.LENGTH_SHORT).show();
                 } else if (e != null) {
                     //We found games but there is a parse error
-                    Toast.makeText(GameFragment.this.getActivity().getApplicationContext(),
+                    Toast.makeText(MapDisplayFragment.this.getActivity().getApplicationContext(),
                             "Please check internet connection", Toast.LENGTH_SHORT).show();
                     Log.wtf(TAG, e.getLocalizedMessage());
                 } else {
@@ -254,7 +254,7 @@ public class GameFragment extends Fragment
         btnGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(GameFragment.this.getActivity().getApplicationContext(),
+                Intent i = new Intent(MapDisplayFragment.this.getActivity().getApplicationContext(),
                         CreateGameActivity.class);
                 startActivity(i);
             }
@@ -312,7 +312,7 @@ public class GameFragment extends Fragment
 
     @Override
     public View getInfoContents(Marker marker) {
-        LayoutInflater inflater = GameFragment.this.getActivity().getLayoutInflater();
+        LayoutInflater inflater = MapDisplayFragment.this.getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.infowindowlayout, null);
 
         TextView name = (TextView) view.findViewById(R.id.infoWindowName);

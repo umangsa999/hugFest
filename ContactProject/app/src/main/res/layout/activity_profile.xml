@@ -2,7 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileFragment">
+    tools:context="com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileFragment"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp">
 
     <RelativeLayout
         android:orientation="horizontal"

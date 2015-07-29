@@ -22,16 +22,16 @@ import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.ResultActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
-import com.usc.itp476.contact.contactproject.slidetab.fragments.GameFragment;
+import com.usc.itp476.contact.contactproject.slidetab.fragments.MapDisplayFragment;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.ProfileFragment;
-import com.usc.itp476.contact.contactproject.slidetab.helper.CustomParsePushBroadcastReceiver;
+import com.usc.itp476.contact.contactproject.CustomParsePushBroadcastReceiver;
 import com.usc.itp476.contact.contactproject.slidetab.helper.SlidingTabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AllTabActivity extends FragmentActivity {
 
-    public static final String MY_PREFS_NAME = "MyPrefsFile";
+//    public static final String MY_PREFS_NAME = "MyPrefsFile";
     final String TAG = this.getClass().getSimpleName();
     private static final int NUM_PAGES = 3;
     private ViewPager mPager;
@@ -62,7 +62,7 @@ public class AllTabActivity extends FragmentActivity {
         titles.add("Friends");
         titles.add( "Profile" );
 
-        tabs.add(new GameFragment());
+        tabs.add(new MapDisplayFragment());
         mFriendFragment = new FriendsFragment();
         mFriendFragment.setAllTabActivity(this);
         tabs.add(mFriendFragment);
@@ -190,7 +190,7 @@ public class AllTabActivity extends FragmentActivity {
     @Override
     public void onResume(){
         super.onResume();
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
         String restoredText = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
         if (restoredText != null) {
             action = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
@@ -203,7 +203,7 @@ public class AllTabActivity extends FragmentActivity {
             }
         }
         SharedPreferences.Editor editor = this.getApplicationContext().getSharedPreferences(
-                AllTabActivity.MY_PREFS_NAME,
+                ContactApplication.SHARED_PREF_FILE,
                 this.getApplicationContext().MODE_PRIVATE).edit();
         editor.clear().commit();
 

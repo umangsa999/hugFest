@@ -16,7 +16,7 @@ import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
-import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
+import com.usc.itp476.contact.contactproject.PicassoTrustAll;
 
 import java.util.ArrayList;
 import java.util.HashMap;

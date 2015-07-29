@@ -14,14 +14,14 @@
         android:layout_alignBottom="@+id/txvwMax"
         android:layout_marginRight="4dp"
         android:layout_marginLeft="16dp"
-        android:textSize="24sp" />
+        android:textSize="28sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="10"
         android:id="@+id/txvwMax"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:minWidth="30dp"
         android:layout_marginLeft="4dp"
         android:nestedScrollingEnabled="false"
@@ -45,7 +45,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
+        android:text="Contact!"
         android:id="@+id/btnCreate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
@@ -77,8 +77,18 @@
         android:layout_above="@+id/btnCreate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/skbrMax"
+        android:layout_below="@+id/textView4"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Invite Your Friends"
+        android:id="@+id/textView4"
+        android:textSize="32sp"
+        android:layout_below="@+id/skbrMax"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

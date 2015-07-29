@@ -33,6 +33,7 @@ public class ContactApplication extends Application {
 	// Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "Ai9qe71kw0YSzWrsOhsqOGzJB";
     private static final String TWITTER_SECRET = "VRYJY0hRozcEupHlTNus18RbSxiLE5ioKkVCRZmjUF4ErKqL59";
+    public static final String SHARED_PREF_FILE = "com.usc.itp476.contact.contactproject.ContactApplication.SHARED_PREF_FILE";
     private static HashMap<String, ParseUser> friendList;
     public final String TAG = this.getClass().getSimpleName();
     public static ParseACL defaultACL;

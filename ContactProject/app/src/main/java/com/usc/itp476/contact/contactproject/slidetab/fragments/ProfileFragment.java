@@ -30,7 +30,7 @@ import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
-import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
+import com.usc.itp476.contact.contactproject.PicassoTrustAll;
 
 import java.util.HashMap;
 
