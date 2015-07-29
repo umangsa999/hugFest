@@ -297,6 +297,7 @@ public class TargetActivity extends Activity {
 
     @Override
     public void onResume(){
+        super.onResume();
         SharedPreferences prefs = getSharedPreferences(AllTabActivity.MY_PREFS_NAME, MODE_PRIVATE);
         String restoredText = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
         if (restoredText != null) {
