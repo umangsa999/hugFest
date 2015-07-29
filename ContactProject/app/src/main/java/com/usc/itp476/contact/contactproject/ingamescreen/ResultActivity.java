@@ -19,8 +19,6 @@ import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.http.HEAD;
-
 public class ResultActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private ImageView images[] = new ImageView[4];
@@ -32,14 +30,12 @@ public class ResultActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-
-
         Intent i = getIntent();
         //expect gameID from somewhere before, may be push notification
         String gameID = null;
-        gameID = i.getStringExtra("gameID");
-        if( !gameID.equals(null) ){
-            ParsePush.unsubscribeInBackground(gameID);
+        gameID = i.getStringExtra(TargetActivity.GAMEID);
+        if( gameID!=(null) ){
+            ParsePush.unsubscribeInBackground("game" +gameID);
         }
 
         images[0] = (ImageView) findViewById(R.id.resultsWinnerImage);

@@ -77,17 +77,7 @@ public class TargetActivity extends Activity {
         max = i.getIntExtra(MAXPOINTS, 10);
         joinedGame = i.getBooleanExtra(JOINEDGAME, true);
         gameID = i.getStringExtra(GAMEID);
-        ParsePush.subscribeInBackground(gameID, new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.wtf(TAG, "successful subscribe to game channel "+ gameID);
-                } else {
-                    Log.wtf(TAG, e.getLocalizedMessage());
-                }
-
-            }
-        });
+        ParsePush.subscribeInBackground("game"+gameID);
 
         Button tempPoints = (Button) findViewById(R.id.btnPlus);
         tempPoints.setOnClickListener(new View.OnClickListener() {
@@ -288,6 +278,8 @@ public class TargetActivity extends Activity {
                         Log.wtf(TAG, "not done yet");
                         getNewTarget();
                     }else{
+                        Intent i = new Intent( getApplicationContext(), ResultActivity.class);
+                        startActivity(i);
                         Log.wtf(TAG, "DONE");
                     }
                 } else {
@@ -337,9 +329,9 @@ public class TargetActivity extends Activity {
 //            backToast.show();
 //        }
 //        backPressedTime = System.currentTimeMillis();
-
     }
 
+    //TODO delete this if we don't need it
     public static Activity getActivity() {
         Class activityThreadClass = null;
         try {
