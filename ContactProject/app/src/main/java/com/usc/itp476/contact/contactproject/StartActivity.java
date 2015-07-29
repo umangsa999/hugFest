@@ -114,19 +114,19 @@ public class StartActivity extends Activity {
         createFacebookCallback();
 
         //TESTING AUTO LOG IN
-        ParseUser.logInInBackground("Chris Lee", "cheese", new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if (e == null) {
-                    Toast.makeText(getApplicationContext(),
-                            "Welcome back,\n" + user.getUsername(),
-                            Toast.LENGTH_SHORT).show();
-                    goToHome();
-                } else {
-                    saveParse();
-                }
-            }
-        });
+//        ParseUser.logInInBackground("Chris Lee", "cheese", new LogInCallback() {
+//            @Override
+//            public void done(ParseUser user, ParseException e) {
+//                if (e == null) {
+//                    Toast.makeText(getApplicationContext(),
+//                            "Welcome back,\n" + user.getUsername(),
+//                            Toast.LENGTH_SHORT).show();
+//                    goToHome();
+//                } else {
+//                    saveParse();
+//                }
+//            }
+//        });
 
 
 //        btnStart.setOnClickListener(new View.OnClickListener() {
