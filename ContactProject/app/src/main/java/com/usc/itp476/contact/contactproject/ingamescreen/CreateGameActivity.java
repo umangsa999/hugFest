@@ -219,7 +219,12 @@ public class CreateGameActivity extends Activity {
                                                                 TargetActivity.class);
                                                         i.putExtra(TargetActivity.JOINEDGAME, false);
                                                         i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
-                                                        i.putExtra("gameID", gameBeingMade.getGameID());
+                                                        try {
+                                                            gameBeingMade.fetch();
+                                                            i.putExtra(TargetActivity.GAMEID, gameBeingMade.getGameID());
+                                                        } catch (ParseException e1) {
+                                                            e1.printStackTrace();
+                                                        }
                                                         startActivityForResult(i, REQUEST_CODE_CREATE_GAME);
                                                     } else {
                                                         Log.wtf(TAG, "trying to put game in player: " + e.getLocalizedMessage());

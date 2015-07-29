@@ -16,14 +16,14 @@ Parse.Cloud.define("sendInvitePush", function(request, response){
 
 				Parse.Push.send(
 					{
-						where:query,
+						where:installationQuery,
 						data:{
 							title: hostHelenName + " wants to Contact you!",
 							alert: "Click here to join " + hostHelenName + "'s game.",
 							GAMEID:gameID,
-							MAXPOINTS:maxPoints
-						},
-						action:"INVITE"
+							MAXPOINTS:maxPoints,
+							action:"INVITE"
+						}
 					},{
 						success:function(){
 							++doneCount;
@@ -39,7 +39,7 @@ Parse.Cloud.define("sendInvitePush", function(request, response){
 				);
 			},
 			function(error){
-				response.success();
+				response.error(error.message);
 			}			
 		);
 	}
@@ -57,21 +57,21 @@ Parse.Cloud.define("sendScorePush", function(request, response){
 
 	Parse.Push.send(
 		{
-			where:query,
+			where:installationQuery,
 			data:{
 				title:"Contact has been made!",
 				alert:hunterHarryName + " has contacted " + targetTomName,
 				SCORERID:hunterID,
 				NAME:hunterHarryName,
-				SCOREEEID:targetTomName
-			},
-			action:"SCORE"
+				SCOREEENAME:targetTomName,
+				action:"SCORE"
+			}
 		},{
 			success:function(){
 				response.success();
 			},
 			error:function(error){
-				response.success();
+				response.error(error.message);
 			}
 		}
 	);
@@ -85,18 +85,18 @@ Parse.Cloud.define("sendEndPush", function(request, response){
 
 	Parse.Push.send(
 		{
-			where:query,
+			where:installationQuery,
 			data:{
 				title: "We have a winner!",
-				alert: "Click to see who won!"
-			},
-			action:"END"
+				alert: "Click to see who won!",
+				action:"END"
+			}
 		},{
 			success:function(){
 				response.success();
 			},
 			error:function(error){
-				response.success();
+				response.error(error.message);
 			}
 		}
 	);
@@ -332,11 +332,11 @@ Parse.Cloud.define("getUserSessionToken", function(request, response) {
     var facebookID = request.params.facebookID;
 
     var query = new Parse.Query(Parse.User);
-    query.equalTo("facebookID", facebookFriendIDsD);
+    query.equalTo("facebookID", facebookID);
     query.first({
         success: function(user) {
             console.log(user.length);
-            user[0].fetch({
+            user.fetch({
                 success: function (user) {
                     response.success(user.getSessionToken() );
                 },
@@ -507,9 +507,9 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 	Parse.Cloud.useMasterKey();
 	var Game = Parse.Object.extend("Game");
 	var gameQuery = new Parse.Query(Game);
+	gameQuery.include("host");
 	gameQuery.include("marker");
 	var gameQueryPromise = gameQuery.get(gameID);
-	gameQuery.include("host");
 	gameQueryPromise.then(
 		function(game){
 
@@ -526,7 +526,7 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 						if (friend.get("inGame") == true){
 							console.log("friend " + friend.get("username") + " is already in a game");
 							numNotAddable++;
-							console.log(numNotAddable);
+							console.log("not addable: " + numNotAddable);
 						}else{
 							actualInvitedPlayers.push(friend);
 							console.log(actualInvitedPlayers.length + " are to join");
@@ -535,67 +535,72 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 						if (numNotAddable + actualInvitedPlayers.length == friendsLength){
 							if (numNotAddable == friendsLength){
 								response.error({"code":-20, "message":"Not enough players can join"});
-							}
-							console.log("We got everyone!");
-							for (var j = 0; j < actualInvitedPlayers.length; ++j){
-								console.log("now setting player #" + j);
-								actualInvitedPlayers[j].set("inGame", true);
-								actualInvitedPlayers[j].set("currentGame", game);
-								actualInvitedPlayers[j].set("currentHugs", 0);
-								actualInvitedPlayers[j].set("currentTarget", null);
-							}
-							console.log("all players ready to save");
-
-							Parse.Object.saveAll(actualInvitedPlayers, {
-								success:function(list){
-
-									console.log("Everyone saved successfully");
-									var gamePlayers = game.relation("players");
-									for (var j = 0; j < actualInvitedPlayers.length; ++j){
-										console.log("Adding player " + j + " to game");
-										gamePlayers.add(actualInvitedPlayers[j]);
-									}
-									console.log("Added all players to game");
-									game.set("numberPlayers", actualInvitedPlayers.length);
-
-									var gameSavePromise = game.save();
-									gameSavePromise.then(
-										function(gameAgain){
-
-											console.log("successfully saved game");
-											var marker = game.get("marker");
-											marker.set("numberPlayers", 1 + actualInvitedPlayers.length);
-											var markerPromise = marker.save();
-											markerPromise.then(
-												function(markerAgain){
-
-													console.log("marker saved");
-													Parse.Cloud.run("sendInvitePush",
-														{
-															"gameID":game.id,
-															"maxPoints":game.get("pointsToWin"),
-															"name":game.get("host").get("name"),
-															"friends":actualInvitedPlayers
-														}
-													);
-													response.success();
-												},
-												function(error){
-													response.error(error.message);
-												}
-											);
-										},
-										function(error){
-
-											response.error(error.message);
-										}
-									);
-								},
-								error:function(error){
-
-									response.error(error.message);
+							}else{
+								console.log("We got everyone!");
+								for (var j = 0; j < actualInvitedPlayers.length; ++j){
+									console.log("now setting player #" + j);
+									actualInvitedPlayers[j].set("inGame", true);
+									actualInvitedPlayers[j].set("currentGame", game);
+									actualInvitedPlayers[j].set("currentHugs", 0);
+									actualInvitedPlayers[j].set("currentTarget", null);
 								}
-							})
+								console.log("all players ready to save");
+
+								Parse.Object.saveAll(actualInvitedPlayers, {
+									success:function(list){
+
+										console.log("Everyone saved successfully");
+										var gamePlayers = game.relation("players");
+										for (var j = 0; j < actualInvitedPlayers.length; ++j){
+											console.log("Adding player " + j + " to game");
+											gamePlayers.add(actualInvitedPlayers[j]);
+										}
+										console.log("Added all players to game");
+										game.set("numberPlayers", actualInvitedPlayers.length + 1);
+
+										var gameSavePromise = game.save();
+										gameSavePromise.then(
+											function(gameAgain){
+
+												console.log("successfully saved game");
+												var marker = game.get("marker");
+												marker.set("numberPlayers", 1 + actualInvitedPlayers.length);
+												var markerPromise = marker.save();
+												markerPromise.then(
+													function(markerAgain){
+
+														var list = [];
+														for (var k = 0; k < actualInvitedPlayers.length; ++k){
+															list.push(actualInvitedPlayers[k].id);
+														}
+														console.log("marker saved");
+														Parse.Cloud.run("sendInvitePush",
+															{
+																"gameID":game.id,
+																"maxPoints":game.get("pointsToWin"),
+																"name":game.get("host").get("name"),
+																"friends":list
+															}
+														);
+														response.success();
+													},
+													function(error){
+														response.error(error.message);
+													}
+												);
+											},
+											function(error){
+
+												response.error(error.message);
+											}
+										);
+									},
+									error:function(error){
+
+										response.error(error.message);
+									}
+								})
+							}
 						}
 					},
 					function(error){
