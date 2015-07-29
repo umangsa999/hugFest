@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.slidetab.helper.PicassoTrustAll;
@@ -29,9 +30,14 @@ public class ResultActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+
+
         Intent i = getIntent();
         //expect gameID from somewhere before, may be push notification
         String gameID = i.getStringExtra("gameID");
+        if(gameID.length()>0 || gameID.equals(null)){
+            ParsePush.unsubscribeInBackground(gameID);
+        }
 
         images[0] = (ImageView) findViewById(R.id.resultsWinnerImage);
         images[1] = (ImageView) findViewById(R.id.resultsLeftImage);

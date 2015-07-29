@@ -8,12 +8,10 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.parse.ParsePushBroadcastReceiver;
 import com.usc.itp476.contact.contactproject.ingamescreen.ResultActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
-
 import org.json.JSONObject;
 
 public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver {
@@ -21,10 +19,14 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
     public static final String PARSE_JSON_CHANNEL_KEY = "com.parse.Channel";
     public static final String END = "END";
     public static final String SCORERID = "SCOREID";
+    public static final String SCOREEENAME = "SCOREEENAME";
     public static final String SCORE = "SCORE";
     public static final String INVITE = "INVITE";
+    public static final String NAME = "NAME";
     public static final String SCORERNAME = "NAME";
     public static final String ACTION = "ACTION";
+    public static final String GAMEID = "GAMEID";
+    public static final String MAXPOINTS = "MAXPOINTS";
     public static String action = "";
     private AllTabActivity mAllTabActivity;
 
@@ -81,12 +83,13 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
     @Override
     protected void onPushOpen(Context context, Intent intent) {
         //super.onPushOpen(context, intent);
-        //User has clicke open the notification
+        //User has clicked open the notification
         Bundle mBundle = intent.getExtras();
         JSONObject json = null;
         if (mBundle != null) {
             try {
                 json = new JSONObject(mBundle.getString(PARSE_EXTRA_DATA_KEY));
+                Log.wtf(TAG, json.toString() );
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -95,8 +98,12 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
         if( action.equals(END) ){
             //end of the game, start new resultActivity
             i = new Intent( context, ResultActivity.class);
-            i.putExtras(intent.getExtras());
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                i.putExtra(TargetActivity.GAMEID, json.getString(GAMEID) );
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             context.startActivity(i);
         }else if( action.equals(SCORE) ){
 
@@ -105,31 +112,36 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
             //get the old target Activity and display it
 
             Log.wtf( TAG +"Class is: ", getActivity(context, intent).getClass().getSimpleName() );
-
             try {
-                String scoreID = json.getString(SCORERID);
-                //i.putExtra(TargetActivity.SCORERID, scoreID); //might not need this
-                //i.putExtras(intent.getExtras());
+                String scorerID = json.getString(SCORERID);
+                String scoreeeName = json.getString(SCOREEENAME);
+                String name = json.getString(NAME);
                 //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 //someone score on you
                 i = new Intent( context, TargetActivity.class);
+                i.putExtra(TargetActivity.SCORERID, scorerID ); //might not need this
+                i.putExtra(TargetActivity.SCOREEENAME, scoreeeName); //might not need this
+                i.putExtra(TargetActivity.NAME, name); //might not need this
                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 context.startActivity(i);
             }catch(Exception e){
                 e.printStackTrace();
             }
         }else if(action.equals(INVITE)){
-
             //you got invited to a game, start new targetActivity stack
             i = new Intent( context, TargetActivity.class);
-            i.putExtras(intent.getExtras());
+            try {
+                i.putExtra(TargetActivity.MAXPOINTS, json.getInt(MAXPOINTS));
+                i.putExtra(TargetActivity.GAMEID, json.getString(GAMEID));
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
         }
         else{
             Log.wtf(TAG, "Unknown action!!");
         }
-
     }
 
     @Override
@@ -138,7 +150,16 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
         //causing the ParsePushBroadcastReceiver to call onPushReceive
 
         //we get the action of what we need to do and set it {END, SCORE, INVITE}
-        action = intent.getAction();
+        Bundle mBundle = intent.getExtras();
+        JSONObject json = null;
+        if (mBundle != null) {
+            try {
+                json = new JSONObject(mBundle.getString(PARSE_EXTRA_DATA_KEY));
+                action = json.getString("action");
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
         super.onReceive(context, intent);
     }
 

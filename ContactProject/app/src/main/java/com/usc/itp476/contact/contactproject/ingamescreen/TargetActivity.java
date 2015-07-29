@@ -21,6 +21,7 @@ import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
@@ -41,6 +42,8 @@ public class TargetActivity extends Activity {
     public static final String JOINEDGAME = "com.usc.itp476.contact.contactproject.JOINEDGAME";
     public static final String GAMEID = "com.usc.itp476.contact.contactproject.GAMEID";
     public static final String SCORERID = "com.usc.itp476.contact.contactproject.SCORERID";
+    public static final String SCOREEENAME = "com.usc.itp476.contact.contactproject.SCOREEENAME";
+    public static final String NAME = "com.usc.itp476.contact.contactproject.NAME";
 
     final String TAG = this.getClass().getSimpleName();
     public static final int RETURN_FROM_RESULT = 80085;
@@ -74,6 +77,17 @@ public class TargetActivity extends Activity {
         max = i.getIntExtra(MAXPOINTS, 10);
         joinedGame = i.getBooleanExtra(JOINEDGAME, true);
         gameID = i.getStringExtra(GAMEID);
+        ParsePush.subscribeInBackground(gameID, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.wtf(TAG, "successful subscribe to game channel "+ gameID);
+                } else {
+                    Log.wtf(TAG, e.getLocalizedMessage());
+                }
+
+            }
+        });
 
         Button tempPoints = (Button) findViewById(R.id.btnPlus);
         tempPoints.setOnClickListener(new View.OnClickListener() {
@@ -269,7 +283,6 @@ public class TargetActivity extends Activity {
             @Override
             public void done(Boolean didWin, ParseException e) {
                 if (e == null) {
-                    Log.wtf(TAG, didWin.toString());
                     increasePoints();
                     if (!didWin){
                         Log.wtf(TAG, "not done yet");

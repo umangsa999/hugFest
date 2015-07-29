@@ -231,7 +231,6 @@ public class StartActivity extends Activity {
                 AccessToken accessToken = mLoginResult.getAccessToken();
                 //We have the accessToken, now we want to do a graphRequest to get the user data
                 findFacebookUserData();
-
             }
             @Override
             public void onCancel() {
