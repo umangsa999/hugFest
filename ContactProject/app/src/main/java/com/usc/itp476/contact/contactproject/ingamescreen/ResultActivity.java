@@ -34,8 +34,9 @@ public class ResultActivity extends Activity {
 
         Intent i = getIntent();
         //expect gameID from somewhere before, may be push notification
-        String gameID = i.getStringExtra("gameID");
-        if(gameID.length()>0 || gameID.equals(null)){
+        String gameID = null;
+        gameID = i.getStringExtra("gameID");
+        if( !gameID.equals(null) ){
             ParsePush.unsubscribeInBackground(gameID);
         }
 
