@@ -60,6 +60,7 @@ Parse.Cloud.define("sendScorePush", function(request, response){
 	console.log("game channel is: " + gameChannel);
 
 	var installationQuery = new Parse.Query(Parse.Installation);
+	installationQuery.notEqualTo("currentUserID", hunterHarryID);
 	installationQuery.equalTo("channels", gameChannel);
 
 	Parse.Push.send(
