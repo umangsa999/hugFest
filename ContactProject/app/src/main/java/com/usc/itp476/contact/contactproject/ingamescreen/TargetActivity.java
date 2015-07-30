@@ -21,6 +21,7 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.ContactApplication;
@@ -43,6 +44,8 @@ public class TargetActivity extends Activity {
     public static final String SCORERID = "com.usc.itp476.contact.contactproject.SCORERID";
     public static final String SCOREEENAME = "com.usc.itp476.contact.contactproject.SCOREEENAME";
     public static final String NAME = "com.usc.itp476.contact.contactproject.NAME";
+    public static final String IMAGENAME = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.IMAGENAME";
+    public static final String CURRENTPHOTOPATH = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.CURRENTPHOTOPATH";
 
     final String TAG = this.getClass().getSimpleName();
     public static final int RETURN_FROM_RESULT = 80085;
@@ -74,22 +77,30 @@ public class TargetActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_target);
 
-        subscribeToGame();
-
         loaded = true;
         if (savedInstanceState == null) {
+            Log.wtf(TAG, "savedInstanceState is null");
             Intent i = getIntent();
             max = i.getIntExtra(MAXPOINTS, 10);
             joinedGame = i.getBooleanExtra(JOINEDGAME, true);
             gameID = i.getStringExtra(GAMEID);
+            mImageName = i.getStringExtra(IMAGENAME);
+            mCurrentPhotoPath = i.getStringExtra(CURRENTPHOTOPATH);
             target = null;
             getNewTarget();
         }else{
+            Log.wtf(TAG, "savedInstanceState is not null");
             max = savedInstanceState.getInt(MAXPOINTS);
             joinedGame = savedInstanceState.getBoolean(JOINEDGAME);
             gameID = savedInstanceState.getString(GAMEID);
+            mImageName = savedInstanceState.getString(IMAGENAME);
+            mCurrentPhotoPath = savedInstanceState.getString(CURRENTPHOTOPATH);
             getLatestSelf();
+            updateTarget();
         }
+
+        Log.wtf(TAG, "Try to subscribe");
+        subscribeToGame();
 
         mImageView = (ImageView) findViewById(R.id.imageViewFriend);
         txvwCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
@@ -110,6 +121,7 @@ public class TargetActivity extends Activity {
     @Override
     public void onResume(){
         super.onResume();
+        Log.wtf(TAG, "onResume");
         SharedPreferences prefs =
                 getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
         String restoredText = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
@@ -127,26 +139,31 @@ public class TargetActivity extends Activity {
         }
 
         if (!loaded){
+            Log.wtf(TAG, "pull from sharedPrefs");
             max = prefs.getInt(MAXPOINTS, 10);
             joinedGame = prefs.getBoolean(JOINEDGAME, true);
             gameID = prefs.getString(GAMEID, "");
-            getLatestSelf();
+            mImageName = prefs.getString(IMAGENAME, "");
+            mCurrentPhotoPath = prefs.getString(CURRENTPHOTOPATH, "");
             loaded = true;
+            getLatestSelf();
+            updateTarget();
         }
-
-        updateTarget();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
+        Log.wtf(TAG, "onPause");
         SharedPreferences sharedPreferences =
                 getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
         sharedPreferencesEditor.putInt(MAXPOINTS, max);
         sharedPreferencesEditor.putBoolean(JOINEDGAME, joinedGame);
         sharedPreferencesEditor.putString(GAMEID, gameID);
+        sharedPreferencesEditor.putString(CURRENTPHOTOPATH, mCurrentPhotoPath);
+        sharedPreferencesEditor.putString(IMAGENAME, mImageName);
         sharedPreferencesEditor.apply();
         loaded = false;
     }
@@ -154,9 +171,12 @@ public class TargetActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.wtf(TAG, "onSaveInstanceState");
         outState.putBoolean(JOINEDGAME, joinedGame);
         outState.putInt(MAXPOINTS, max);
         outState.putString(GAMEID, gameID);
+        outState.putString(CURRENTPHOTOPATH, mCurrentPhotoPath);
+        outState.putString(IMAGENAME, mImageName);
     }
 
     @Override
@@ -187,13 +207,16 @@ public class TargetActivity extends Activity {
     }
 
     private void getLatestSelf() {
+        String myID = ParseUser.getCurrentUser().getObjectId();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.include("currentTarget");
+
         try {
-            ParseUser.getCurrentUser().fetchIfNeeded();
-            current = ParseUser.getCurrentUser().getInt("currentHugs");
+            ParseUser me = query.get(myID);
+            current = me.getInt("currentHugs");
             target = ParseUser.getCurrentUser().getParseUser("currentTarget");
-            target.fetch();
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.wtf(TAG, "self: " + e.getLocalizedMessage());
         }
     }
 
@@ -246,7 +269,7 @@ public class TargetActivity extends Activity {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
             Bitmap imageBitmap = convertToBM();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
             currentPhoto = new ParseFile(mImageName, byteArray);
             signalIncrease();
@@ -256,44 +279,13 @@ public class TargetActivity extends Activity {
         }
     }
 
-    /** Create a File for saving an image or video */
-    private  File getOutputMediaFile(){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
-        if( isExternalStorageWritable() && isExternalStorageReadable() ) {
-            File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                    + "/Android/data/"
-                    + getApplicationContext().getPackageName()
-                    + "/Files");
-
-            // This location works best if you want the created images to be shared
-            // between applications and persist after your app has been uninstalled.
-            // Create the storage directory if it does not exist
-            if (!mediaStorageDir.exists()) {
-                if (!mediaStorageDir.mkdirs()) {
-                    return null;
-                }
-            }
-            // Create a media file name
-            String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-            File mediaFile;
-            mImageName = "MI_" + timeStamp + ".jpeg";
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-            mCurrentPhotoPath = mediaFile.getAbsolutePath();
-            return mediaFile;
-        }else{
-            Log.wtf( TAG, "External storage not writable or readable" );
-            return null;
-        }
-    }
-
     //use this for lower memory (probably need for gridview friends)
     private Bitmap convertToBM() {
 
         // Get the dimensions of the View
         int targetW = mImageView.getWidth();
         int targetH = mImageView.getHeight();
+        Log.wtf(TAG, "size is: " + targetW + "x" + targetH);
 
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -302,7 +294,8 @@ public class TargetActivity extends Activity {
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
 
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+//        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        int scaleFactor = photoW/targetW;
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
@@ -331,6 +324,38 @@ public class TargetActivity extends Activity {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
+        }
+    }
+
+    /** Create a File for saving an image or video */
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        if( isExternalStorageWritable() && isExternalStorageReadable() ) {
+            File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                    + "/Android/data/"
+                    + getApplicationContext().getPackageName()
+                    + "/Files");
+
+            // This location works best if you want the created images to be shared
+            // between applications and persist after your app has been uninstalled.
+            // Create the storage directory if it does not exist
+            if (!mediaStorageDir.exists()) {
+                if (!mediaStorageDir.mkdirs()) {
+                    return null;
+                }
+            }
+            // Create a media file name
+            String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+            File mediaFile;
+            mImageName = "MI_" + timeStamp + ".png";
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+            mCurrentPhotoPath = mediaFile.getAbsolutePath();
+            return mediaFile;
+        }else{
+            Log.wtf( TAG, "External storage not writable or readable" );
+            return null;
         }
     }
 

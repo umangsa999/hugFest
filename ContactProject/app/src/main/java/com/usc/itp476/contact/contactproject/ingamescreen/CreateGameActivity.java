@@ -195,6 +195,11 @@ public class CreateGameActivity extends Activity {
                                             me.saveInBackground(new SaveCallback() {
                                                 @Override
                                                 public void done(ParseException e) {
+                                                    Intent intent = new Intent(
+                                                            CreateGameActivity.this.getApplicationContext(),
+                                                            TargetActivity.class);
+                                                    intent.putExtra(TargetActivity.JOINEDGAME, false);
+                                                    intent.putExtra(TargetActivity.MAXPOINTS, maxPoints);
                                                     if (e == null) {
                                                         //Call cloud code to send players to server
                                                         HashMap<String, Object> params = new HashMap<>();
@@ -206,26 +211,18 @@ public class CreateGameActivity extends Activity {
                                                         params.put("gameID", gameBeingMade.getGameID());
                                                         try {
                                                             ParseCloud.callFunction("addFriendsToGame", params);
+                                                            gameBeingMade.fetch();
+                                                            intent.putExtra(TargetActivity.GAMEID, gameBeingMade.getGameID());
+                                                            startActivityForResult(intent, REQUEST_CODE_CREATE_GAME);
                                                         } catch (ParseException e2) {
                                                             if (e2.getCode() == -20){
                                                                 Toast.makeText(getApplicationContext(),
                                                                         "Could not invite enough players", Toast.LENGTH_SHORT).show();
                                                             }
                                                             Log.wtf(TAG + "addfriendtoGame: ", e2.getLocalizedMessage());
+                                                        }finally{
+                                                            selectedFriendParseIDs.clear();
                                                         }
-                                                        selectedFriendParseIDs.clear();
-                                                        Intent i = new Intent(
-                                                                CreateGameActivity.this.getApplicationContext(),
-                                                                TargetActivity.class);
-                                                        i.putExtra(TargetActivity.JOINEDGAME, false);
-                                                        i.putExtra(TargetActivity.MAXPOINTS, maxPoints);
-                                                        try {
-                                                            gameBeingMade.fetch();
-                                                            i.putExtra(TargetActivity.GAMEID, gameBeingMade.getGameID());
-                                                        } catch (ParseException e1) {
-                                                            e1.printStackTrace();
-                                                        }
-                                                        startActivityForResult(i, REQUEST_CODE_CREATE_GAME);
                                                     } else {
                                                         Log.wtf(TAG, "trying to put game in player: " + e.getLocalizedMessage());
                                                         HashMap<String, String> params = new HashMap<>();

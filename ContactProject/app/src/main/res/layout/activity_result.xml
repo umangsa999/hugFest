@@ -3,8 +3,8 @@
     android:layout_height="match_parent"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="16dp"
-    android:paddingRight="32dp"
-    android:paddingLeft="32dp"
+    android:paddingRight="18dp"
+    android:paddingLeft="18dp"
     tools:context="com.usc.itp476.contact.contactproject.ingamescreen.ResultActivity">
 
     <TextView
@@ -13,6 +13,7 @@
         android:text="Winner"
         android:id="@+id/textView"
         android:textSize="24sp"
+        android:layout_marginTop="-4dp"
         android:layout_centerHorizontal="true"/>
 
     <TextView
@@ -24,7 +25,7 @@
         android:id="@+id/resultsWinnerName"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/textView"
-        android:layout_marginTop="-4dp"
+        android:layout_marginTop="-8dp"
         android:layout_marginBottom="2dp"/>
 
     <ImageView
@@ -38,9 +39,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:src="@mipmap/large"
-        android:layout_marginTop="-2dp"/>
+        android:layout_marginTop="-2dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,7 +50,6 @@
         android:textSize="20sp"
         android:id="@+id/textView3"
         android:layout_below="@+id/resultsWinnerImage"
-        android:layout_marginTop="6dp"
         android:layout_marginBottom="-8dp"
         android:layout_centerHorizontal="true" />
 
@@ -86,10 +86,10 @@
                 android:id="@+id/resultsLeftImage"
                 android:src="@mipmap/medium"
                 android:adjustViewBounds="true"
-                android:maxWidth="105dp"
-                android:minWidth="105dp"
-                android:maxHeight="105dp"
-                android:minHeight="105dp"
+                android:maxWidth="94dp"
+                android:minWidth="94dp"
+                android:maxHeight="94dp"
+                android:minHeight="94dp"
                 android:scaleType="centerInside"
                 android:layout_centerVertical="true"
                 android:layout_alignParentStart="true"
@@ -120,10 +120,10 @@
                 android:id="@+id/resultsMiddleImage"
                 android:src="@mipmap/medium"
                 android:adjustViewBounds="true"
-                android:maxWidth="105dp"
-                android:minWidth="105dp"
-                android:maxHeight="105dp"
-                android:minHeight="105dp"
+                android:maxWidth="94dp"
+                android:minWidth="94dp"
+                android:maxHeight="94dp"
+                android:minHeight="94dp"
                 android:scaleType="centerInside"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true" />
@@ -139,10 +139,10 @@
                 android:id="@+id/resultsRightImage"
                 android:src="@mipmap/medium"
                 android:adjustViewBounds="true"
-                android:maxWidth="105dp"
-                android:minWidth="105dp"
-                android:maxHeight="105dp"
-                android:minHeight="105dp"
+                android:maxWidth="94dp"
+                android:minWidth="94dp"
+                android:maxHeight="94dp"
+                android:minHeight="94dp"
                 android:scaleType="centerInside"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"

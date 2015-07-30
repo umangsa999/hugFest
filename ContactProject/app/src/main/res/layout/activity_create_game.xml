@@ -1,8 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
     tools:context="com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity">
 
     <TextView android:text="Max Score:" android:layout_width="wrap_content"
@@ -42,6 +44,34 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Invite Your Friends"
+        android:id="@+id/textView4"
+        android:textSize="32sp"
+        android:layout_below="@+id/skbrMax"
+        android:layout_centerHorizontal="true" />
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/grid_view"
+        android:layout_below="@+id/textView4"
+        android:layout_above="@+id/btnCreate"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="0dp"
+        android:verticalSpacing="4dp"
+        android:horizontalSpacing="4dp"
+        android:scrollingCache="true"
+        android:smoothScrollbar="true"
+        android:clipChildren="true"
+        android:alwaysDrawnWithCache="true"
+        android:numColumns="auto_fit"
+        android:columnWidth="100dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center_horizontal" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,39 +86,5 @@
         android:layout_marginRight="50dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp" />
-
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/grid_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:padding="0dp"
-        android:verticalSpacing="2dp"
-        android:horizontalSpacing="2dp"
-        android:scrollingCache="true"
-        android:smoothScrollbar="true"
-        android:clipChildren="true"
-        android:alwaysDrawnWithCache="true"
-        android:numColumns="auto_fit"
-        android:columnWidth="100dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center_horizontal"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_above="@+id/btnCreate"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/textView4"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Invite Your Friends"
-        android:id="@+id/textView4"
-        android:textSize="32sp"
-        android:layout_below="@+id/skbrMax"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

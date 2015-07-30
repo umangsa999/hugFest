@@ -136,18 +136,8 @@ public class FriendsFragment extends Fragment {
         });
     }
 
-    private void askUpdateFriends(){
-        mAllTabActivity.updateFriends();
-    }
-
     public void updateFriends(){
         mFriendListAdapter.notifyDataSetChanged(); //actually tell people to display
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        askUpdateFriends();
     }
 
     @Override
