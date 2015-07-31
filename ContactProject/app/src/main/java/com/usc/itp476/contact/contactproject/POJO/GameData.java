@@ -26,6 +26,10 @@ public class GameData extends ParseObject {
         return getInt("pointsToWin");
     }
 
+    public boolean getIsOver(){
+        return getBoolean("isOver");
+    }
+
     public ParseGeoPoint getLocation(){
         return getParseGeoPoint("start");
     }
@@ -58,5 +62,7 @@ public class GameData extends ParseObject {
         put("numberPlayers", numPlayers);
     }
 
-
+    public void setGameOver(boolean isOver){
+        put("isOver", isOver);
+    }
 }

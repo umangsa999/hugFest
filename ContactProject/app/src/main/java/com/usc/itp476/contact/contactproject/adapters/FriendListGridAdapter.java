@@ -75,6 +75,7 @@ public class FriendListGridAdapter extends BaseAdapter {
         ImageView img;
         TextView points;
         TextView objectID;
+        TextView name;
         CheckBox invited;
     }
 
@@ -89,17 +90,26 @@ public class FriendListGridAdapter extends BaseAdapter {
         holder.points = (TextView) rowView.findViewById(R.id.imageViewScore);
         holder.invited = (CheckBox) rowView.findViewById(R.id.ckbxInvite);
         holder.objectID = (TextView) rowView.findViewById(R.id.ObjectIdTextView);
-        holder.img.setImageResource(R.mipmap.medium);
-
+        holder.name = (TextView) rowView.findViewById(R.id.txvwFriendName);
         ParseUser me = friendsArrayForm.get(position);
 
-        String pictureURL = me.getString("pictureLink");
+        String pictureURL = pictureURL = me.getString("pictureLink");
         String name = me.getString("name");
+        if (name.length() > 12){
+            int indexOfSpace = name.indexOf(' ');
+            if (indexOfSpace < 10) {
+                char lastNameLetter = Character.toUpperCase(name.charAt(indexOfSpace + 1));
+                name = name.substring(0, indexOfSpace + 1) + lastNameLetter + ".";
+            }else{
+                name = name.substring(0, indexOfSpace);
+            }
+        }
+        holder.name.setText(name);
         int points = me.getInt("totalHugs");
         holder.points.setText( String.valueOf(points) );
         String objectID = me.getObjectId();
 
-        PicassoTrustAll.getInstance( context ).load(pictureURL).fit().into(holder.img);
+        PicassoTrustAll.getInstance(context).load(pictureURL).error(R.mipmap.medium).placeholder(R.mipmap.medium).fit().into(holder.img);
 
         holder.objectID.setText( friendsList == null ? "" : objectID);
         if(mDisplayCheckBox){

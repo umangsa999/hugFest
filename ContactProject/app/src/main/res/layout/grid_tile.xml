@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:clipToPadding="true"
     android:background="@drawable/borderouterimage">
 
     <ImageView
         android:id="@+id/imageViewFriend"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="135dp"
+        android:layout_height="115dp"
         android:gravity="center"
         android:contentDescription="Friend"
         android:src="@mipmap/large"
@@ -21,12 +21,14 @@
         android:text="30"
         android:textColor="@android:color/black"
         android:id="@+id/imageViewScore"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
         android:layout_alignTop="@+id/imageViewFriend"
         android:layout_alignEnd="@+id/imageViewFriend"
         android:layout_alignRight="@+id/imageViewFriend"
-        style="@style/TextAppearance.AppCompat.Headline" />
+        style="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -48,5 +50,19 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ryan Zhou"
+        android:id="@+id/txvwFriendName"
+        android:layout_below="@id/imageViewFriend"
+        style="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:layout_marginLeft="2dp"
+        android:lines="1"
+        android:minLines="1"
+        android:maxLines="1" />
 
 </RelativeLayout>

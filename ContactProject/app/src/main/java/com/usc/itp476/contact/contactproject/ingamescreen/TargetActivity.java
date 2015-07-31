@@ -71,6 +71,7 @@ public class TargetActivity extends Activity {
     private int current = 0;
     private boolean joinedGame;
     private boolean loaded = false;
+    private boolean takingPicture = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,16 +103,17 @@ public class TargetActivity extends Activity {
         Log.wtf(TAG, "Try to subscribe");
         subscribeToGame();
 
+        imvwTarget = (ImageView) findViewById(R.id.imvwTarget);
         mImageView = (ImageView) findViewById(R.id.imageViewFriend);
         txvwCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
         txvwMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
         txvwName = (TextView) findViewById(R.id.txvwName);
-        imvwTarget = (ImageView) findViewById(R.id.imvwTarget);
         buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
 
         buttonTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                takingPicture = true;
                 dispatchTakePictureIntent();
                 //DispatchtakePicture starts an camera screen intent
             }
@@ -138,7 +140,7 @@ public class TargetActivity extends Activity {
             editor.apply();
         }
 
-        if (!loaded){
+        if (!loaded && !takingPicture){
             Log.wtf(TAG, "pull from sharedPrefs");
             max = prefs.getInt(MAXPOINTS, 10);
             joinedGame = prefs.getBoolean(JOINEDGAME, true);
@@ -156,16 +158,18 @@ public class TargetActivity extends Activity {
         super.onPause();
 
         Log.wtf(TAG, "onPause");
-        SharedPreferences sharedPreferences =
-                getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        sharedPreferencesEditor.putInt(MAXPOINTS, max);
-        sharedPreferencesEditor.putBoolean(JOINEDGAME, joinedGame);
-        sharedPreferencesEditor.putString(GAMEID, gameID);
-        sharedPreferencesEditor.putString(CURRENTPHOTOPATH, mCurrentPhotoPath);
-        sharedPreferencesEditor.putString(IMAGENAME, mImageName);
-        sharedPreferencesEditor.apply();
-        loaded = false;
+        if (!takingPicture) {
+            SharedPreferences sharedPreferences =
+                    getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
+            SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+            sharedPreferencesEditor.putInt(MAXPOINTS, max);
+            sharedPreferencesEditor.putBoolean(JOINEDGAME, joinedGame);
+            sharedPreferencesEditor.putString(GAMEID, gameID);
+            sharedPreferencesEditor.putString(CURRENTPHOTOPATH, mCurrentPhotoPath);
+            sharedPreferencesEditor.putString(IMAGENAME, mImageName);
+            sharedPreferencesEditor.apply();
+            loaded = false;
+        }
     }
 
     @Override
@@ -249,8 +253,7 @@ public class TargetActivity extends Activity {
     }
 
     private void getImage(){
-        if (target != null)
-            PicassoTrustAll.getInstance(getApplicationContext()).load(target.getString("pictureLink")).fit().into(mImageView);
+        PicassoTrustAll.getInstance(getApplicationContext()).load(target.getString("pictureLink")).placeholder(R.mipmap.large).error(R.mipmap.large).fit().into(imvwTarget);
     }
 
     private void setName(){
@@ -273,6 +276,7 @@ public class TargetActivity extends Activity {
             byte[] byteArray = stream.toByteArray();
             currentPhoto = new ParseFile(mImageName, byteArray);
             signalIncrease();
+            takingPicture = false;
         }
         else if (resultCode == RETURN_FROM_RESULT) {
             finish();
@@ -283,8 +287,8 @@ public class TargetActivity extends Activity {
     private Bitmap convertToBM() {
 
         // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
+        int targetW = imvwTarget.getWidth();
+        int targetH = imvwTarget.getHeight();
         Log.wtf(TAG, "size is: " + targetW + "x" + targetH);
 
         // Get the dimensions of the bitmap
@@ -295,7 +299,7 @@ public class TargetActivity extends Activity {
         int photoH = bmOptions.outHeight;
 
 //        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-        int scaleFactor = photoW/targetW;
+        int scaleFactor = photoW / targetW;
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;

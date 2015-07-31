@@ -87,6 +87,12 @@ public class MapDisplayFragment extends Fragment
         //async call to create and set up map.
         assignListeners();
 
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         if (map == null) {
             if (mapFragment != null){
                 map = mapFragment.getMap();
@@ -98,15 +104,7 @@ public class MapDisplayFragment extends Fragment
                 fragmentTransaction.commit();
                 mapFragment.getMapAsync(this);
             }
-        }
-
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (map != null) {
+        }else {
             createRadius();
             //findPoints();
         }
@@ -166,7 +164,7 @@ public class MapDisplayFragment extends Fragment
             public boolean onMarkerClick(Marker marker) {
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
                 try {
-                    GameMarker gm = (GameMarker) markerToGame.get(marker).fetchIfNeeded();
+                    GameMarker gm = markerToGame.get(marker).fetchIfNeeded();
                     markerToGame.put(marker, gm);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -206,6 +204,9 @@ public class MapDisplayFragment extends Fragment
     private void findPoints() {
         ParseGeoPoint myLocParse = new ParseGeoPoint(myLoc.latitude, myLoc.longitude);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Marker");
+        query.whereEqualTo("isOver", false);
+        query.whereLessThan("numberPlayers", MAX_PLAYERS);
+        query.whereWithinMiles("start",myLocParse,maxDistance);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
@@ -262,11 +263,13 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void createRadius(){
-        CircleOptions circleOptions = new CircleOptions()
-                .center(myLoc)
-                .radius(maxDistanceDraw).fillColor(backgroundColor)
-                .strokeWidth(5).strokeColor(backgroundColor);
-        radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
+        if (map != null) {
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(myLoc)
+                    .radius(maxDistanceDraw).fillColor(backgroundColor)
+                    .strokeWidth(5).strokeColor(backgroundColor);
+            radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
+        }
     }
 
     private void setLocationListener() {

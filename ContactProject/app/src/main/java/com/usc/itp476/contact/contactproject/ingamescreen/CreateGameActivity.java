@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +35,11 @@ import java.util.HashMap;
 public class CreateGameActivity extends Activity {
     final String TAG = this.getClass().getSimpleName();
     private static final int REQUEST_CODE_CREATE_GAME = -499;
-    public static final int RESULT_CODE_QUIT_GAME = -449;
     private static ArrayList<String> selectedFriendParseIDs;
     private Button btnCreate;
     private TextView txvwMax;
     private SeekBar skbrMax;
-    private ListView lsvwInvite;
+//    private ListView lsvwInvite;
     private GridView gridView;
     private int maxPoints = 10;
     private GameMarker gameMarkerBeingMade;
@@ -129,6 +127,7 @@ public class CreateGameActivity extends Activity {
         GameMarker marker = new GameMarker();
         marker.setLocation(pLoc);
         marker.setHostName();
+        marker.setGameOver(false);
         marker.setPoints(maxPoints);
         gameMarkerBeingMade = marker;
         marker.saveInBackground(new SaveCallback() {
@@ -153,6 +152,7 @@ public class CreateGameActivity extends Activity {
         gameData.setHostName();
         gameData.setPointsToWin(maxPoints);
         gameData.setMarker(gameMarkerBeingMade);
+        gameData.setGameOver(false);
         gameBeingMade = gameData;
 
         gameData.saveInBackground(new SaveCallback() {

@@ -38,6 +38,10 @@ public class GameMarker extends ParseObject {
         put("game", game);
     }
 
+    public void setGameOver(boolean isOver){
+        put("isOver", isOver);
+    }
+
     public void setHostName(){
         put("host", ParseUser.getCurrentUser());
     }
@@ -91,5 +95,9 @@ public class GameMarker extends ParseObject {
 
     public ParseGeoPoint getLocation(){
         return getParseGeoPoint("start");
+    }
+
+    public boolean getIsOver(){
+        return getBoolean("isOver");
     }
 }

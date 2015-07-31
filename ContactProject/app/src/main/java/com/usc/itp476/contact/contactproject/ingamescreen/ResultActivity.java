@@ -102,8 +102,8 @@ public class ResultActivity extends Activity {
                     @Override
                     public void done(ArrayList<HashMap<String, Object>> list, ParseException e) {
                         if (e == null) {
-                            for (int i = 0; i < list.size(); ++i) {
-                                HashMap<String, Object> map = list.get(i);
+//                            for (int i = 0; i < list.size(); ++i) {
+//                                HashMap<String, Object> map = list.get(i);
 //                            Object [] keys = map.keySet().toArray();
 //                            Log.wtf(TAG, "item: " + i);
 //                            for (Object o : keys){
@@ -113,7 +113,7 @@ public class ResultActivity extends Activity {
 //                            for (Object o : values){
 //                                Log.wtf(TAG, "\tvalues: " + o.toString());
 //                            }
-                            }
+//                            }
                             //store and update what we get
                             topPlayersList = list;
                             updateUI();
@@ -149,7 +149,7 @@ public class ResultActivity extends Activity {
                 HashMap<String, Object> player = topPlayersList.get(i);
                 if (player.containsKey("pictureLink")) {
                     PicassoTrustAll.getInstance(getApplicationContext())
-                            .load(player.get("pictureLink").toString()).fit().into(images[i]);
+                            .load(player.get("pictureLink").toString()).fit().placeholder(R.mipmap.large).error(R.mipmap.large).into(images[i]);
                 }
                 names[i].setText(player.get("name").toString());
             }else{

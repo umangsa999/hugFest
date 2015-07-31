@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -42,13 +41,12 @@ public class ProfileFragment extends Fragment {
     private Button btnViewFacebook;
     private TextView txvwName;
     private TextView txvwTotal;
-    private EditText edtxName;
     private ImageView imgPhoto = null;
     private boolean isEditing = false;
     public boolean mFriendProfile = false;
     private AllTabActivity myParent = null;
     private String friendID = null;
-    private HashMap<String, Object> parms = new HashMap<String, Object>();
+    private HashMap<String, Object> parms = new HashMap<>();
     Profile p;
     String tokenID = "";
     String un = "", ps = "";
@@ -68,7 +66,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = (View) inflater.inflate(
+        View rootView = inflater.inflate(
                 R.layout.activity_profile, container, false);
 
         mActivity = this.getActivity();
@@ -80,7 +78,6 @@ public class ProfileFragment extends Fragment {
         imgPhoto = (ImageView) rootView.findViewById(R.id.imvwPhoto);
         txvwName = (TextView) rootView.findViewById(R.id.txvwName);
         txvwTotal = (TextView) rootView.findViewById(R.id.textViewTotal);
-        edtxName = (EditText) rootView.findViewById(R.id.edtxName);
         btnLink = (Button) rootView.findViewById(R.id.btnLink);
         btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
         btnViewFacebook = (Button) rootView.findViewById(R.id.buttonViewFacebook);
@@ -102,7 +99,6 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 ParseUser.logOut();
                 LoginManager.getInstance().logOut();
-                Intent i = new Intent();
                 getActivity().setResult(StartActivity.RESULT_LOGOUT);
                 getActivity().finish();
             }
@@ -121,7 +117,7 @@ public class ProfileFragment extends Fragment {
             String picLink = ParseUser.getCurrentUser().getString("pictureLink");
             int totalHugs = ParseUser.getCurrentUser().getInt("totalHugs");
             String name = ParseUser.getCurrentUser().getString("name");
-            PicassoTrustAll.getInstance( context ).load(picLink).fit().into(imgPhoto);
+            PicassoTrustAll.getInstance( context ).load(picLink).fit().error(R.mipmap.large).placeholder(R.mipmap.large).into(imgPhoto);
             txvwTotal.setText( String.valueOf(totalHugs) );
             txvwName.setText( name );
             setListeners();
@@ -245,7 +241,7 @@ public class ProfileFragment extends Fragment {
             if (friend != null){
                 txvwTotal.setText(String.valueOf(friend.getInt("totalHugs")));
                 txvwName.setText(friend.getString("name"));
-                PicassoTrustAll.getInstance( context ).load(friend.getString("pictureLink") ).fit().into(imgPhoto);
+                PicassoTrustAll.getInstance( context ).load(friend.getString("pictureLink") ).error(R.mipmap.large).placeholder(R.mipmap.large).fit().into(imgPhoto);
             }else{
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Could not find friend",
@@ -263,14 +259,14 @@ public class ProfileFragment extends Fragment {
         isEditing = !isEditing;
         if (isEditing){
             imbnEdit.setBackgroundResource(R.mipmap.ic_done);
-            edtxName.setVisibility(View.VISIBLE);
+//            edtxName.setVisibility(View.VISIBLE);
             txvwName.setVisibility(View.GONE);
-            edtxName.setText(txvwName.getText());//TODO make the check also end editing
+//            edtxName.setText(txvwName.getText());//TODO make the check also end editing
         }else{
             imbnEdit.setBackgroundResource(R.mipmap.ic_edit);
             txvwName.setVisibility(View.VISIBLE);
-            edtxName.setVisibility(View.GONE);
-            txvwName.setText(edtxName.getText());
+//            edtxName.setVisibility(View.GONE);
+//            txvwName.setText(edtxName.getText());
 
             if (!mFriendProfile){
                 ParseUser update = ParseUser.getCurrentUser();

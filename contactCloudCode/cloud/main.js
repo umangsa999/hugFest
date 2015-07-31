@@ -653,8 +653,31 @@ Parse.Cloud.define("increaseScore", function( request, response){
 							//TODO notify all users here
 							console.log("hugs are now: "+parseUser.get("currentHugs"));
 							if (currentHugs == game.get("pointsToWin")){
-								Parse.Cloud.run("sendEndPush", {"gameID":game.id, "winnerID":parseUser.id});
-								response.success(true);
+								game.set("isOver", true);
+								var gameSavePromise = game.save();
+								gameSavePromise.then(
+									function(gameAgain){
+										gameAgain.get("marker").fetch({
+											success:function(marker){
+												marker.set("isOver", true);
+												var markerSavePromise = marker.save();
+												markerSavePromise.then(
+													function(markerAgain){
+														Parse.Cloud.run("sendEndPush", {"gameID":game.id, "winnerID":parseUser.id});
+														response.success(true);
+													},function(error){
+														response.error(error.message);
+													}
+												);
+											},
+											error:function(error){
+												response.error(error.message);
+											}
+										});
+									},function(error){
+										response.error(error.message);
+									}
+								);
 							}else{
 								response.success(false);
 							}
