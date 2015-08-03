@@ -2,7 +2,6 @@ package com.usc.itp476.contact.contactproject.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +79,7 @@ public class FriendListGridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final Holder holder = new Holder();
+        Holder holder = new Holder();
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.grid_tile, null);
@@ -124,18 +123,21 @@ public class FriendListGridAdapter extends BaseAdapter {
         }
         if(displayCheckbox){
             holder.textViewScore.setVisibility(View.GONE);
+            if (CreateGameActivity.getSelectedFriendParseIDs().contains(objectID)){
+                holder.checkBoxInvited.setChecked(true);
+            }
+            else{
+                holder.checkBoxInvited.setChecked(false);
+            }
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     TextView id = (TextView) view.findViewById(R.id.textViewObjectID);
-                    CheckBox c = (CheckBox) view.findViewById(R.id.checkBoxInvite);
-                    c.setChecked(!c.isChecked());
+                    CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkBoxInvite);
                     //this is invite friends
-                    if (holder.checkBoxInvited.isChecked()) {
-                        Log.wtf(TAG + "Tring to add freisfsdf", "CAT");
+                    checkbox.setChecked( !checkbox.isChecked() );
+                    if (checkbox.isChecked()) {
                         CreateGameActivity.getSelectedFriendParseIDs().add(id.getText().toString());
-                        Log.wtf(TAG + "size: ",
-                                "" + CreateGameActivity.getSelectedFriendParseIDs().size());
                     } else {
                         CreateGameActivity.getSelectedFriendParseIDs().remove(id.getText().toString());
                     }
@@ -149,8 +151,6 @@ public class FriendListGridAdapter extends BaseAdapter {
                 public void onClick(View view) {
                     //This is where we handle pressing gridtiles
                     TextView id = (TextView) view.findViewById(R.id.textViewObjectID);
-                    //This is the stinkin friends list
-                    Log.wtf(TAG + "Clicked", id.getText().toString());
                     ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(
                             id.getText().toString());
                 }

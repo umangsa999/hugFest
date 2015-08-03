@@ -1,7 +1,9 @@
 package com.usc.itp476.contact.contactproject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -63,7 +65,6 @@ public class StartActivity extends Activity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_start);
-
         buttonLoginFacebook = (LoginButton) findViewById(R.id.login_button);
         createFacebookCallback();
         profileTracker = new ProfileTracker() {
@@ -75,8 +76,8 @@ public class StartActivity extends Activity {
                 profileTracker.stopTracking();
             }
         };
-
         profileTracker.startTracking();
+        checkSharedPreferences();
     }
 
     @Override
@@ -92,6 +93,7 @@ public class StartActivity extends Activity {
         super.onResume();
         // Logs 'install' and 'app activate' App Events
         AppEventsLogger.activateApp(StartActivity.this);
+        checkSharedPreferences();
     }
 
     //Called when facebook is done
@@ -110,7 +112,6 @@ public class StartActivity extends Activity {
         FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.wtf(TAG, "Facebook success");
                 StartActivity.this.loginResult = loginResult;
                 //We have the accessToken, now we want to do a graphRequest to get the user data
                 findFacebookUserData();
@@ -127,6 +128,17 @@ public class StartActivity extends Activity {
         callbackManager = CallbackManager.Factory.create();
         buttonLoginFacebook.setReadPermissions(permissions);
         buttonLoginFacebook.registerCallback(callbackManager, callback);
+    }
+
+    private void checkSharedPreferences(){
+
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean(ContactApplication.IS_LOGGED_IN, false);
+        Log.wtf(TAG, "Check shared pref, isLoggedIn = "+ isLoggedIn );
+        if (isLoggedIn){
+            goToHome();
+        }
     }
 
     private void addFaceBookFriends(){
@@ -195,6 +207,8 @@ public class StartActivity extends Activity {
                             try {
                                 //OLD USER
                                 user = ParseUser.become(tokenID);
+                                Log.wtf(TAG, "setLoggedIn for old user");
+                                ContactApplication.setLoggedIn(true);
                                 goToHome();
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -239,6 +253,8 @@ public class StartActivity extends Activity {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
+                                            Log.wtf(TAG, "setLoggedIn for new user");
+                                            ContactApplication.setLoggedIn(true);
                                             goToHome();
                                         } else {
                                             Log.wtf(TAG, e.getLocalizedMessage());
@@ -262,7 +278,7 @@ public class StartActivity extends Activity {
         });
     }
 
-    private void goToHome(){
+    public void goToHome(){
         ParseInstallation pi = ParseInstallation.getCurrentInstallation();
         pi.put("currentUser", ParseUser.getCurrentUser());
         pi.put("currentUserID", ParseUser.getCurrentUser().getObjectId());

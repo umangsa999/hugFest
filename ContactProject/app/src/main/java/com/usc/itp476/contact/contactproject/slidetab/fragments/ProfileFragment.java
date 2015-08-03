@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.StartActivity;
 
@@ -53,7 +54,6 @@ public class ProfileFragment extends Fragment {
 
         if( mFriendProfile ) {
             //We are viewing the friend with the profile fragment
-            imageButtonEdit.setVisibility(View.INVISIBLE);
             buttonLogout.setVisibility(View.GONE);
             loadFriendSaveData();
 
@@ -74,6 +74,7 @@ public class ProfileFragment extends Fragment {
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ContactApplication.setLoggedIn(false);
                 ParseUser.logOut();
                 LoginManager.getInstance().logOut();
                 getActivity().setResult(StartActivity.RESULT_LOGOUT);

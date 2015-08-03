@@ -83,7 +83,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/resultsLeftImage"
+                android:id="@+id/imageViewLeftImage"
                 android:src="@mipmap/medium"
                 android:adjustViewBounds="true"
                 android:maxWidth="100dp"
@@ -117,7 +117,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/resultsMiddleImage"
+                android:id="@+id/imageViewMiddleImage"
                 android:src="@mipmap/medium"
                 android:adjustViewBounds="true"
                 android:maxWidth="100dp"

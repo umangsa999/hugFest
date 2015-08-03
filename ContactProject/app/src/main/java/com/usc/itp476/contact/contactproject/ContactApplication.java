@@ -2,12 +2,16 @@ package com.usc.itp476.contact.contactproject;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.util.Base64;
 import android.util.Log;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseException;
@@ -34,6 +38,7 @@ public class ContactApplication extends Application {
     public static final int COMPRESS_QUALITY = 100;
     public static final int DEFAULT_IMAGE_SIZE = 700;
 
+    public static final String IS_LOGGED_IN = "com.usc.itp476.contact.contactproject.IS_LOGGED_IN";
     public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject.MAXPOINTS";
     public static final String JOINEDGAME = "com.usc.itp476.contact.contactproject.JOINEDGAME";
     public static final String GAMEID = "com.usc.itp476.contact.contactproject.GAMEID";
@@ -43,7 +48,8 @@ public class ContactApplication extends Application {
     public static final String IMAGENAME = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.IMAGENAME";
     public static final String CURRENTPHOTOPATH = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.CURRENTPHOTOPATH";
     public static final String SHARED_PREF_FILE = "com.usc.itp476.contact.contactproject.ContactApplication.SHARED_PREF_FILE";
-    public final String TAG = this.getClass().getSimpleName();
+    public static String TAG = null;
+    private static SharedPreferences sharedPreferences = null;
     public static ParseACL defaultACL;
 	
     private static ContactApplication singleton;
@@ -73,9 +79,24 @@ public class ContactApplication extends Application {
         defaultACL = new ParseACL();
         defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
-
+        TAG = this.getClass().getSimpleName();
         subscribeInstallation();
         friendList = new HashMap<>();
+        sharedPreferences = getSharedPreferences( ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
+
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(
+                    AccessToken oldAccessToken,
+                    AccessToken currentAccessToken) {
+                if (currentAccessToken == null){
+                    //User logged out
+                    setLoggedIn(false);
+                }else{
+                    setLoggedIn(true);
+                }
+            }
+        };
     }
 
     private void subscribeInstallation(){
@@ -118,4 +139,10 @@ public class ContactApplication extends Application {
         return key;
     }
 
+    public static void setLoggedIn(boolean isLoggedIn){
+        Log.wtf(TAG, " = " + isLoggedIn);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        sharedPreferencesEditor.putBoolean(ContactApplication.IS_LOGGED_IN, isLoggedIn);
+        sharedPreferencesEditor.commit();
+    }
 }
