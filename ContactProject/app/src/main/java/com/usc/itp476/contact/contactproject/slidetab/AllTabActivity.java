@@ -1,5 +1,6 @@
 package com.usc.itp476.contact.contactproject.slidetab;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,20 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AllTabActivity extends FragmentActivity {
-
-//    public static final String MY_PREFS_NAME = "MyPrefsFile";
-    final String TAG = this.getClass().getSimpleName();
-    private static final int NUM_PAGES = 3;
-    private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
-    private SlidingTabLayout mSlidingTabLayout;
-    private ArrayList<Fragment> tabs;
-    private ArrayList<String> titles;
-    public ProfileFragment mProfileFragment = null;
-    public FriendsFragment mFriendFragment = null;
-    private String scorerID = "";
-    private String action = "";
-    //we need this ^ because we later need to check the profile fragment is a view of the friends or user
+    private final String TAG = this.getClass().getSimpleName();
+    private ViewPager viewPager = null;
+    private PagerAdapter pagerAdapter = null;
+    private ArrayList<Fragment> tabs = null;
+    public ProfileFragment profileFragment = null;
+    public FriendsFragment friendFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,34 +45,34 @@ public class AllTabActivity extends FragmentActivity {
         setContentView(R.layout.activity_all_tab);
 
         tabs = new ArrayList<>();
-        titles = new ArrayList<>();
+        ArrayList<String> titles = new ArrayList<>();
 
         // Instantiate a ViewPager and a PagerAdapter.
-        mPager = (ViewPager) findViewById(R.id.viewPager);
-        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.slidingTabLayout);
 
         titles.add("Games");
         titles.add("Friends");
         titles.add( "Profile" );
 
         tabs.add(new MapDisplayFragment());
-        mFriendFragment = new FriendsFragment();
-        mFriendFragment.setAllTabActivity(this);
-        tabs.add(mFriendFragment);
+        friendFragment = new FriendsFragment();
+        friendFragment.setAllTabActivity(this);
+        tabs.add(friendFragment);
 
-        mProfileFragment = new ProfileFragment();
-        mProfileFragment.setContext( getApplicationContext() );
-        tabs.add( mProfileFragment );
+        profileFragment = new ProfileFragment();
+        tabs.add(profileFragment);
 
-        mPagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
-        mPager.setAdapter(mPagerAdapter);
+        pagerAdapter = new ScreenSlidePagerAdapter( getSupportFragmentManager(), tabs, titles );
+        viewPager.setAdapter(pagerAdapter);
 
         mSlidingTabLayout.setDistributeEvenly(true);
-        mSlidingTabLayout.setViewPager(mPager);
+        mSlidingTabLayout.setViewPager(viewPager);
 
         updateFriends();
     }
 
+    //TODO cloud code?
     public void updateFriends(){
         ParseRelation<ParseUser> friends = ParseUser.getCurrentUser().getRelation("friends");
         ParseQuery<ParseUser> getAllFriends = friends.getQuery();
@@ -93,7 +86,6 @@ public class AllTabActivity extends FragmentActivity {
                     Toast.makeText(getApplicationContext(),
                             "Could not find friends", Toast.LENGTH_SHORT).show();
                 } else {
-                    //Log.wtf(TAG, "list of friends is size: " + String.valueOf(list.size()));
                     grabRealFriends(list);
                     signalUpdateFriends();
                 }
@@ -103,7 +95,6 @@ public class AllTabActivity extends FragmentActivity {
 
     private void grabRealFriends(List<ParseUser> list){
         //for each user in the relation, we only have the ObjectId and username
-        Log.wtf(TAG, "" + ContactApplication.getFriendsList().size());
         for (ParseUser u : list){
             try {
                 ParseUser friend = ParseUser.getQuery().get(u.getObjectId()); //get the rest
@@ -119,45 +110,44 @@ public class AllTabActivity extends FragmentActivity {
     }
 
     private void signalUpdateFriends(){
-        mFriendFragment.updateFriends();
+        friendFragment.updateFriends();
     }
 
     public void showFriendProfile(String id){
         //setting the middle tab to profile of a friend
-        mProfileFragment = new ProfileFragment();
-        mProfileFragment.friendProfileTrue(id, true, this);
-        tabs.set(1, mProfileFragment);
-        mPagerAdapter.notifyDataSetChanged();
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setCurrentItem( 1 );
+        profileFragment = new ProfileFragment();
+        profileFragment.friendProfileTrue(id, true);
+        tabs.set(1, profileFragment);
+        pagerAdapter.notifyDataSetChanged();
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(1);
     }
 
     public void returnToList(){
-        tabs.set(1, mFriendFragment);
-        mProfileFragment = null;
-        mPagerAdapter.notifyDataSetChanged();
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setCurrentItem( 1 );
+        tabs.set(1, friendFragment);
+        profileFragment = null;
+        pagerAdapter.notifyDataSetChanged();
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(1);
     }
 
     @Override
     public void onBackPressed() {
 
-        if (mPager.getCurrentItem() == 0) {
+        if (viewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             Intent i = new Intent();
             setResult(StartActivity.RESULT_ALLTABS_QUIT_STAY_LOGIN, i);
             finish();
-        } else if( mPager.getCurrentItem() == 1 && (mProfileFragment != null) ){
+        } else if( viewPager.getCurrentItem() == 1 && (profileFragment != null) ){
             //if the user has clicked to view one of his friend's profile in friendsfragment then we want to
             //set the the current fragment back to the gridview of his friends
-
             returnToList();
         }
         else {
             // Otherwise, select the previous step.
-            mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }
 
@@ -193,19 +183,18 @@ public class AllTabActivity extends FragmentActivity {
         SharedPreferences prefs = getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
         String restoredText = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
         if (restoredText != null) {
-            action = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
-            if(action.equals(CustomParsePushBroadcastReceiver.INVITE)){
-                Intent i = new Intent(this.getApplicationContext(), TargetActivity.class);
-                startActivity(i);
-            }else if(action.equals(CustomParsePushBroadcastReceiver.END)){
-                Intent i = new Intent(this.getApplicationContext(), ResultActivity.class);
-                startActivity(i);
+            String action = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
+            if (action != null) {
+                if (action.equals(CustomParsePushBroadcastReceiver.INVITE)) {
+                    Intent i = new Intent(this.getApplicationContext(), TargetActivity.class);
+                    startActivity(i);
+                } else if (action.equals(CustomParsePushBroadcastReceiver.END)) {
+                    Intent i = new Intent(this.getApplicationContext(), ResultActivity.class);
+                    startActivity(i);
+                }
             }
         }
-        SharedPreferences.Editor editor = this.getApplicationContext().getSharedPreferences(
-                ContactApplication.SHARED_PREF_FILE,
-                this.getApplicationContext().MODE_PRIVATE).edit();
-        editor.clear().commit();
-
+        this.getApplicationContext().getSharedPreferences( ContactApplication.SHARED_PREF_FILE,
+                Context.MODE_PRIVATE).edit().clear().apply();
     }
 }

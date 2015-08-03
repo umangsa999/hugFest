@@ -26,10 +26,10 @@ import java.util.HashMap;
 public class ContactApplication extends Application {
 	// Note: Your consumer key and secret should be obfuscated in your source code before shipping.
 
+    public static final int MAX_PLAYERS = 20;
 
     public static final int REQUEST_CODE_CREATE_GAME = -499;
     public static final int RETURN_FROM_RESULT = 80085;
-    public static final int REQUEST_ACKNOWLEDGE_RESULT = 7236;
     public static final int REQUEST_TAKE_PHOTO = 1;
     public static final int COMPRESS_QUALITY = 100;
     public static final int DEFAULT_IMAGE_SIZE = 700;

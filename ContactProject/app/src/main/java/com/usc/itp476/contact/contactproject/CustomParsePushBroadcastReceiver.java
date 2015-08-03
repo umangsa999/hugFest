@@ -109,7 +109,7 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
                 i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 try {
-                    i.putExtra(TargetActivity.GAMEID, json.getString(GAMEID) );
+                    i.putExtra(ContactApplication.GAMEID, json.getString(GAMEID) );
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -125,9 +125,9 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
                     String name = json.getString(NAME);
                     //someone score on you
                     i = new Intent( context, TargetActivity.class);
-                    i.putExtra(TargetActivity.SCORERID, scorerID );
-                    i.putExtra(TargetActivity.SCOREEENAME, scoreeeName);
-                    i.putExtra(TargetActivity.NAME, name);
+                    i.putExtra(ContactApplication.SCORERID, scorerID );
+                    i.putExtra(ContactApplication.SCOREEENAME, scoreeeName);
+                    i.putExtra(ContactApplication.NAME, name);
                     i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     context.startActivity(i);
                 }catch(Exception e){
@@ -139,8 +139,8 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
                 //you got invited to a game, start new targetActivity stack
                 i = new Intent( context, TargetActivity.class);
                 try {
-                    i.putExtra(TargetActivity.MAXPOINTS, json.getInt(MAXPOINTS));
-                    i.putExtra(TargetActivity.GAMEID, json.getString(GAMEID));
+                    i.putExtra(ContactApplication.MAXPOINTS, json.getInt(MAXPOINTS));
+                    i.putExtra(ContactApplication.GAMEID, json.getString(GAMEID));
                 }catch(Exception e){
                     e.printStackTrace();
                 }

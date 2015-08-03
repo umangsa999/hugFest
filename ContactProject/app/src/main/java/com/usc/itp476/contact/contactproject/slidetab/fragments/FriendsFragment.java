@@ -28,23 +28,23 @@ import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 import java.util.HashMap;
 
 public class FriendsFragment extends Fragment {
-    final String TAG = this.getClass().getSimpleName();
-    private FriendListGridAdapter mFriendListAdapter;
-    private ImageButton buttonAdd;
-    private Context mContext;
-    private Activity mActivity;
-    private GridView gridView;
-    private String mInputAddFriendText = "";
-    private AllTabActivity mAllTabActivity;
+    private final String TAG = this.getClass().getSimpleName();
+    private FriendListGridAdapter friendListAdapter = null;
+    private ImageButton imageButtonAddFriend = null;
+    private Context context = null;
+    private Activity activity = null;
+    private GridView gridView = null;
+    private String addFriendName = null;
+    private AllTabActivity allTabActivity = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_friends, container, false);
-        mContext = getActivity().getApplicationContext();
-        mActivity = getActivity();
+        context = getActivity().getApplicationContext();
+        activity = getActivity();
 
-        buttonAdd = (ImageButton) rootView.findViewById(R.id.btnAdd);
+        imageButtonAddFriend = (ImageButton) rootView.findViewById(R.id.btnAdd);
         gridView = (GridView) rootView.findViewById(R.id.grid_view);
 
         setAddListener();
@@ -53,17 +53,17 @@ public class FriendsFragment extends Fragment {
     }
 
     public void setAllTabActivity(AllTabActivity allTabActivity) {
-        this.mAllTabActivity = allTabActivity;
+        this.allTabActivity = allTabActivity;
     }
 
     private void setAddListener(){
-        buttonAdd.setOnClickListener(new View.OnClickListener() {
+        imageButtonAddFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // get prompts.xml view
-                LayoutInflater layoutInflater = LayoutInflater.from(mActivity);
+                LayoutInflater layoutInflater = LayoutInflater.from(activity);
                 View promptView = layoutInflater.inflate(R.layout.prompt_add_friend, null);
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
                 // set prompts.xml to be the layout file of the alertdialog builder
                 alertDialogBuilder.setView(promptView);
                 final EditText input = (EditText) promptView.findViewById(R.id.userInput);
@@ -73,8 +73,8 @@ public class FriendsFragment extends Fragment {
                         .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // get user input and set it to result
-                                mInputAddFriendText = input.getText().toString();
-                                addFriend(mInputAddFriendText);
+                                addFriendName = input.getText().toString();
+                                addFriend(addFriendName);
                             }
                         })
                         .setNegativeButton("Cancel",
@@ -85,26 +85,15 @@ public class FriendsFragment extends Fragment {
                                 });
 
                 // create an alert dialog
-                //AlertDialog alertD = alertDialogBuilder.
                 alertDialogBuilder.show();
             }
         });
     }
 
     private void generateGridView(){
-        mFriendListAdapter = new FriendListGridAdapter( mContext, false, mAllTabActivity);
-        gridView.setAdapter(mFriendListAdapter);
-
+        friendListAdapter = new FriendListGridAdapter(context, false, allTabActivity);
+        gridView.setAdapter(friendListAdapter);
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
-
-        // On Click event for Single Gridview Item
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // Sending image id to FullScreenActivity
-                //this shit doesn't run
-            }
-        });
     }
 
     //TODO make this code more server heavy
@@ -132,12 +121,12 @@ public class FriendsFragment extends Fragment {
     }
 
     public void updateFriends(){
-        mFriendListAdapter.notifyDataSetChanged(); //actually tell people to display
+        //actually display new friends
+        friendListAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onDestroy() {
-        //moPubView.destroy();
         super.onDestroy();
     }
 }

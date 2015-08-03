@@ -36,6 +36,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
@@ -46,18 +47,17 @@ import java.util.List;
 
 public class MapDisplayFragment extends Fragment
         implements GoogleMap.InfoWindowAdapter, OnMapReadyCallback {
-    private GoogleMap map;
-    private ImageButton btnGame = null;
-    private LatLng myLoc;
-    private SupportMapFragment mapFragment;
-    private View rootView;
+    private final String TAG = this.getClass().getSimpleName();
+    private GoogleMap map = null;
+    private ImageButton buttonNewGame = null;
+    private LatLng myLoc = null;
+    private SupportMapFragment mapFragment = null;
+    private View rootView = null;
     private Circle radiusCircle = null;
     private final int maxDistanceDraw = 700;
     private final double maxDistance = 0.0075;
-    public static final int MAX_PLAYERS = 20;
     private final int backgroundColor = Color.argb(128, 0, 128, 128);
     private HashMap<Marker, GameMarker> markerToGame;
-    private final String TAG = this.getClass().getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,10 +75,10 @@ public class MapDisplayFragment extends Fragment
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = (View) inflater.inflate(
+        rootView = inflater.inflate(
                 R.layout.activity_map_display, container, false);
 
-        btnGame = (ImageButton) rootView.findViewById(R.id.btnGame);
+        buttonNewGame = (ImageButton) rootView.findViewById(R.id.btnGame);
 
         //TODO make sure this is same map as last time
         //TODO it seems to just create new since getMapAsync again
@@ -105,7 +105,6 @@ public class MapDisplayFragment extends Fragment
             }
         }else {
             createRadius();
-            //findPoints();
         }
     }
 
@@ -123,7 +122,6 @@ public class MapDisplayFragment extends Fragment
         map = googleMap;
         map.setInfoWindowAdapter(this);
         map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        map.setPadding(4, 4, 4, 4);
         map.setMyLocationEnabled(true);
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -138,18 +136,15 @@ public class MapDisplayFragment extends Fragment
                             Intent i = new Intent(
                                     MapDisplayFragment.this.getActivity().getApplicationContext(),
                                     TargetActivity.class);
-                            i.putExtra(TargetActivity.JOINEDGAME, true);
-                            i.putExtra(TargetActivity.MAXPOINTS, (Integer) map.get("points"));
-                            i.putExtra(TargetActivity.GAMEID, (String) map.get("gameID"));
+                            i.putExtra(ContactApplication.JOINEDGAME, true);
+                            i.putExtra(ContactApplication.MAXPOINTS, (Integer) map.get("points"));
+                            i.putExtra(ContactApplication.GAMEID, (String) map.get("gameID"));
                             markerToGame.clear();
                             startActivity(i);
-                        } else if (e.getCode() == 20) {
-                            Log.wtf(TAG, "maxed out");
+                        } else if (e.getCode() == ContactApplication.MAX_PLAYERS) {
                             Toast.makeText(getActivity().getApplicationContext(),
                                     "That game is full", Toast.LENGTH_SHORT).show();
-                            //TODO it would be cool to update map here
                         }else{
-                            Log.wtf(TAG, "no join game:\n" + e.getLocalizedMessage());
                             Toast.makeText(getActivity().getApplicationContext(),
                                     "Could not join game", Toast.LENGTH_SHORT).show();
                         }
@@ -175,21 +170,21 @@ public class MapDisplayFragment extends Fragment
 
         setupLocationChecks();
         //make sure the create button is still at top
-        btnGame.bringToFront();
+        buttonNewGame.bringToFront();
         rootView.requestLayout();
         rootView.invalidate();
         setLocationListener();
     }
 
     private void setupLocationChecks(){
-        LocationManager LocMan =
+        LocationManager locationManager =
                 (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Location loc = LocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         //only when we have location access
-        if (loc != null && map != null) {
-            myLoc = new LatLng(loc.getLatitude(), loc.getLongitude());
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 14.0f)); //old = 15
+        if (location != null && map != null) {
+            myLoc = new LatLng(location.getLatitude(), location.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, 15));
 
             findPoints(); //do a server call for all games
             createRadius();
@@ -199,13 +194,14 @@ public class MapDisplayFragment extends Fragment
         }
     }
 
+    //TODO see if this can be pushed to parse
     //this method is suppose to do server call to find games
     private void findPoints() {
         ParseGeoPoint myLocParse = new ParseGeoPoint(myLoc.latitude, myLoc.longitude);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Marker");
         query.whereEqualTo("isOver", false);
-        query.whereLessThan("numberPlayers", MAX_PLAYERS);
-        query.whereWithinMiles("start",myLocParse,maxDistance);
+        query.whereLessThan("numberPlayers", ContactApplication.MAX_PLAYERS);
+        query.whereWithinRadians("start",myLocParse,maxDistance);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
@@ -251,7 +247,7 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void assignListeners(){
-        btnGame.setOnClickListener(new View.OnClickListener() {
+        buttonNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MapDisplayFragment.this.getActivity().getApplicationContext(),
@@ -272,7 +268,7 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void setLocationListener() {
-        LocationManager l =
+        LocationManager locationManager =
                 (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
             @Override
@@ -303,7 +299,7 @@ public class MapDisplayFragment extends Fragment
             public void onProviderDisabled(String provider) {
             }
         };
-        l.requestLocationUpdates(
+        locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, 5000, 3, locationListener);
     }
 
@@ -320,15 +316,11 @@ public class MapDisplayFragment extends Fragment
         TextView name = (TextView) view.findViewById(R.id.infoWindowName);
         TextView players = (TextView) view.findViewById(R.id.infoWindowNumPlayer);
         TextView points = (TextView) view.findViewById(R.id.infoWindowPointsToWin);
-        ImageView image = (ImageView) view.findViewById(R.id.infoWindowImage);
 
         GameMarker data = markerToGame.get(marker);
         name.setText(data.getHostName());
         points.setText(String.valueOf(data.getPoints()));
         players.setText(String.valueOf(data.getPlayerCount()));
-
-        String picLink = data.getHost().getString("pictureLink");
-        Log.wtf(TAG, "HOST IMAGE LINK: " + picLink);
 
         return view;
     }

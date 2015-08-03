@@ -11,10 +11,6 @@ import com.parse.ParseUser;
 @ParseClassName("Marker")
 public class GameMarker extends ParseObject {
     final String TAG = this.getClass().getSimpleName();
-    public static final String PREFFILE = "com.usc.itp476.contact.contactproject.POJO.GameMarker.PREFFILE";
-    public static final String USER_ID = "com.usc.itp476.contact.contactproject.POJO.GameMarker.USER_ID";
-    public static final String FULL_NAME = "com.usc.itp476.contact.contactproject.POJO.GameMarker.FULL_NAME";
-    public static final String TOTAL_HUGS = "com.usc.itp476.contact.contactproject.POJO.GameMarker.TOTAL_HUGS";
     private ParseUser host = null;
     private GameData game = null;
 

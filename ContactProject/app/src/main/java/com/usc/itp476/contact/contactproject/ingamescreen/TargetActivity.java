@@ -43,7 +43,6 @@ public class TargetActivity extends Activity {
     private TextView textViewMaxPoints;
     private TextView textViewName;
     private ImageView imageViewTarget;
-    private Button buttonTakePicture;
     private ParseFile currentPhoto;
     private ParseUser target;
     private String imageName;
@@ -88,7 +87,7 @@ public class TargetActivity extends Activity {
         textViewCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
         textViewMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
         textViewName = (TextView) findViewById(R.id.txvwName);
-        buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
+        Button buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
 
         buttonTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
