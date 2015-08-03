@@ -40,7 +40,6 @@ import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
-import com.usc.itp476.contact.contactproject.PicassoTrustAll;
 
 import java.util.HashMap;
 import java.util.List;
@@ -330,8 +329,6 @@ public class MapDisplayFragment extends Fragment
 
         String picLink = data.getHost().getString("pictureLink");
         Log.wtf(TAG, "HOST IMAGE LINK: " + picLink);
-        PicassoTrustAll.getInstance(getActivity().getApplicationContext())
-                .load(picLink).fit().into(image);
 
         return view;
     }

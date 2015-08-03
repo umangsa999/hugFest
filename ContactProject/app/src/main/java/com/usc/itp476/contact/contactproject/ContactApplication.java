@@ -8,7 +8,6 @@ import android.content.pm.Signature;
 import android.util.Base64;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseException;
@@ -18,27 +17,37 @@ import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 
 import java.security.MessageDigest;
 import java.util.HashMap;
-import java.util.List;
-
-import io.fabric.sdk.android.Fabric;
 
 public class ContactApplication extends Application {
 	// Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    private static final String TWITTER_KEY = "Ai9qe71kw0YSzWrsOhsqOGzJB";
-    private static final String TWITTER_SECRET = "VRYJY0hRozcEupHlTNus18RbSxiLE5ioKkVCRZmjUF4ErKqL59";
+
+
+    public static final int REQUEST_CODE_CREATE_GAME = -499;
+    public static final int RETURN_FROM_RESULT = 80085;
+    public static final int REQUEST_ACKNOWLEDGE_RESULT = 7236;
+    public static final int REQUEST_TAKE_PHOTO = 1;
+    public static final int COMPRESS_QUALITY = 100;
+    public static final int DEFAULT_IMAGE_SIZE = 700;
+
+    public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject.MAXPOINTS";
+    public static final String JOINEDGAME = "com.usc.itp476.contact.contactproject.JOINEDGAME";
+    public static final String GAMEID = "com.usc.itp476.contact.contactproject.GAMEID";
+    public static final String SCORERID = "com.usc.itp476.contact.contactproject.SCORERID";
+    public static final String SCOREEENAME = "com.usc.itp476.contact.contactproject.SCOREEENAME";
+    public static final String NAME = "com.usc.itp476.contact.contactproject.NAME";
+    public static final String IMAGENAME = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.IMAGENAME";
+    public static final String CURRENTPHOTOPATH = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.CURRENTPHOTOPATH";
     public static final String SHARED_PREF_FILE = "com.usc.itp476.contact.contactproject.ContactApplication.SHARED_PREF_FILE";
-    private static HashMap<String, ParseUser> friendList;
     public final String TAG = this.getClass().getSimpleName();
     public static ParseACL defaultACL;
 	
     private static ContactApplication singleton;
+    private static HashMap<String, ParseUser> friendList;
 
     public ContactApplication getSingleton(){
         return singleton;
@@ -46,10 +55,6 @@ public class ContactApplication extends Application {
 
     public static HashMap<String, ParseUser> getFriendsList(){
         return friendList;
-    }
-
-    public void setFriendsList(HashMap<String, ParseUser> inList){
-        friendList = inList;
     }
 
     @Override
@@ -61,35 +66,22 @@ public class ContactApplication extends Application {
 
         Parse.enableLocalDatastore(this);
         Parse.initialize(this,
-                "ellChjDHP7hNM4CBQLHrBNWzDMoOzElwUgy3MpEc",
-                "aXSv9sdHcVcnjSIaqy8KuymGh16K5I53MiWXGgnN");
+                getResources().getString(R.string.application_id),
+                getResources().getString(R.string.client_key));
         ParseInstallation.getCurrentInstallation().saveInBackground();
         ParseFacebookUtils.initialize(this); //For converting authenticated FB users to Parse users
         defaultACL = new ParseACL();
         defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
 
+        subscribeInstallation();
+        friendList = new HashMap<>();
+    }
+
+    private void subscribeInstallation(){
         // Save the current Installation to Parse.
         ParseInstallation.getCurrentInstallation().saveInBackground();
         // subscribe to the channels
-        ParsePush.subscribeInBackground("", new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if( e == null){
-                    Log.wtf(TAG, "Success done" );
-                }else{
-                    Log.wtf(TAG, e.getLocalizedMessage() );
-                }
-
-            }
-        });
-
-        //get set of channels subscribed to
-        List<String> subscribedChannels = ParseInstallation.getCurrentInstallation().getList("channels");
-        //TODO subscribe to more as necessary
-
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new com.twitter.sdk.android.Twitter(authConfig), new Crashlytics(), new Twitter(authConfig));
 
         ParsePush.subscribeInBackground("", new SaveCallback() {
             @Override
@@ -101,7 +93,6 @@ public class ContactApplication extends Application {
                 }
             }
         });
-        friendList = new HashMap<>();
     }
 
     public static String printKeyHash(Activity context) {

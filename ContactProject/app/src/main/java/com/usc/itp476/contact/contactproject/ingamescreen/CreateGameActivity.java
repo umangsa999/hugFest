@@ -8,7 +8,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.SeekBar;
@@ -22,6 +21,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
@@ -33,18 +33,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CreateGameActivity extends Activity {
-    final String TAG = this.getClass().getSimpleName();
-    private static final int REQUEST_CODE_CREATE_GAME = -499;
+    private final String TAG = this.getClass().getSimpleName();
     private static ArrayList<String> selectedFriendParseIDs;
-    private Button btnCreate;
-    private TextView txvwMax;
-    private SeekBar skbrMax;
-//    private ListView lsvwInvite;
-    private GridView gridView;
+    private Button buttonCreate = null;
+    private TextView textViewwMax = null;
+    private SeekBar seekbarMax = null;
+    private GridView gridView = null;
     private int maxPoints = 10;
-    private GameMarker gameMarkerBeingMade;
-    private GameData gameBeingMade;
-    private ParseGeoPoint pLoc;
+    private GameMarker gameMarkerBeingMade = null;
+    private GameData gameBeingMade = null;
+    private ParseGeoPoint myLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,65 +50,54 @@ public class CreateGameActivity extends Activity {
         setContentView(R.layout.activity_create_game);
 
         selectedFriendParseIDs = new ArrayList<>();
-
         gridView = (GridView) findViewById(R.id.grid_view);
-        btnCreate = (Button) findViewById(R.id.btnCreate);
-        txvwMax = (TextView) findViewById(R.id.txvwMax);
-        skbrMax = (SeekBar) findViewById(R.id.skbrMax);
+        buttonCreate = (Button) findViewById(R.id.btnCreate);
+        textViewwMax = (TextView) findViewById(R.id.txvwMax);
+        seekbarMax = (SeekBar) findViewById(R.id.skbrMax);
         setGridAdapter();
         setListeners();
     }
 
     private void setGridAdapter(){
-        gridView.setAdapter( new FriendListGridAdapter( getApplicationContext(), true, this, false) );
+        gridView.setAdapter(new FriendListGridAdapter(getApplicationContext(), true, this));
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
-        // On Click event for Single Gridview Item
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // Sending image id to FullScreenActivity
-                Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void setListeners(){
-        btnCreate.setOnClickListener(new View.OnClickListener() {
+        buttonCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LocationManager locationManager =
                         (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                if (l == null) {
+                if (location == null) {
                     Toast.makeText(getApplicationContext(),
                             "Cannot detect location to start game",
                             Toast.LENGTH_SHORT).show();
                     finish();
-                }
-                else if( selectedFriendParseIDs.size() < 2 ){
+                } else if (selectedFriendParseIDs.size() < 2) {
                     Toast.makeText(getApplicationContext(),
                             "You need to invite at least two friends!",
                             Toast.LENGTH_SHORT).show();
                     finish();
-                }else if( selectedFriendParseIDs.size() > 19 ){
+                } else if (selectedFriendParseIDs.size() > 19) {
                     Toast.makeText(getApplicationContext(),
                             "Maximum number game is 19(+ you)!",
                             Toast.LENGTH_SHORT).show();
                     finish();
-                }
-                else {
-                    pLoc = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
+                } else {
+                    myLocation = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
                     createGameMarker();
                 }
             }
         });
 
-        skbrMax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekbarMax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 maxPoints = 1 + progress;
-                txvwMax.setText(String.valueOf(maxPoints));
+                textViewwMax.setText(String.valueOf(maxPoints));
             }
 
             @Override
@@ -125,7 +112,7 @@ public class CreateGameActivity extends Activity {
 
     private void createGameMarker(){
         GameMarker marker = new GameMarker();
-        marker.setLocation(pLoc);
+        marker.setLocation(myLocation);
         marker.setHostName();
         marker.setGameOver(false);
         marker.setPoints(maxPoints);
@@ -137,7 +124,6 @@ public class CreateGameActivity extends Activity {
                     createGame();
                 } else {
                     gameBeingMade = null;
-                    Log.wtf(TAG, "marker creation bad: " + e.getLocalizedMessage());
                     Toast.makeText(getApplicationContext(),
                             "Could not make game", Toast.LENGTH_SHORT).show();
                 }
@@ -148,13 +134,14 @@ public class CreateGameActivity extends Activity {
     private void createGame(){
 
         GameData gameData = new GameData();
-        gameData.setLocation(pLoc);
+        gameData.setLocation(myLocation);
         gameData.setHostName();
         gameData.setPointsToWin(maxPoints);
         gameData.setMarker(gameMarkerBeingMade);
         gameData.setGameOver(false);
         gameBeingMade = gameData;
 
+        //TODO move to the cloud
         gameData.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -164,7 +151,6 @@ public class CreateGameActivity extends Activity {
                         @Override
                         public void done(ParseException e) {
                             if (e != null) {
-                                Log.wtf(TAG, "save game good, set id on marker bad: " + e.getLocalizedMessage());
                                 Toast.makeText(getApplicationContext(),
                                         "Could not make game", Toast.LENGTH_SHORT).show();
                                 HashMap<String, String> params = new HashMap<>();
@@ -198,8 +184,8 @@ public class CreateGameActivity extends Activity {
                                                     Intent intent = new Intent(
                                                             CreateGameActivity.this.getApplicationContext(),
                                                             TargetActivity.class);
-                                                    intent.putExtra(TargetActivity.JOINEDGAME, false);
-                                                    intent.putExtra(TargetActivity.MAXPOINTS, maxPoints);
+                                                    intent.putExtra(ContactApplication.JOINEDGAME, false);
+                                                    intent.putExtra(ContactApplication.MAXPOINTS, maxPoints);
                                                     if (e == null) {
                                                         //Call cloud code to send players to server
                                                         HashMap<String, Object> params = new HashMap<>();
@@ -212,8 +198,8 @@ public class CreateGameActivity extends Activity {
                                                         try {
                                                             ParseCloud.callFunction("addFriendsToGame", params);
                                                             gameBeingMade.fetch();
-                                                            intent.putExtra(TargetActivity.GAMEID, gameBeingMade.getGameID());
-                                                            startActivityForResult(intent, REQUEST_CODE_CREATE_GAME);
+                                                            intent.putExtra(ContactApplication.GAMEID, gameBeingMade.getGameID());
+                                                            startActivityForResult(intent, ContactApplication.REQUEST_CODE_CREATE_GAME);
                                                         } catch (ParseException e2) {
                                                             if (e2.getCode() == -20){
                                                                 Toast.makeText(getApplicationContext(),
@@ -313,7 +299,6 @@ public class CreateGameActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-//        askUpdateFriends();
     }
 
     public static ArrayList<String> getSelectedFriendParseIDs() {

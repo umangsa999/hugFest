@@ -3,11 +3,7 @@ package com.usc.itp476.contact.contactproject;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -41,130 +37,52 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class StartActivity extends Activity {
-    final String TAG = this.getClass().getSimpleName();
-    public static final int REQUEST_START_GAME = 1939;
-    public static final int RESULT_ALLTABS_QUIT_STAY_LOGIN = 1945;
-    public static final int RESULT_LOGOUT = 2000;
-    private Button btnStart;
-    private EditText edtxFirst;
-    private EditText edtxLast;
-    private EditText edtxPass;
-    private String name;
-    private String pictureURL;
-    private String pass;
-    private HashMap<String, ArrayList<ParseUser>> parsefriendIDs;
-    private ProfileTracker mProfileTracker;
+    private final String TAG = this.getClass().getSimpleName();
     public static ParseUser user = null;
-    //
-    private String userEmail;
-    private String facebookID = "0";
+    public static final int REQUEST_START_GAME = 104;
+    public static final int RESULT_ALLTABS_QUIT_STAY_LOGIN = 105;
+    public static final int RESULT_LOGOUT = 200;
+    public static final List<String> permissions =
+            Arrays.asList("public_profile", "user_friends", "email");
+
+    private String name = null;
+    private String pictureURL = null;
+    private String userEmail = null;
+    private String facebookID = null;
     private JSONArray facebookIDs = null;
-    private LoginResult mLoginResult = null;
+    private LoginResult loginResult = null;
+    private ProfileTracker profileTracker = null;
+    private LoginButton buttonLoginFacebook = null;
+    private CallbackManager callbackManager = null;
+    private HashMap< String, ArrayList<ParseUser> > parseFriendIDs = null;
 
-    private boolean hasParseAccount = false;
-    //TODO -- if user has parseaccount and no facebook association, if they click fb, link it
-
-    public final static List<String> permissions = Arrays.asList("public_profile", "user_friends", "email");
-    private LoginButton loginButtonFacebook;
-    private CallbackManager mCallbackManager;
-    private FacebookCallback<LoginResult> mCallback;
-//    private TwitterLoginButton loginButtonTwitter;
-    private static final int PROGRESS = 0x1;
-
-    private ProgressBar mProgress;
-    private int mProgressStatus = 0;
-
-    private Handler mHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_start);
 
-        mProgress = (ProgressBar) findViewById(R.id.progressBar);
-
-        if (ParseUser.getCurrentUser() != null) {
-            Log.wtf(TAG, "There IS a PU");
-            //ParseUser.logOut();
-        }
-
-//        btnStart = (Button) findViewById(R.id.btnStart);
-//        edtxFirst = (EditText) findViewById(R.id.edtxFirst);
-//        edtxLast = (EditText) findViewById(R.id.edtxLast);
-//        edtxPass = (EditText) findViewById(R.id.edtxPassword);
-//        loginButtonTwitter = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
-        loginButtonFacebook = (LoginButton) findViewById(R.id.login_button);
-
-//        createDigitButton();
-//        createTwitterCallback();
+        buttonLoginFacebook = (LoginButton) findViewById(R.id.login_button);
         createFacebookCallback();
-
-        //TESTING AUTO LOG IN
-//        ParseUser.logInInBackground("Chris Lee", "cheese", new LogInCallback() {
-//            @Override
-//            public void done(ParseUser user, ParseException e) {
-//                if (e == null) {
-//                    Toast.makeText(getApplicationContext(),
-//                            "Welcome back,\n" + user.getUsername(),
-//                            Toast.LENGTH_SHORT).show();
-//                    goToHome();
-//                } else {
-//                    saveParse();
-//                }
-//            }
-//        });
-
-
-//        btnStart.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //AUTO LOGIN TESTING
-//                ParseUser.logInInBackground("Ryan Zhou", "Ryan Zhou", new LogInCallback() {
-//                    @Override
-//                    public void done(ParseUser user, ParseException e) {
-//                        if (e == null) {
-//                            Toast.makeText(getApplicationContext(),
-//                                    "Welcome back,\n" + user.getUsername(),
-//                                    Toast.LENGTH_SHORT).show();
-//                            goToHome();
-//                        } else {
-//                            saveParse();
-//                        }
-//                    }
-//                });
-//
-//                //uncomment
-//                //check();
-//            }
-//        });
-
-        mProfileTracker = new ProfileTracker() {
+        profileTracker = new ProfileTracker() {
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
-                if( oldProfile != null){
-//                    Log.wtf("facebook - OLD profile", oldProfile.getFirstName());
-//                    Log.wtf("facebook - profile", oldProfile.getId());
-                }
                 if( newProfile != null){
-                    //There is a new profile, set this to the old one
-//                    Log.wtf("facebook - NEW profile", newProfile.getFirstName());
-//                    Log.wtf("facebook - profile", newProfile.getId());
                     Profile.setCurrentProfile(newProfile);
                 }
-                mProfileTracker.stopTracking();
+                profileTracker.stopTracking();
             }
         };
 
-        mProfileTracker.startTracking();
+        profileTracker.startTracking();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Logs 'app deactivate' App Event.
+        // Logs 'app deactivate' App Event
         AppEventsLogger.deactivateApp(StartActivity.this);
     }
 
@@ -172,7 +90,7 @@ public class StartActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Logs 'install' and 'app activate' App Events.
+        // Logs 'install' and 'app activate' App Events
         AppEventsLogger.activateApp(StartActivity.this);
     }
 
@@ -183,52 +101,17 @@ public class StartActivity extends Activity {
         if (resultCode == RESULT_ALLTABS_QUIT_STAY_LOGIN){
             finish();
         }else{
-            mCallbackManager.onActivityResult( requestCode, resultCode, data);
-//            loginButtonTwitter.onActivityResult(requestCode, resultCode, data);
+            callbackManager.onActivityResult( requestCode, resultCode, data);
             ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-//    private void createDigitButton(){
-//        DigitsAuthButton digitsButton = (DigitsAuthButton) findViewById(R.id.auth_button);
-//        digitsButton.setCallback(new AuthCallback() {
-//            @Override
-//            public void success(DigitsSession session, String phoneNumber) {
-//                // Do something with the session and phone number
-//                Log.wtf(TAG, "DigitsAuth success");
-//            }
-//
-//            @Override
-//            public void failure(DigitsException exception) {
-//                // Do something on failure
-//                Log.wtf(TAG, "DigitsAuth Fail");
-//            }
-//        });
-//    }
-//
-//    private void createTwitterCallback() {
-//        loginButtonTwitter.setCallback(new Callback<TwitterSession>() {
-//            @Override
-//            public void success(Result<TwitterSession> result) {
-//                // Do something with result, which provides a TwitterSession for making API calls
-//                Log.wtf(TAG, "Twitter success");
-//            }
-//
-//            @Override
-//            public void failure(TwitterException exception) {
-//                // Do something on failure
-//                Log.wtf(TAG, "Twitter fail");
-//            }
-//        });
-//    }
-
     private void createFacebookCallback(){
-        mCallback = new FacebookCallback<LoginResult>() {
+        FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.wtf(TAG, "Facebook success");
-                mLoginResult = loginResult;
-                AccessToken accessToken = mLoginResult.getAccessToken();
+                StartActivity.this.loginResult = loginResult;
                 //We have the accessToken, now we want to do a graphRequest to get the user data
                 findFacebookUserData();
             }
@@ -241,9 +124,9 @@ public class StartActivity extends Activity {
                 Log.wtf(TAG, "error");
             }
         };
-        mCallbackManager = CallbackManager.Factory.create();
-        loginButtonFacebook.setReadPermissions(permissions);
-        loginButtonFacebook.registerCallback(mCallbackManager, mCallback);
+        callbackManager = CallbackManager.Factory.create();
+        buttonLoginFacebook.setReadPermissions(permissions);
+        buttonLoginFacebook.registerCallback(callbackManager, callback);
     }
 
     private void addFaceBookFriends(){
@@ -260,11 +143,11 @@ public class StartActivity extends Activity {
                             facebookIDs = tempArray.getJSONArray("data");
                             if( facebookIDs.length() > 0 ) {
                                 //actually have friends then proceed
-                                HashMap<String, Object> parms = new HashMap<String, Object>();
+                                HashMap<String, Object> parms = new HashMap<>();
                                 parms.put("ids", facebookIDs);
                                 try {
                                     //pass in a HashMap, get back a HashMap
-                                    parsefriendIDs = ParseCloud.callFunction("getParseFriendsFromFBID", parms);
+                                    parseFriendIDs = ParseCloud.callFunction("getParseFriendsFromFBID", parms);
                                 } catch (Exception e) {
                                     Log.wtf(TAG, e.getMessage());
                                 }
@@ -283,42 +166,42 @@ public class StartActivity extends Activity {
 
         //This method calls a graphrequest to get user id
         GraphRequest request = GraphRequest.newMeRequest(
-            mLoginResult.getAccessToken(),
-            new GraphRequest.GraphJSONObjectCallback() {
-                @Override
-                public void onCompleted(
-                        JSONObject object,
-                        GraphResponse response) {
-                    try {
-                        userEmail = object.get("email").toString();
-                        facebookID = object.get("id").toString();
-                        name = object.get("name").toString();
-                        pictureURL = object.getJSONObject("picture").getJSONObject("data").getString("url");
-
-                    } catch (JSONException e) {
-                        Log.wtf(TAG+"Graph request catch: ", e.getLocalizedMessage());
-                    }
-                    HashMap<String, Object> parms = new HashMap<String, Object>();
-                    parms.put("facebookID", facebookID);
-                    String tokenID = null;
-                    try {
-                        tokenID = ParseCloud.callFunction("getUserSessionToken", parms);
-                    } catch (ParseException e) {
-                        //New user, so we need to do another request to get friends
-                        addFaceBookFriends();
-                        return;
-                    }
-                    if (tokenID != null) {
+                loginResult.getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(
+                            JSONObject object,
+                            GraphResponse response) {
                         try {
-                            //OLD USER
-                            user = ParseUser.become(tokenID);
-                            goToHome();
+                            userEmail = object.get("email").toString();
+                            facebookID = object.get("id").toString();
+                            name = object.get("name").toString();
+                            pictureURL = object.getJSONObject("picture").getJSONObject("data").getString("url");
+
+                        } catch (JSONException e) {
+                            Log.wtf(TAG + "Graph request catch: ", e.getLocalizedMessage());
+                        }
+                        HashMap<String, Object> parms = new HashMap<>();
+                        parms.put("facebookID", facebookID);
+                        String tokenID;
+                        try {
+                            tokenID = ParseCloud.callFunction("getUserSessionToken", parms);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            //New user, so we need to do another request to get friends
+                            addFaceBookFriends();
+                            return;
+                        }
+                        if (tokenID != null) {
+                            try {
+                                //OLD USER
+                                user = ParseUser.become(tokenID);
+                                goToHome();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                }
-            });
+                });
         Bundle parameters = new Bundle();
         parameters.putString("fields", "name,id,email,picture.width(300).height(300)");
         request.setParameters(parameters);
@@ -326,15 +209,10 @@ public class StartActivity extends Activity {
     }
 
     private void createFaceBookParseUser() {
-        //TODO - see if user granted all permissions
-        Set getRecentlyGrantedPermissions = mLoginResult.getRecentlyGrantedPermissions();
-        Set getDeniedPermissions = mLoginResult.getRecentlyDeniedPermissions();
-
-        //String username = firstName +lastName;
         user = new ParseUser();
         user.setUsername(name);
         user.put("name", name);
-        user.setPassword(name); //TODO create a more complex password
+        user.setPassword(name + ((int)(Math.random() * 9999)));
         user.setEmail(userEmail);
         user.put("totalGames", 0);
         user.put("totalHugs", 0);
@@ -343,16 +221,16 @@ public class StartActivity extends Activity {
         user.put("inGame", false);
 
         user.signUpInBackground(new SignUpCallback() {
-            public void done(ParseException e) {//TODO incorporate multiple people with same name
+            public void done(ParseException e) {
                 if (e == null) {
                     // Hooray! Let them use the app now.
-                    ParseFacebookUtils.linkInBackground(user, mLoginResult.getAccessToken(), new SaveCallback() {
+                    ParseFacebookUtils.linkInBackground(user, loginResult.getAccessToken(), new SaveCallback() {
                         public void done(ParseException e) {
                             if (e == null) {
                                 ParseRelation<ParseUser> userFriends = user.getRelation("friends");
                                 ArrayList<ParseUser> friends;
                                 //Arrays in cloudcode are ArrayLists in Android
-                                friends = parsefriendIDs.get("friends");
+                                friends = parseFriendIDs.get("friends");
                                 //add each friend individually and then save alltogether
                                 for (int i = 0; i < friends.size(); ++i) {
                                     userFriends.add(friends.get(i));
@@ -379,62 +257,6 @@ public class StartActivity extends Activity {
                     Log.wtf(TAG, e.getLocalizedMessage());
                     Toast.makeText(getApplicationContext(),
                             "Could not sign you up", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        //user.setPassword(pass); //TODO random password generator
-    }
-
-//    private void check(){
-//        //name is incompatible
-//        name = edtxFirst.getText().toString() + " " + edtxLast.getText().toString();
-//        pass = edtxPass.getText().toString();
-//        if (edtxFirst.getText().length() == 0 ||
-//                edtxLast.getText().length() == 0 ||
-//                edtxPass.getText().length() == 0){
-//                    Toast.makeText(getApplicationContext(),
-//                            "Please enter a valid name.",
-//                            Toast.LENGTH_SHORT).show();
-//        }else{
-//            //TODO incorporate multiple people with same name
-//            ParseUser.logInInBackground(name, pass, new LogInCallback() {
-//                @Override
-//                public void done(ParseUser user, ParseException e) {
-//                    if (e == null) {
-//                        Toast.makeText(getApplicationContext(),
-//                                "Welcome back,\n" + user.getUsername(),
-//                                Toast.LENGTH_SHORT).show();
-//                        goToHome();
-//                    } else {
-//                        saveParse();
-//                    }
-//                }
-//            });
-//        }
-//    }
-
-    private void saveParse(){
-        ParseUser user = new ParseUser();
-        user.setUsername(name);
-        user.setPassword(pass);
-        user.put("name", name);
-        user.put("totalHugs", 0);
-        user.put("totalGames", 0);
-
-        user.signUpInBackground(new SignUpCallback() {
-            public void done(ParseException e) {//TODO incorporate multiple people with same name
-                if (e == null) {
-                    // Hooray! Let them use the app now.
-                    Toast.makeText(getApplicationContext(),
-                            "Welcome aboard, " + name + "!",
-                            Toast.LENGTH_SHORT).show();
-                    goToHome();
-                } else {
-                    // Sign up didn't succeed. Look at the ParseException
-                    // to figure out what went wrong
-                    Toast.makeText(getApplicationContext(),
-                            "Sorry, that user already exists",
-                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

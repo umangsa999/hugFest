@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.parse.FunctionCallback;
@@ -29,7 +30,6 @@ import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
-import com.usc.itp476.contact.contactproject.PicassoTrustAll;
 
 import java.util.HashMap;
 
@@ -117,7 +117,7 @@ public class ProfileFragment extends Fragment {
             String picLink = ParseUser.getCurrentUser().getString("pictureLink");
             int totalHugs = ParseUser.getCurrentUser().getInt("totalHugs");
             String name = ParseUser.getCurrentUser().getString("name");
-            PicassoTrustAll.getInstance( context ).load(picLink).fit().error(R.mipmap.large).placeholder(R.mipmap.large).into(imgPhoto);
+            Glide.with(this).load(picLink).into(imgPhoto);
             txvwTotal.setText( String.valueOf(totalHugs) );
             txvwName.setText( name );
             setListeners();
@@ -241,7 +241,7 @@ public class ProfileFragment extends Fragment {
             if (friend != null){
                 txvwTotal.setText(String.valueOf(friend.getInt("totalHugs")));
                 txvwName.setText(friend.getString("name"));
-                PicassoTrustAll.getInstance( context ).load(friend.getString("pictureLink") ).error(R.mipmap.large).placeholder(R.mipmap.large).fit().into(imgPhoto);
+                Glide.with(this).load(friend.getString("pictureLink")).error(R.mipmap.large).into(imgPhoto);
             }else{
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Could not find friend",

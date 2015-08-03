@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
@@ -25,47 +27,27 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.ContactApplication;
-import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.CustomParsePushBroadcastReceiver;
-import com.usc.itp476.contact.contactproject.PicassoTrustAll;
+import com.usc.itp476.contact.contactproject.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 
 public class TargetActivity extends Activity {
-    public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject.MAXPOINTS";
-    public static final String JOINEDGAME = "com.usc.itp476.contact.contactproject.JOINEDGAME";
-    public static final String GAMEID = "com.usc.itp476.contact.contactproject.GAMEID";
-    public static final String SCORERID = "com.usc.itp476.contact.contactproject.SCORERID";
-    public static final String SCOREEENAME = "com.usc.itp476.contact.contactproject.SCOREEENAME";
-    public static final String NAME = "com.usc.itp476.contact.contactproject.NAME";
-    public static final String IMAGENAME = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.IMAGENAME";
-    public static final String CURRENTPHOTOPATH = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.CURRENTPHOTOPATH";
 
-    final String TAG = this.getClass().getSimpleName();
-    public static final int RETURN_FROM_RESULT = 80085;
-    public static final int REQUEST_ACKNOWLEDGE_RESULT = 7236;
-    private static final int REQUEST_TAKE_PHOTO = 1;
-    private TextView txvwCurrentPoints;
-    private TextView txvwMaxPoints;
-    private TextView txvwName;
-    private ImageView mImageView;
-    private ImageView imvwTarget;
+    private final String TAG = this.getClass().getSimpleName();
+    private TextView textViewCurrentPoints;
+    private TextView textViewMaxPoints;
+    private TextView textViewName;
+    private ImageView imageViewTarget;
     private Button buttonTakePicture;
-//    private long backPressedTime = 0;
-//    private final long TIME_INTERVAL = 2000;
-//    private Toast backToast;
-//    private CameraManager manager;
-//    static final int REQUEST_IMAGE_CAPTURE = 1;
     private ParseFile currentPhoto;
     private ParseUser target;
-    private String mImageName;
-    private String mCurrentPhotoPath;
+    private String imageName;
+    private String currentPhotoPath;
     private String gameID;
     private int max;
     private int current = 0;
@@ -80,34 +62,32 @@ public class TargetActivity extends Activity {
 
         loaded = true;
         if (savedInstanceState == null) {
-            Log.wtf(TAG, "savedInstanceState is null");
+
             Intent i = getIntent();
-            max = i.getIntExtra(MAXPOINTS, 10);
-            joinedGame = i.getBooleanExtra(JOINEDGAME, true);
-            gameID = i.getStringExtra(GAMEID);
-            mImageName = i.getStringExtra(IMAGENAME);
-            mCurrentPhotoPath = i.getStringExtra(CURRENTPHOTOPATH);
+            max = i.getIntExtra(ContactApplication.MAXPOINTS, 10);
+            joinedGame = i.getBooleanExtra(ContactApplication.JOINEDGAME, true);
+            gameID = i.getStringExtra(ContactApplication.GAMEID);
+            imageName = i.getStringExtra(ContactApplication.IMAGENAME);
+            currentPhotoPath = i.getStringExtra(ContactApplication.CURRENTPHOTOPATH);
             target = null;
             getNewTarget();
         }else{
-            Log.wtf(TAG, "savedInstanceState is not null");
-            max = savedInstanceState.getInt(MAXPOINTS);
-            joinedGame = savedInstanceState.getBoolean(JOINEDGAME);
-            gameID = savedInstanceState.getString(GAMEID);
-            mImageName = savedInstanceState.getString(IMAGENAME);
-            mCurrentPhotoPath = savedInstanceState.getString(CURRENTPHOTOPATH);
+
+            max = savedInstanceState.getInt(ContactApplication.MAXPOINTS);
+            joinedGame = savedInstanceState.getBoolean(ContactApplication.JOINEDGAME);
+            gameID = savedInstanceState.getString(ContactApplication.GAMEID);
+            imageName = savedInstanceState.getString(ContactApplication.IMAGENAME);
+            currentPhotoPath = savedInstanceState.getString(ContactApplication.CURRENTPHOTOPATH);
             getLatestSelf();
             updateTarget();
         }
 
-        Log.wtf(TAG, "Try to subscribe");
         subscribeToGame();
 
-        imvwTarget = (ImageView) findViewById(R.id.imvwTarget);
-        mImageView = (ImageView) findViewById(R.id.imageViewFriend);
-        txvwCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
-        txvwMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
-        txvwName = (TextView) findViewById(R.id.txvwName);
+        imageViewTarget = (ImageView) findViewById(R.id.imvwTarget);
+        textViewCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
+        textViewMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
+        textViewName = (TextView) findViewById(R.id.txvwName);
         buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
 
         buttonTakePicture.setOnClickListener(new View.OnClickListener() {
@@ -123,16 +103,17 @@ public class TargetActivity extends Activity {
     @Override
     public void onResume(){
         super.onResume();
-        Log.wtf(TAG, "onResume");
         SharedPreferences prefs =
                 getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
         String restoredText = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
 
         if (restoredText != null) {
             String action = prefs.getString(CustomParsePushBroadcastReceiver.ACTION, null);
-            if(action.equals(CustomParsePushBroadcastReceiver.SCORE)){
-                String name = prefs.getString(CustomParsePushBroadcastReceiver.SCORERNAME, null);
-                Toast.makeText(this.getApplicationContext(), name, Toast.LENGTH_LONG ).show();
+            if( action != null){
+                if(action.equals(CustomParsePushBroadcastReceiver.SCORE)){
+                    String name = prefs.getString(CustomParsePushBroadcastReceiver.SCORERNAME, null);
+                    Toast.makeText(this.getApplicationContext(), name, Toast.LENGTH_LONG ).show();
+                }
             }
             SharedPreferences.Editor editor = prefs.edit();
             editor.remove(CustomParsePushBroadcastReceiver.ACTION);
@@ -141,12 +122,11 @@ public class TargetActivity extends Activity {
         }
 
         if (!loaded && !takingPicture){
-            Log.wtf(TAG, "pull from sharedPrefs");
-            max = prefs.getInt(MAXPOINTS, 10);
-            joinedGame = prefs.getBoolean(JOINEDGAME, true);
-            gameID = prefs.getString(GAMEID, "");
-            mImageName = prefs.getString(IMAGENAME, "");
-            mCurrentPhotoPath = prefs.getString(CURRENTPHOTOPATH, "");
+            max = prefs.getInt(ContactApplication.MAXPOINTS, 10);
+            joinedGame = prefs.getBoolean(ContactApplication.JOINEDGAME, true);
+            gameID = prefs.getString(ContactApplication.GAMEID, "");
+            imageName = prefs.getString(ContactApplication.IMAGENAME, "");
+            currentPhotoPath = prefs.getString(ContactApplication.CURRENTPHOTOPATH, "");
             loaded = true;
             getLatestSelf();
             updateTarget();
@@ -162,50 +142,39 @@ public class TargetActivity extends Activity {
             SharedPreferences sharedPreferences =
                     getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
             SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-            sharedPreferencesEditor.putInt(MAXPOINTS, max);
-            sharedPreferencesEditor.putBoolean(JOINEDGAME, joinedGame);
-            sharedPreferencesEditor.putString(GAMEID, gameID);
-            sharedPreferencesEditor.putString(CURRENTPHOTOPATH, mCurrentPhotoPath);
-            sharedPreferencesEditor.putString(IMAGENAME, mImageName);
+            sharedPreferencesEditor.putInt(ContactApplication.MAXPOINTS, max);
+            sharedPreferencesEditor.putBoolean(ContactApplication.JOINEDGAME, joinedGame);
+            sharedPreferencesEditor.putString(ContactApplication.GAMEID, gameID);
+            sharedPreferencesEditor.putString(ContactApplication.CURRENTPHOTOPATH, currentPhotoPath);
+            sharedPreferencesEditor.putString(ContactApplication.IMAGENAME, imageName);
             sharedPreferencesEditor.apply();
             loaded = false;
         }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.wtf(TAG, "onSaveInstanceState");
-        outState.putBoolean(JOINEDGAME, joinedGame);
-        outState.putInt(MAXPOINTS, max);
-        outState.putString(GAMEID, gameID);
-        outState.putString(CURRENTPHOTOPATH, mCurrentPhotoPath);
-        outState.putString(IMAGENAME, mImageName);
+        outState.putBoolean(ContactApplication.JOINEDGAME, joinedGame);
+        outState.putInt(ContactApplication.MAXPOINTS, max);
+        outState.putString(ContactApplication.GAMEID, gameID);
+        outState.putString(ContactApplication.CURRENTPHOTOPATH, currentPhotoPath);
+        outState.putString(ContactApplication.IMAGENAME, imageName);
     }
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(getApplicationContext(), "No back for you", Toast.LENGTH_SHORT).show();
-//        if (TIME_INTERVAL + backPressedTime > System.currentTimeMillis()) {
-//            backToast.cancel();
-//            removeMeFromGame();
-//            return;
-//        }else{
-//            backToast.show();
-//        }
-//        backPressedTime = System.currentTimeMillis();
+        //Toast.makeText(getApplicationContext(), "No back for you", Toast.LENGTH_SHORT).show();
+        //TODO, DO DO THIS LAWLS
     }
 
     private void subscribeToGame(){
         ParsePush.subscribeInBackground("game" + gameID, new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if (e == null) {
-                    Log.wtf(TAG, "successful subscribe to game channel " + gameID);
-                } else {
+                if (e != null)
                     Log.wtf(TAG, e.getLocalizedMessage());
-                }
-
             }
         });
     }
@@ -214,7 +183,6 @@ public class TargetActivity extends Activity {
         String myID = ParseUser.getCurrentUser().getObjectId();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.include("currentTarget");
-
         try {
             ParseUser me = query.get(myID);
             current = me.getInt("currentHugs");
@@ -235,7 +203,7 @@ public class TargetActivity extends Activity {
                             target = parseUser;
                             updateTarget();
                         } else {
-                            Log.wtf(TAG, "bad!: " + e.getLocalizedMessage());
+                            Log.wtf(TAG, e.getLocalizedMessage());
                         }
                     }
                 });
@@ -253,32 +221,31 @@ public class TargetActivity extends Activity {
     }
 
     private void getImage(){
-        PicassoTrustAll.getInstance(getApplicationContext()).load(target.getString("pictureLink")).placeholder(R.mipmap.large).error(R.mipmap.large).fit().into(imvwTarget);
+        Glide.with(this).load(target.getString("pictureLink")).error(R.mipmap.large).into(imageViewTarget);
     }
 
     private void setName(){
-        txvwName.setText(target.getString("name"));
+        textViewName.setText(target.getString("name"));
     }
 
     private void setPoints(){
-        txvwCurrentPoints.setText(String.valueOf(current));
-        txvwMaxPoints.setText(String.valueOf(max));
+        textViewCurrentPoints.setText(String.valueOf(current));
+        textViewMaxPoints.setText(String.valueOf(max));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //V only geta thumbnail
-        Log.wtf(TAG, "Result code is: " + resultCode);
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
+
+        if (requestCode == ContactApplication.REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
             Bitmap imageBitmap = convertToBM();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, ContactApplication.COMPRESS_QUALITY, stream);
             byte[] byteArray = stream.toByteArray();
-            currentPhoto = new ParseFile(mImageName, byteArray);
+            currentPhoto = new ParseFile(imageName, byteArray);
             signalIncrease();
             takingPicture = false;
         }
-        else if (resultCode == RETURN_FROM_RESULT) {
+        else if (resultCode == ContactApplication.RETURN_FROM_RESULT) {
             finish();
         }
     }
@@ -287,26 +254,29 @@ public class TargetActivity extends Activity {
     private Bitmap convertToBM() {
 
         // Get the dimensions of the View
-        int targetW = imvwTarget.getWidth();
-        int targetH = imvwTarget.getHeight();
-        Log.wtf(TAG, "size is: " + targetW + "x" + targetH);
+        int targetW = imageViewTarget.getWidth();
+        int targetH = imageViewTarget.getHeight();
 
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
 
-//        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-        int scaleFactor = photoW / targetW;
+        int scaleFactor;
+        if( targetH != 0 && targetW != 0){
+            scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        }else if(targetW != 0){
+            scaleFactor = photoW / targetW;
+        }else{
+            scaleFactor = Math.min(photoW/ContactApplication.DEFAULT_IMAGE_SIZE,
+                    photoH/ContactApplication.DEFAULT_IMAGE_SIZE);
+        }
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-
-        return bitmap;
+        return BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
     }
 
     private void dispatchTakePictureIntent() {
@@ -316,7 +286,6 @@ public class TargetActivity extends Activity {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-
                 //getOutputMediaFile gets a appropriate, unique filepathname
                 photoFile = getOutputMediaFile();
             } catch (Exception ex) {
@@ -326,7 +295,7 @@ public class TargetActivity extends Activity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                startActivityForResult(takePictureIntent, ContactApplication.REQUEST_TAKE_PHOTO);
             }
         }
     }
@@ -351,11 +320,11 @@ public class TargetActivity extends Activity {
                 }
             }
             // Create a media file name
-            String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+            String timeStamp = SimpleDateFormat.getDateTimeInstance().toString();
             File mediaFile;
-            mImageName = "MI_" + timeStamp + ".png";
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-            mCurrentPhotoPath = mediaFile.getAbsolutePath();
+            imageName = "MI_" + timeStamp + ".png";
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + imageName);
+            currentPhotoPath = mediaFile.getAbsolutePath();
             return mediaFile;
         }else{
             Log.wtf( TAG, "External storage not writable or readable" );
@@ -366,21 +335,14 @@ public class TargetActivity extends Activity {
     /* Checks if external storage is available for read and write */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            Log.wtf("TA, writable", state);
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     /* Checks if external storage is available to at least read */
     public boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            Log.wtf("TA, readable", state);
-            return true;
-        }
-        return false;
+        return ( Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) );
     }
 
     private void signalIncrease(){
@@ -392,16 +354,14 @@ public class TargetActivity extends Activity {
                 if (e == null) {
                     increasePoints();
                     if (!didWin){
-                        Log.wtf(TAG, "not done yet");
                         getNewTarget();
                     }else{
                         Intent i = new Intent( getApplicationContext(), ResultActivity.class);
-                        i.putExtra(GAMEID, gameID);
+                        i.putExtra(ContactApplication.GAMEID, gameID);
                         startActivity(i);
-                        Log.wtf(TAG, "DONE");
                     }
                 } else {
-                    Log.wtf(TAG, "cannot increase score " + e.getLocalizedMessage());
+                    Log.wtf(TAG, "Cannot increase score " + e.getLocalizedMessage());
                 }
             }
         });
@@ -410,59 +370,10 @@ public class TargetActivity extends Activity {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Log.wtf(TAG, "could not save image: " + e.getLocalizedMessage());
                     Toast.makeText(getApplicationContext(),
                             "Could not upload image, try again", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-
-    //TODO delete this if we don't need it
-    public static Activity getActivity() {
-        Class activityThreadClass = null;
-        try {
-            activityThreadClass = Class.forName("TargetActivity.java");
-            Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
-            Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
-            activitiesField.setAccessible(true);
-            HashMap activities = (HashMap) activitiesField.get(activityThread);
-            for(Object activityRecord:activities.values()){
-                Class activityRecordClass = activityRecord.getClass();
-                Field pausedField = activityRecordClass.getDeclaredField("paused");
-                pausedField.setAccessible(true);
-                if(!pausedField.getBoolean(activityRecord)) {
-                    Field activityField = activityRecordClass.getDeclaredField("activity");
-                    activityField.setAccessible(true);
-                    Activity activity = (Activity) activityField.get(activityRecord);
-                    return activity;
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-        return null;
-    }
-
-//    private void removeMeFromGame(){
-//        HashMap<String, String> params = new HashMap<>();
-//        params.put("playerID", ParseUser.getCurrentUser().getObjectId());
-//        ParseCloud.callFunctionInBackground("removeFromGame", params, new FunctionCallback<Boolean>() {
-//            @Override
-//            public void done(Boolean isGood, ParseException e) {
-//                if (e == null){
-//                    Log.wtf(TAG, isGood.toString() + " returns back from call");
-//                    Intent i = new Intent();
-//                    setResult(CreateGameActivity.RESULT_CODE_QUIT_GAME);
-//                    finish();
-//                }else{
-//                    Log.wtf(TAG, "Could not leave game: " + e.getLocalizedMessage());
-//                    Toast.makeText(getApplicationContext(),
-//                            "You cannot leave this game", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//    }
 }

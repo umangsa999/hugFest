@@ -16,13 +16,9 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
 import com.parse.FunctionCallback;
-import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
@@ -30,7 +26,6 @@ import com.usc.itp476.contact.contactproject.adapters.FriendListGridAdapter;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class FriendsFragment extends Fragment {
     final String TAG = this.getClass().getSimpleName();
@@ -97,7 +92,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void generateGridView(){
-        mFriendListAdapter = new FriendListGridAdapter( mContext, false, mAllTabActivity, true);
+        mFriendListAdapter = new FriendListGridAdapter( mContext, false, mAllTabActivity);
         gridView.setAdapter(mFriendListAdapter);
 
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
