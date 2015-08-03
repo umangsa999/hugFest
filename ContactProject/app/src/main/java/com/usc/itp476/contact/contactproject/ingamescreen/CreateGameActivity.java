@@ -50,10 +50,10 @@ public class CreateGameActivity extends Activity {
         setContentView(R.layout.activity_create_game);
 
         selectedFriendParseIDs = new ArrayList<>();
-        gridView = (GridView) findViewById(R.id.grid_view);
-        buttonCreate = (Button) findViewById(R.id.btnCreate);
-        textViewwMax = (TextView) findViewById(R.id.txvwMax);
-        seekbarMax = (SeekBar) findViewById(R.id.skbrMax);
+        gridView = (GridView) findViewById(R.id.gridViewInvite);
+        buttonCreate = (Button) findViewById(R.id.buttonCreate);
+        textViewwMax = (TextView) findViewById(R.id.textViewMaxCreate);
+        seekbarMax = (SeekBar) findViewById(R.id.seekbarMax);
         setGridAdapter();
         setListeners();
     }

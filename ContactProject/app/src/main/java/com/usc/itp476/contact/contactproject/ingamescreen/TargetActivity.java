@@ -83,10 +83,10 @@ public class TargetActivity extends Activity {
 
         subscribeToGame();
 
-        imageViewTarget = (ImageView) findViewById(R.id.imvwTarget);
-        textViewCurrentPoints = (TextView) findViewById(R.id.txvwPoints);
-        textViewMaxPoints = (TextView) findViewById(R.id.txvwMaxScore);
-        textViewName = (TextView) findViewById(R.id.txvwName);
+        imageViewTarget = (ImageView) findViewById(R.id.imageViewTarget);
+        textViewCurrentPoints = (TextView) findViewById(R.id.textViewCurrentPoints);
+        textViewMaxPoints = (TextView) findViewById(R.id.textViewMaxScore);
+        textViewName = (TextView) findViewById(R.id.textViewNameTarget);
         Button buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
 
         buttonTakePicture.setOnClickListener(new View.OnClickListener() {

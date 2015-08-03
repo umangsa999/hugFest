@@ -87,11 +87,11 @@ public class FriendListGridAdapter extends BaseAdapter {
         }
 
         //SET FRIENDS NAME AND IMAGE HERE
-        holder.imageViewPicture = (ImageView) convertView.findViewById(R.id.imageViewFriend);
-        holder.textViewScore = (TextView) convertView.findViewById(R.id.imageViewScore);
-        holder.checkBoxInvited = (CheckBox) convertView.findViewById(R.id.ckbxInvite);
-        holder.textViewObjectID = (TextView) convertView.findViewById(R.id.ObjectIdTextView);
-        holder.textViewName = (TextView) convertView.findViewById(R.id.txvwFriendName);
+        holder.imageViewPicture = (ImageView) convertView.findViewById(R.id.imageViewPhotoFriend);
+        holder.textViewScore = (TextView) convertView.findViewById(R.id.textViewScoreFriend);
+        holder.checkBoxInvited = (CheckBox) convertView.findViewById(R.id.checkBoxInvite);
+        holder.textViewObjectID = (TextView) convertView.findViewById(R.id.textViewObjectID);
+        holder.textViewName = (TextView) convertView.findViewById(R.id.textViewNameFriend);
         ParseUser me = friendsArrayForm.get(position);
 
         String pictureURL = me.getString("pictureLink");
@@ -127,8 +127,8 @@ public class FriendListGridAdapter extends BaseAdapter {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TextView id = (TextView) view.findViewById(R.id.ObjectIdTextView);
-                    CheckBox c = (CheckBox) view.findViewById(R.id.ckbxInvite);
+                    TextView id = (TextView) view.findViewById(R.id.textViewObjectID);
+                    CheckBox c = (CheckBox) view.findViewById(R.id.checkBoxInvite);
                     c.setChecked(!c.isChecked());
                     //this is invite friends
                     if (holder.checkBoxInvited.isChecked()) {
@@ -148,7 +148,7 @@ public class FriendListGridAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View view) {
                     //This is where we handle pressing gridtiles
-                    TextView id = (TextView) view.findViewById(R.id.ObjectIdTextView);
+                    TextView id = (TextView) view.findViewById(R.id.textViewObjectID);
                     //This is the stinkin friends list
                     Log.wtf(TAG + "Clicked", id.getText().toString());
                     ((AllTabActivity) FriendListGridAdapter.this.parent).showFriendProfile(

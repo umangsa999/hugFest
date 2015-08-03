@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,7 +77,7 @@ public class MapDisplayFragment extends Fragment
         rootView = inflater.inflate(
                 R.layout.activity_map_display, container, false);
 
-        buttonNewGame = (ImageButton) rootView.findViewById(R.id.btnGame);
+        buttonNewGame = (ImageButton) rootView.findViewById(R.id.buttonStartGameCreation);
 
         //TODO make sure this is same map as last time
         //TODO it seems to just create new since getMapAsync again

@@ -23,7 +23,7 @@
 
         <TextView android:text="10" android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/txvwPoints"
+            android:id="@+id/textViewCurrentPoints"
             android:textSize="28sp"
             android:maxWidth="35dp"
             android:layout_marginRight="4dp"
@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="10"
-            android:id="@+id/txvwMaxScore"
+            android:id="@+id/textViewMaxScore"
             android:textSize="28sp"
             android:maxWidth="35dp" />
     </LinearLayout>
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="NAME"
-            android:id="@+id/txvwName"
+            android:id="@+id/textViewNameTarget"
             android:layout_below="@+id/textView"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-8dp"
@@ -78,7 +78,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imvwTarget"
+        android:id="@+id/imageViewTarget"
         android:src="@mipmap/large"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
@@ -91,7 +91,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageViewFriend"
+        android:id="@+id/imageViewPhotoFriend"
         android:src="@mipmap/large"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"

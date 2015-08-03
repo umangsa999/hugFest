@@ -22,7 +22,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="32sp"
         android:text="Nathan Greenfield"
-        android:id="@+id/resultsWinnerName"
+        android:id="@+id/imageViewWinnerName"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/textView"
         android:layout_marginTop="-8dp"
@@ -31,8 +31,8 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/resultsWinnerImage"
-        android:layout_below="@+id/resultsWinnerName"
+        android:id="@+id/imageViewWinnerImage"
+        android:layout_below="@+id/imageViewWinnerName"
         android:layout_centerHorizontal="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
@@ -49,7 +49,7 @@
         android:text="So close..."
         android:textSize="20sp"
         android:id="@+id/textView3"
-        android:layout_below="@+id/resultsWinnerImage"
+        android:layout_below="@+id/imageViewWinnerImage"
         android:layout_marginBottom="-8dp"
         android:layout_centerHorizontal="true" />
 
@@ -72,13 +72,13 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Raymond Kim"
-                android:id="@+id/resultsLeftName"
-                android:layout_alignLeft="@+id/resultsLeftImage"
-                android:layout_alignStart="@+id/resultsLeftImage"
-                android:layout_alignRight="@+id/resultsLeftImage"
-                android:layout_alignEnd="@+id/resultsLeftImage"
+                android:id="@+id/imageViewLeftName"
+                android:layout_alignLeft="@+id/imageViewLeftImage"
+                android:layout_alignStart="@+id/imageViewLeftImage"
+                android:layout_alignRight="@+id/imageViewLeftImage"
+                android:layout_alignEnd="@+id/imageViewLeftImage"
                 android:gravity="center_horizontal"
-                android:layout_below="@+id/resultsLeftImage"/>
+                android:layout_below="@+id/imageViewLeftImage"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -106,13 +106,13 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Mike Lee"
-                android:layout_alignLeft="@+id/resultsMiddleImage"
-                android:layout_alignStart="@+id/resultsMiddleImage"
-                android:layout_alignRight="@+id/resultsMiddleImage"
-                android:layout_alignEnd="@+id/resultsMiddleImage"
+                android:layout_alignLeft="@+id/imageViewMiddleImage"
+                android:layout_alignStart="@+id/imageViewMiddleImage"
+                android:layout_alignRight="@+id/imageViewMiddleImage"
+                android:layout_alignEnd="@+id/imageViewMiddleImage"
                 android:gravity="center_horizontal"
-                android:id="@+id/resultsMiddleName"
-                android:layout_below="@+id/resultsMiddleImage"/>
+                android:id="@+id/imageViewMiddleName"
+                android:layout_below="@+id/imageViewMiddleImage"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -136,7 +136,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/resultsRightImage"
+                android:id="@+id/imageViewRightImage"
                 android:src="@mipmap/medium"
                 android:adjustViewBounds="true"
                 android:maxWidth="100dp"
@@ -153,13 +153,13 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Ryan Zhou"
-                android:id="@+id/resultsRightName"
-                android:layout_alignLeft="@+id/resultsRightImage"
-                android:layout_alignStart="@+id/resultsRightImage"
-                android:layout_alignRight="@+id/resultsRightImage"
-                android:layout_alignEnd="@+id/resultsRightImage"
+                android:id="@+id/imageViewRightName"
+                android:layout_alignLeft="@+id/imageViewRightImage"
+                android:layout_alignStart="@+id/imageViewRightImage"
+                android:layout_alignRight="@+id/imageViewRightImage"
+                android:layout_alignEnd="@+id/imageViewRightImage"
                 android:gravity="center_horizontal"
-                android:layout_below="@+id/resultsRightImage"/>
+                android:layout_below="@+id/imageViewRightImage"/>
 
         </RelativeLayout>
 

@@ -46,10 +46,10 @@ public class ProfileFragment extends Fragment {
 
         //v1.0 do not allow for edits from user profile
 
-        imageViewPhoto = (ImageView) rootView.findViewById(R.id.imvwPhoto);
-        textViewName = (TextView) rootView.findViewById(R.id.txvwName);
+        imageViewPhoto = (ImageView) rootView.findViewById(R.id.imageViewProfileImage);
+        textViewName = (TextView) rootView.findViewById(R.id.textViewNameProfile);
         textViewTotal = (TextView) rootView.findViewById(R.id.textViewTotal);
-        buttonLogout = (Button) rootView.findViewById(R.id.btnLogout);
+        buttonLogout = (Button) rootView.findViewById(R.id.buttonLogout);
 
         if( mFriendProfile ) {
             //We are viewing the friend with the profile fragment

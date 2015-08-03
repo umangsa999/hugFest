@@ -6,7 +6,7 @@
     android:background="@drawable/borderouterimage">
 
     <ImageView
-        android:id="@+id/imageViewFriend"
+        android:id="@+id/imageViewPhotoFriend"
         android:layout_width="135dp"
         android:layout_height="115dp"
         android:gravity="center"
@@ -20,12 +20,12 @@
         android:layout_height="wrap_content"
         android:text="30"
         android:textColor="@android:color/black"
-        android:id="@+id/imageViewScore"
+        android:id="@+id/textViewScoreFriend"
         android:layout_marginRight="4dp"
         android:layout_marginTop="4dp"
-        android:layout_alignTop="@+id/imageViewFriend"
-        android:layout_alignEnd="@+id/imageViewFriend"
-        android:layout_alignRight="@+id/imageViewFriend"
+        android:layout_alignTop="@+id/imageViewPhotoFriend"
+        android:layout_alignEnd="@+id/imageViewPhotoFriend"
+        android:layout_alignRight="@+id/imageViewPhotoFriend"
         style="@style/TextAppearance.AppCompat.Headline"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -33,19 +33,19 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ckbxInvite"
+        android:id="@+id/checkBoxInvite"
         android:minWidth="30dp"
         android:minHeight="30dp"
-        android:layout_alignTop="@+id/imageViewFriend"
-        android:layout_alignEnd="@+id/imageViewFriend"
-        android:layout_alignRight="@+id/imageViewFriend"/>
+        android:layout_alignTop="@+id/imageViewPhotoFriend"
+        android:layout_alignEnd="@+id/imageViewPhotoFriend"
+        android:layout_alignRight="@+id/imageViewPhotoFriend"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="1234"
-        android:id="@+id/ObjectIdTextView"
+        android:id="@+id/textViewObjectID"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -55,8 +55,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ryan Zhou"
-        android:id="@+id/txvwFriendName"
-        android:layout_below="@id/imageViewFriend"
+        android:id="@+id/textViewNameFriend"
+        android:layout_below="@id/imageViewPhotoFriend"
         style="@style/TextAppearance.AppCompat.Headline"
         android:textSize="20sp"
         android:textColor="#000000"

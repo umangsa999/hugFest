@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -44,8 +43,8 @@ public class FriendsFragment extends Fragment {
         context = getActivity().getApplicationContext();
         activity = getActivity();
 
-        imageButtonAddFriend = (ImageButton) rootView.findViewById(R.id.btnAdd);
-        gridView = (GridView) rootView.findViewById(R.id.grid_view);
+        imageButtonAddFriend = (ImageButton) rootView.findViewById(R.id.buttonAddFriend);
+        gridView = (GridView) rootView.findViewById(R.id.gridViewFriends);
 
         setAddListener();
         generateGridView();

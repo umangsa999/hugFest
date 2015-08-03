@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,7 +29,7 @@ public class ResultActivity extends Activity {
     private final int TOTAL_DISPLAY = 4;
     private ImageView images[] = new ImageView[TOTAL_DISPLAY];
     private TextView names[] = new TextView[TOTAL_DISPLAY];
-    private ArrayList<HashMap<String, Object>> topPlayersList;
+    private ArrayList<HashMap<String, Object>> topPlayersList = null;
     private String gameID = null;
     private boolean loaded = false;
 
@@ -37,15 +38,15 @@ public class ResultActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        images[0] = (ImageView) findViewById(R.id.resultsWinnerImage);
-        images[1] = (ImageView) findViewById(R.id.resultsLeftImage);
-        images[2] = (ImageView) findViewById(R.id.resultsMiddleImage);
-        images[3] = (ImageView) findViewById(R.id.resultsRightImage);
+        images[0] = (ImageView) findViewById(R.id.imageViewWinnerImage);
+        images[1] = (ImageView) findViewById(R.id.imageViewLeftImage);
+        images[2] = (ImageView) findViewById(R.id.imageViewMiddleImage);
+        images[3] = (ImageView) findViewById(R.id.imageViewRightImage);
 
-        names[0] = (TextView) findViewById(R.id.resultsWinnerName);
-        names[1] = (TextView) findViewById(R.id.resultsLeftName);
-        names[2] = (TextView) findViewById(R.id.resultsMiddleName);
-        names[3] = (TextView) findViewById(R.id.resultsRightName);
+        names[0] = (TextView) findViewById(R.id.imageViewWinnerName);
+        names[1] = (TextView) findViewById(R.id.imageViewLeftName);
+        names[2] = (TextView) findViewById(R.id.imageViewMiddleName);
+        names[3] = (TextView) findViewById(R.id.imageViewRightName);
 
         loaded = true;
         if (savedInstanceState == null){
@@ -89,7 +90,7 @@ public class ResultActivity extends Activity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(ContactApplication.GAMEID, gameID);
     }

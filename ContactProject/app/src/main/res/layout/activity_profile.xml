@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ryan Zhou"
-            android:id="@+id/txvwName"
+            android:id="@+id/textViewNameProfile"
             android:textSize="32dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
@@ -36,7 +36,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/imvwPhoto"
+        android:id="@+id/imageViewProfileImage"
         android:contentDescription="User image"
         android:src="@mipmap/large"
         android:adjustViewBounds="true"
@@ -74,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Logout"
-            android:id="@+id/btnLogout" />
+            android:id="@+id/buttonLogout" />
 
         <Button
             android:layout_width="wrap_content"
@@ -94,6 +94,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/imvwPhoto"/>
+        android:layout_below="@id/imageViewProfileImage"/>
 
 </RelativeLayout>
