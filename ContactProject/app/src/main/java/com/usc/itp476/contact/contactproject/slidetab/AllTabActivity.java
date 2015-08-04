@@ -53,7 +53,7 @@ public class AllTabActivity extends FragmentActivity {
 
         titles.add("Games");
         titles.add("Friends");
-        titles.add( "Profile" );
+        titles.add("Profile");
 
         tabs.add(new MapDisplayFragment());
         friendFragment = new FriendsFragment();

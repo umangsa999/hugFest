@@ -49,7 +49,7 @@ public class FriendsFragment extends Fragment {
         imageButtonAddFriend = (ImageButton) rootView.findViewById(R.id.buttonAddFriend);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         gridView = (GridView) rootView.findViewById(R.id.gridViewFriends);
-        swipeRefreshLayout.setColorScheme(
+        swipeRefreshLayout.setColorSchemeColors(
                 R.color.swipe_color_1, R.color.swipe_color_2,
                 R.color.swipe_color_3, R.color.swipe_color_4);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
