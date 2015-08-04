@@ -47,6 +47,7 @@ Parse.Cloud.define("sendInvitePush", function(request, response){
 
 });
 
+
 Parse.Cloud.define("sendScorePush", function(request, response){
 	Parse.Cloud.useMasterKey();
 	console.log("START OF SENDSCOREPUSH");
@@ -85,6 +86,7 @@ Parse.Cloud.define("sendScorePush", function(request, response){
 	);
 });
 
+
 Parse.Cloud.define("sendEndPush", function(request, response){
 	Parse.Cloud.useMasterKey();
 	console.log("START SENDENDPUSH");
@@ -118,6 +120,7 @@ Parse.Cloud.define("sendEndPush", function(request, response){
 		}
 	);
 });
+
 
 Parse.Cloud.define("joinGame", function(request, response){
 	Parse.Cloud.useMasterKey();
@@ -300,7 +303,6 @@ Parse.Cloud.define("getNewTarget", function(request, response){
 });
 
 
-
 Parse.Cloud.define("getPlayerEndScores", function(request, response){
 	var gameID = request.params.gameID;
 	console.log("Trying to find players end scores with game ID: " + gameID);
@@ -338,7 +340,6 @@ Parse.Cloud.define("getPlayerEndScores", function(request, response){
 		}
 	});
 });
-
 
 
 //Get sessionToken
@@ -539,17 +540,31 @@ Parse.Cloud.define("deleteGameData", function(request, response){
 				function(markerAgain){
 
 					console.log("deleted marker");
-					game.destroy({
-						success:function(gameAgain){
 
-							console.log("deleted game");
-							response.success("good");
+					var players = game.relation("players");
+					var playerQuery = players.query();
+					var playerQueryPromise = playerQuery.find();
+					playerQueryPromise.then(
+						function(players){
+
+							destroyAll(players);
+							game.destroy({
+								success:function(gameAgain){
+
+									console.log("deleted game");
+									response.success("good");
+								},
+								error:function(error){
+
+									response.error(error.message);
+								}
+							});
 						},
-						error:function(error){
+						function(error){
 
 							response.error(error.message);
 						}
-					});
+					);
 				},
 				function(error){
 
@@ -580,6 +595,7 @@ Parse.Cloud.define("removePlayerFromGame", function(request, response){
 		function(doneDiana){
 
 			var game = doneDiana.get("currentGame");
+
 			if (didFinishGame){
 				console.log("did finish game");
 				var totalGames = doneDiana.get("totalGames") + 1;
@@ -587,63 +603,133 @@ Parse.Cloud.define("removePlayerFromGame", function(request, response){
 				var currentHugs = doneDiana.get("currentHugs");
 				doneDiana.set("totalGames", totalGames);
 				doneDiana.set("totalHugs", currentHugs + oldTotalHugs);
-			}
-			doneDiana.set("inGame", false);
-			doneDiana.set("currentTarget", null);
-			doneDiana.set("currentGame", null);
-			doneDiana.set("currentHugs", 0);
-			var savePromise = doneDiana.save();
-			savePromise.then(
-				function(doneDianaAgain){
 
-					console.log("player save complete");
-					var currentPlayers = game.get("numberPlayers");
-					game.set("numberPlayers", currentPlayers - 1);
+				console.log("create a holder user");
+				var holderPlayer = new Parse.User();
+				holderPlayer.set("username", doneDiana.get("username") + game.id);
+				holderPlayer.set("password", doneDiana.get("name"));
+				holderPlayer.set("name", doneDiana.get("name"));
+				holderPlayer.set("currentHugs", currentHugs);
+				holderPlayer.set("pictureLink", doneDiana.get("pictureLink"));
+				holderPlayer.signUp(null, {
+					success:function(tempPlayer){
 
-					if (didFinishGame == false){
+						console.log("added holder user");
 						var players = game.relation("players");
 						players.remove(doneDiana);
+						players.add(holderPlayer);
+						var currentPlayers = game.get("numberPlayers");
+						game.set("numberPlayers", currentPlayers - 1);
+
+						var gameSavePromise = game.save();
+						gameSavePromise.then(
+							function(gameAgain){
+
+								console.log("game save complete");
+								doneDiana.set("inGame", false);
+								doneDiana.set("currentTarget", null);
+								doneDiana.set("currentGame", null);
+								doneDiana.set("currentHugs", 0);
+								var savePromise = doneDiana.save();
+								savePromise.then(
+									function(doneDianaAgain){
+
+										console.log("player save complete");
+										var markerPointer = gameAgain.get("marker");
+										markerPointer.fetch({
+											success:function(marker){
+
+												console.log("found marker");
+												marker.set("numberPlayers", currentPlayers - 1);
+												var markerSavePromise = marker.save();
+												markerSavePromise.then(
+													function(markerAgain){
+
+														console.log("marker save complete");
+														response.success();
+													},
+													function(error){
+
+														response.error(error.message);
+													}
+												);
+											},
+											error:function(error){
+
+												reponse.error(error.message);
+											}
+										});
+									},function(error){
+
+										response.error(error.message);
+									}
+								);
+							},
+							function(error){
+
+								response.error(error.message);
+							}
+						);
+					},
+					error:function(error){
+
+						response.error(error.message);
 					}
-					var gameSavePromise = game.save();
-					gameSavePromise.then(
-						function(gameAgain){
+				});
+			}else{
+				var currentPlayers = game.get("numberPlayers");
+				game.set("numberPlayers", currentPlayers - 1);
 
-							console.log("game save complete");
-							var markerPointer = game.get("marker");
-							markerPointer.fetch({
-								success:function(marker){
+				doneDiana.set("inGame", false);
+				doneDiana.set("currentTarget", null);
+				doneDiana.set("currentGame", null);
+				doneDiana.set("currentHugs", 0);
+				var savePromise = doneDiana.save();
+				savePromise.then(
+					function(doneDianaAgain){
 
-									console.log("found marker");
-									marker.set("numberPlayers", currentPlayers - 1);
-									var markerSavePromise = marker.save();
-									markerSavePromise.then(
-										function(markerAgain){
+						console.log("player save complete");
+						var gameSavePromise = game.save();
+						gameSavePromise.then(
+							function(gameAgain){
 
-											console.log("marker save complete");
-											response.success();
-										},
-										function(error){
+								console.log("game save complete");
+								var markerPointer = game.get("marker");
+								markerPointer.fetch({
+									success:function(marker){
 
-											response.error(error.message);
-										}
-									);
-								},
-								error:function(error){
+										console.log("found marker");
+										marker.set("numberPlayers", currentPlayers - 1);
+										var markerSavePromise = marker.save();
+										markerSavePromise.then(
+											function(markerAgain){
 
-									reponse.error(error.message);
-								}
-							});
-						},function(error){
+												console.log("marker save complete");
+												response.success();
+											},
+											function(error){
 
-							response.error(error.message);
-						}
-					);
-				},
-				function(error){
+												response.error(error.message);
+											}
+										);
+									},
+									error:function(error){
 
-					response.error(error.message);
-				}
-			);
+										reponse.error(error.message);
+									}
+								});
+							},function(error){
+
+								response.error(error.message);
+							}
+						);
+					},
+					function(error){
+
+						response.error(error.message);
+					}
+				);
+			}
 		},
 		function(error){
 
@@ -651,7 +737,6 @@ Parse.Cloud.define("removePlayerFromGame", function(request, response){
 		}
 	);
 });
-
 
 
 //GET array of ParseUser objectID
@@ -781,7 +866,6 @@ Parse.Cloud.define("addFriendsToGame", function(request, response){
 });
 
 
-
 Parse.Cloud.define("increaseScore", function( request, response){
 	Parse.Cloud.useMasterKey();
 	//Someone has scored, I will get the ParseUser himself, increase his score & alert all player in game
@@ -791,69 +875,73 @@ Parse.Cloud.define("increaseScore", function( request, response){
 	//no problemo, I got the parseUser itself
 
 	var parseUserQuery = new Parse.Query(Parse.User);
+	parseUserQuery.include("currentGame");
 	parseUserQuery.get(userID).then(
 		function(parseUser){
-			parseUser.get("currentGame").fetch({
-				success:function(game){
+			var game = parseUser.get("currentGame");
+			if (game.get("isOver")){
+				respones.error("game is over");
+			}else{
+				var currentHugs = parseUser.get("currentHugs");
+				console.log("hugs are: " + currentHugs);
+				parseUser.set( "currentHugs", ++currentHugs);
+				parseUser.save().then(
+					function(parseUser){
 
-					if (game.get("isOver")){
-						respones.error("game is over");
-					}else{
-						var currentHugs = parseUser.get("currentHugs");
-						console.log("hugs are: " + currentHugs);
-						parseUser.set( "currentHugs", ++currentHugs);
-						parseUser.save().then(
-							function(parseUser){
-								//TODO notify all users here
-								console.log("hugs are now: "+parseUser.get("currentHugs"));
-								if (currentHugs == game.get("pointsToWin")){
-									game.set("isOver", true);
-									var gameSavePromise = game.save();
-									gameSavePromise.then(
-										function(gameAgain){
-											gameAgain.get("marker").fetch({
-												success:function(marker){
-													marker.set("isOver", true);
-													var markerSavePromise = marker.save();
-													markerSavePromise.then(
-														function(markerAgain){
-															Parse.Cloud.run("sendEndPush",
-																{"gameID":game.id, "winnerID":parseUser.id, "endFromQuit":false});
-															response.success(true);
-														},function(error){
-															response.error(error.message);
-														}
-													);
+						//TODO notify all users here
+						console.log("hugs are now: " + parseUser.get("currentHugs"));
+						if (currentHugs == game.get("pointsToWin")){
+							game.set("isOver", true);
+							var gameSavePromise = game.save();
+							gameSavePromise.then(
+								function(gameAgain){
+
+									gameAgain.get("marker").fetch({
+										success:function(marker){
+
+											marker.set("isOver", true);
+											var markerSavePromise = marker.save();
+											markerSavePromise.then(
+												function(markerAgain){
+
+													Parse.Cloud.run("sendEndPush",
+														{"gameID":game.id, "winnerID":parseUser.id, "endFromQuit":false});
+													response.success(true);
 												},
-												error:function(error){
+												function(error){
+
 													response.error(error.message);
 												}
-											});
-										},function(error){
+											);
+										},
+										error:function(error){
+
 											response.error(error.message);
 										}
-									);
-								}else{
-									response.success(false);
+									});
+								},
+								function(error){
+
+									response.error(error.message);
 								}
-							},
-							function(error){
-								response.error(error);
-							}
-						);
+							);
+						}else{
+							response.success(false);
+						}
+					},
+					function(error){
+
+						response.error(error);
 					}
-				},
-				error:function(error){
-					response.error(error.message);
-				}
-			});
+				);
+			}
 		},
 		function(error){
+
 			response.error(error.message);
 		}
 	);
 });
-
 
 
 //Take in array of Facebook UserIDs
