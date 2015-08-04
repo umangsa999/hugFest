@@ -1,5 +1,7 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -7,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,13 +23,13 @@ import com.usc.itp476.contact.contactproject.StartActivity;
 
 public class ProfileFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
-    private ImageButton imageButtonEdit = null;
     private Button buttonLogout = null;
     private TextView textViewName = null;
     private TextView textViewTotal = null;
     private ImageView imageViewPhoto = null;
     public boolean mFriendProfile = false;
     private String friendID = null;
+    private SharedPreferences.Editor sharedPreferencesEditor = null;
 
     public void setName(String name){
         textViewTotal.setText(name);
@@ -46,7 +47,9 @@ public class ProfileFragment extends Fragment {
                 R.layout.activity_profile, container, false);
 
         //v1.0 do not allow for edits from user profile
-
+        SharedPreferences sharedPreferences = this.getActivity().getApplicationContext().
+                getSharedPreferences(ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
+        sharedPreferencesEditor = sharedPreferences.edit();
         imageViewPhoto = (ImageView) rootView.findViewById(R.id.imageViewProfileImage);
         textViewName = (TextView) rootView.findViewById(R.id.textViewNameProfile);
         textViewTotal = (TextView) rootView.findViewById(R.id.textViewTotal);
@@ -74,7 +77,7 @@ public class ProfileFragment extends Fragment {
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContactApplication.setLoggedIn(false);
+                setLoggedIn(false);
                 ParseUser.logOut();
                 LoginManager.getInstance().logOut();
                 getActivity().setResult(StartActivity.RESULT_LOGOUT);
@@ -86,7 +89,6 @@ public class ProfileFragment extends Fragment {
     private void loadFriendSaveData(){
         try {
             ParseUser friend = ParseUser.getQuery().get(friendID);
-            Log.wtf(TAG + "friend: ", friendID);
             if (friend != null){
                 textViewTotal.setText(String.valueOf(friend.getInt("totalHugs")));
                 textViewName.setText(friend.getString("name"));
@@ -102,5 +104,17 @@ public class ProfileFragment extends Fragment {
                     "Could not find friend",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setLoggedIn(boolean isLoggedIn){
+        SharedPreferences sharedPreferences =
+                this.getActivity().getApplicationContext().
+                        getSharedPreferences(ContactApplication.SHARED_PREF_FILE,
+                                this.getActivity().getApplicationContext().MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        sharedPreferencesEditor.putBoolean(ContactApplication.IS_LOGGED_IN, isLoggedIn);
+        sharedPreferencesEditor.commit();
+
+        isLoggedIn = sharedPreferences.getBoolean(ContactApplication.IS_LOGGED_IN, true);
     }
 }

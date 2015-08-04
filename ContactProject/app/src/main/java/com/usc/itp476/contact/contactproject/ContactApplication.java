@@ -2,8 +2,6 @@ package com.usc.itp476.contact.contactproject;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -11,8 +9,6 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.parse.FunctionCallback;
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseCloud;
@@ -54,7 +50,6 @@ public class ContactApplication extends Application {
     public static final String CURRENTPHOTOPATH = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.CURRENTPHOTOPATH";
     public static final String SHARED_PREF_FILE = "com.usc.itp476.contact.contactproject.ContactApplication.SHARED_PREF_FILE";
     public static String TAG = null;
-    private static SharedPreferences sharedPreferences = null;
     public static ParseACL defaultACL;
 	
     private static ContactApplication singleton;
@@ -87,21 +82,7 @@ public class ContactApplication extends Application {
         TAG = this.getClass().getSimpleName();
         subscribeInstallation();
         friendList = new HashMap<>();
-        sharedPreferences = getSharedPreferences( ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
 
-        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(
-                    AccessToken oldAccessToken,
-                    AccessToken currentAccessToken) {
-                if (currentAccessToken == null){
-                    //User logged out
-                    setLoggedIn(false);
-                }else{
-                    setLoggedIn(true);
-                }
-            }
-        };
     }
 
     private void subscribeInstallation(){
@@ -151,24 +132,15 @@ public class ContactApplication extends Application {
         ParseCloud.callFunctionInBackground("removePlayerFromGame", params, new FunctionCallback<JSONObject>() {
             @Override
             public void done(JSONObject obj, ParseException e) {
-                Log.wtf("ContactApplication", obj.toString());
-
                 HashMap<String, String> params = new HashMap<>();
                 params.put("gameID", gameID);
                 ParseCloud.callFunctionInBackground("checkDeleteGame", params, new FunctionCallback<JSONObject>() {
                     @Override
                     public void done(JSONObject jsonObject, ParseException e) {
                         //we don't care what happens, we just want it done
-                        Log.wtf("ContactApplication", jsonObject.toString());
                     }
                 });
             }
         });
-    }
-    public static void setLoggedIn(boolean isLoggedIn){
-        Log.wtf(TAG, " = " + isLoggedIn);
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        sharedPreferencesEditor.putBoolean(ContactApplication.IS_LOGGED_IN, isLoggedIn);
-        sharedPreferencesEditor.commit();
     }
 }
