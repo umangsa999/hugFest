@@ -67,9 +67,7 @@ public class CreateGameActivity extends Activity {
         buttonCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LocationManager locationManager =
-                        (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Location location = ContactApplication.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if (location == null) {
                     Toast.makeText(getApplicationContext(),

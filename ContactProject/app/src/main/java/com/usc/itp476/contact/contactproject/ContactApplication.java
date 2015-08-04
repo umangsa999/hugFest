@@ -2,9 +2,11 @@ package com.usc.itp476.contact.contactproject;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.location.LocationManager;
 import android.util.Base64;
 import android.util.Log;
 
@@ -51,10 +53,10 @@ public class ContactApplication extends Application {
     public static final String CURRENTPHOTOPATH = "com.usc.itp476.contact.contactproject.TARGETACTIVITY.CURRENTPHOTOPATH";
     public static final String SHARED_PREF_FILE = "com.usc.itp476.contact.contactproject.ContactApplication.SHARED_PREF_FILE";
     public static String TAG = null;
-    public static ParseACL defaultACL;
-	
-    private static ContactApplication singleton;
-    private static HashMap<String, ParseUser> friendList;
+    public static ParseACL defaultACL = null;
+	public static LocationManager locationManager = null;
+    private static ContactApplication singleton = null;
+    private static HashMap<String, ParseUser> friendList = null;
 
     public ContactApplication getSingleton(){
         return singleton;
@@ -84,7 +86,7 @@ public class ContactApplication extends Application {
         TAG = this.getClass().getSimpleName();
         subscribeInstallation();
         friendList = new HashMap<>();
-
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 
     private void subscribeInstallation(){

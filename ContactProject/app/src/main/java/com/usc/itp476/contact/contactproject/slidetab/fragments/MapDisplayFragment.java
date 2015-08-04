@@ -176,9 +176,7 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void setupLocationChecks(){
-        LocationManager locationManager =
-                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = ContactApplication.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         //only when we have location access
         if (location != null && map != null) {
@@ -267,8 +265,6 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void setLocationListener() {
-        LocationManager locationManager =
-                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -298,7 +294,7 @@ public class MapDisplayFragment extends Fragment
             public void onProviderDisabled(String provider) {
             }
         };
-        locationManager.requestLocationUpdates(
+        ContactApplication.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, 5000, 3, locationListener);
     }
 
