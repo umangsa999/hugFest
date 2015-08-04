@@ -8,8 +8,6 @@ import com.parse.ParseUser;
 
 @ParseClassName("Game")
 public class GameData extends ParseObject {
-	final String TAG = this.getClass().getSimpleName();
-
 	public String getGameID(){
 		return getObjectId();
 	}

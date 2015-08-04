@@ -28,6 +28,7 @@ public class FriendListGridAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     private Activity parent = null;
     private ArrayList<ParseUser> friendsArrayForm;
+    private ArrayList<String> selectedFriendIds;
 
     public FriendListGridAdapter(Context mainActivity,
                                  Boolean displayCheckBox,
@@ -38,6 +39,9 @@ public class FriendListGridAdapter extends BaseAdapter {
         displayCheckbox = displayCheckBox;
         parent = parentActivity;
         friendsArrayForm = new ArrayList<>(friendsList.values());
+        if (displayCheckbox) {
+            selectedFriendIds = CreateGameActivity.getSelectedFriendParseIDs();
+        }
     }
 
     @Override
@@ -118,17 +122,14 @@ public class FriendListGridAdapter extends BaseAdapter {
 
         if (friendsList == null){
             holder.textViewObjectID.setText( "" );
+            holder.textViewScore.setText("");
         }else{
             holder.textViewObjectID.setText(objectID);
+            holder.textViewScore.setText(String.valueOf(me.getInt("totalHugs")));
         }
         if(displayCheckbox){
             holder.textViewScore.setVisibility(View.GONE);
-            if (CreateGameActivity.getSelectedFriendParseIDs().contains(objectID)){
-                holder.checkBoxInvited.setChecked(true);
-            }
-            else{
-                holder.checkBoxInvited.setChecked(false);
-            }
+            holder.checkBoxInvited.setChecked(selectedFriendIds.contains(objectID));
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -137,14 +138,13 @@ public class FriendListGridAdapter extends BaseAdapter {
                     //this is invite friends
                     checkbox.setChecked( !checkbox.isChecked() );
                     if (checkbox.isChecked()) {
-                        CreateGameActivity.getSelectedFriendParseIDs().add(id.getText().toString());
+                        selectedFriendIds.add(id.getText().toString());
                     } else {
-                        CreateGameActivity.getSelectedFriendParseIDs().remove(id.getText().toString());
+                        selectedFriendIds.remove(id.getText().toString());
                     }
                 }
             });
         }else{
-            holder.textViewScore.setText(friendsList == null ? "" : String.valueOf(me.getInt("totalHugs")));
             holder.checkBoxInvited.setVisibility(View.GONE);
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override

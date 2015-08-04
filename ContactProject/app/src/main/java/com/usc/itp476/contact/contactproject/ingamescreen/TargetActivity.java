@@ -28,7 +28,10 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.CustomParsePushBroadcastReceiver;
+import com.usc.itp476.contact.contactproject.POJO.GamePhoto;
 import com.usc.itp476.contact.contactproject.R;
+
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,10 +42,12 @@ import java.util.HashMap;
 public class TargetActivity extends Activity {
 
     private final String TAG = this.getClass().getSimpleName();
+    private final double TIME_INTERVAL = 2000;
     private TextView textViewCurrentPoints;
     private TextView textViewMaxPoints;
     private TextView textViewName;
     private ImageView imageViewTarget;
+    private GamePhoto currentGamePhoto;
     private ParseFile currentPhoto;
     private ParseUser target;
     private String imageName;
@@ -50,9 +55,11 @@ public class TargetActivity extends Activity {
     private String gameID;
     private int max;
     private int current = 0;
+    private double backPressedTime = 0.0;
     private boolean joinedGame;
     private boolean loaded = false;
     private boolean takingPicture = false;
+    private Toast backToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +104,7 @@ public class TargetActivity extends Activity {
                 //DispatchtakePicture starts an camera screen intent
             }
         });
+        backToast = Toast.makeText(getApplicationContext(), "Press again to quit game", Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -164,12 +172,16 @@ public class TargetActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        //Toast.makeText(getApplicationContext(), "No back for you", Toast.LENGTH_SHORT).show();
-        //TODO, DO DO THIS LAWLS
-        ParsePush.unsubscribeInBackground("game" + gameID);
-        ContactApplication.callCloud(ParseUser.getCurrentUser().getObjectId(), false, gameID);
-        setResult(ContactApplication.RETURN_FROM_QUIT_GAME);
-        finish();
+        if (TIME_INTERVAL + backPressedTime > System.currentTimeMillis()) {
+            backToast.cancel();
+            ParsePush.unsubscribeInBackground("game" + gameID);
+            ContactApplication.callCloud(ParseUser.getCurrentUser().getObjectId(), false, gameID);
+            setResult(ContactApplication.RETURN_FROM_QUIT_GAME);
+            finish();
+        }else{
+            backToast.show();
+        }
+        backPressedTime = System.currentTimeMillis();
     }
 
     private void subscribeToGame(){
@@ -356,10 +368,10 @@ public class TargetActivity extends Activity {
             public void done(Boolean didWin, ParseException e) {
                 if (e == null) {
                     increasePoints();
-                    if (!didWin){
+                    if (!didWin) {
                         getNewTarget();
-                    }else{
-                        Intent i = new Intent( getApplicationContext(), ResultActivity.class);
+                    } else {
+                        Intent i = new Intent(getApplicationContext(), ResultActivity.class);
                         i.putExtra(ContactApplication.GAMEID, gameID);
                         startActivity(i);
                     }
@@ -368,13 +380,36 @@ public class TargetActivity extends Activity {
                 }
             }
         });
-        ParseUser.getCurrentUser().put("image", currentPhoto);
-        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+
+        GamePhoto gamePhoto = new GamePhoto();
+        gamePhoto.setGameID(gameID);
+        gamePhoto.setHunterName(ParseUser.getCurrentUser().getString("name"));
+        gamePhoto.setImage(currentPhoto);
+        gamePhoto.setTargetName(target.getString("name"));
+        gamePhoto.setLocationTaken(null);
+        currentGamePhoto = gamePhoto;
+
+        gamePhoto.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
                     Toast.makeText(getApplicationContext(),
                             "Could not upload image, try again", Toast.LENGTH_SHORT).show();
+                }else{
+                    try {
+                        currentGamePhoto.fetch();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("photoID", currentGamePhoto.getGameID());
+                    params.put("gameID", gameID);
+                    ParseCloud.callFunctionInBackground("addPhotoToGame", params, new FunctionCallback<JSONObject>() {
+                        @Override
+                        public void done(JSONObject jsonObject, ParseException e) {
+                            //nothing needed
+                        }
+                    });
                 }
             }
         });

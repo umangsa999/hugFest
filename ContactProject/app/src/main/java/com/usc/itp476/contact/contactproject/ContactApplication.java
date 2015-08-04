@@ -25,6 +25,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
+import com.usc.itp476.contact.contactproject.POJO.GamePhoto;
 
 import org.json.JSONObject;
 
@@ -74,6 +75,7 @@ public class ContactApplication extends Application {
         singleton = this;
         ParseObject.registerSubclass(GameMarker.class);
         ParseObject.registerSubclass(GameData.class);
+        ParseObject.registerSubclass(GamePhoto.class);
 
         Parse.enableLocalDatastore(this);
         Parse.initialize(this,
