@@ -115,16 +115,7 @@ public class ResultActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("playerID", ParseUser.getCurrentUser().getObjectId());
-        ParseCloud.callFunctionInBackground("removePlayerFromGame", params, new FunctionCallback<JSONObject>() {
-            @Override
-            public void done(JSONObject obj, ParseException e) {
-                if (e != null){
-                    Log.wtf(TAG, e.getLocalizedMessage());
-                }
-            }
-        });
+        ContactApplication.callCloud(ParseUser.getCurrentUser().getObjectId(), true, gameID);
         Intent intent = new Intent();
         setResult(ContactApplication.RETURN_FROM_RESULT, intent);
         this.finish();

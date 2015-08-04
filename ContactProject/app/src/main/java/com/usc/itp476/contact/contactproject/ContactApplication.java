@@ -10,10 +10,12 @@ import android.content.pm.Signature;
 import android.util.Base64;
 import android.util.Log;
 
+import com.parse.FunctionCallback;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
@@ -23,6 +25,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.usc.itp476.contact.contactproject.POJO.GameData;
 import com.usc.itp476.contact.contactproject.POJO.GameMarker;
+
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.util.HashMap;
@@ -34,6 +38,7 @@ public class ContactApplication extends Application {
 
     public static final int REQUEST_CODE_CREATE_GAME = -499;
     public static final int RETURN_FROM_RESULT = 80085;
+    public static final int RETURN_FROM_QUIT_GAME = 58008;
     public static final int REQUEST_TAKE_PHOTO = 1;
     public static final int COMPRESS_QUALITY = 100;
     public static final int DEFAULT_IMAGE_SIZE = 700;
@@ -139,6 +144,27 @@ public class ContactApplication extends Application {
         return key;
     }
 
+    public static void callCloud(String playerID, boolean didFinishGame, final String gameID){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("playerID", playerID);
+        params.put("didFinishGame", Boolean.toString(didFinishGame));
+        ParseCloud.callFunctionInBackground("removePlayerFromGame", params, new FunctionCallback<JSONObject>() {
+            @Override
+            public void done(JSONObject obj, ParseException e) {
+                Log.wtf("ContactApplication", obj.toString());
+
+                HashMap<String, String> params = new HashMap<>();
+                params.put("gameID", gameID);
+                ParseCloud.callFunctionInBackground("checkDeleteGame", params, new FunctionCallback<JSONObject>() {
+                    @Override
+                    public void done(JSONObject jsonObject, ParseException e) {
+                        //we don't care what happens, we just want it done
+                        Log.wtf("ContactApplication", jsonObject.toString());
+                    }
+                });
+            }
+        });
+    }
     public static void setLoggedIn(boolean isLoggedIn){
         Log.wtf(TAG, " = " + isLoggedIn);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();

@@ -166,6 +166,10 @@ public class TargetActivity extends Activity {
     public void onBackPressed() {
         //Toast.makeText(getApplicationContext(), "No back for you", Toast.LENGTH_SHORT).show();
         //TODO, DO DO THIS LAWLS
+        ParsePush.unsubscribeInBackground("game" + gameID);
+        ContactApplication.callCloud(ParseUser.getCurrentUser().getObjectId(), false, gameID);
+        setResult(ContactApplication.RETURN_FROM_QUIT_GAME);
+        finish();
     }
 
     private void subscribeToGame(){

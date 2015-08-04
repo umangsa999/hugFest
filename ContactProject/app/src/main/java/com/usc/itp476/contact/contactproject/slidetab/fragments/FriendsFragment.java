@@ -114,6 +114,8 @@ public class FriendsFragment extends Fragment {
                     updateFriends();
                 }else {
                     Log.wtf(TAG, e.getLocalizedMessage());
+                    Toast.makeText(getActivity().getApplicationContext(), "Could not add friend",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
