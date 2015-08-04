@@ -77,6 +77,8 @@ public class GamePhoto extends ParseObject{
     }
 
     public void setLocationTaken(Location locationTaken){
-        put("locationTaken", locationTaken);
+        ParseGeoPoint geoPoint = new ParseGeoPoint(locationTaken.getLatitude(),
+                                                    locationTaken.getLongitude());
+        put("locationTaken", geoPoint);
     }
 }

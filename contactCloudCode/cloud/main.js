@@ -1017,6 +1017,7 @@ Parse.Cloud.define("addPhotoToGame", function(request, response){
 	Parse.Cloud.useMasterKey();
 	var photoID = request.params.photoID;
 	var gameID = request.params.gameID;
+	console.log("trying to add photo " + photoID + " to game " + gameID);
 
 	var Game = Parse.Object.extend("Game");
 	var Picture = Parse.Object.extend("Picture");
@@ -1026,20 +1027,24 @@ Parse.Cloud.define("addPhotoToGame", function(request, response){
 	pictureQueryPromise.then(
 		function(picture){
 
+			console.log("found photo " + picture.id);
 			var gameQuery = new Parse.Query(Game);
 			var gameQueryPromise = gameQuery.get(gameID);
 			gameQueryPromise.then(
 				function(game){
 
+					console.log("found game " + game.id);
 					var allGamePictures = game.relation("pictures");
 					allGamePictures.add(picture);
 					var gameSavePromise = game.save();
 					gameSavePromise.then(
 						function(gameAgain){
 
+							console.log("added photo to game");
 							response.success();
 						},
 						function(error){
+							
 							response.error(error.message);
 						}
 					);

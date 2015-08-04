@@ -70,9 +70,7 @@ public class CreateGameActivity extends Activity {
         buttonCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LocationManager locationManager =
-                        (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Location location = ContactApplication.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 /* Below, we have some checks for invalid selections. This way we don't send data to
                 the server until we are sure it is appropriate.

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -385,33 +386,38 @@ public class TargetActivity extends Activity {
             }
         });
 
+        Log.wtf(TAG, "making game photo");
         GamePhoto gamePhoto = new GamePhoto();
         gamePhoto.setGameID(gameID);
         gamePhoto.setHunterName(ParseUser.getCurrentUser().getString("name"));
         gamePhoto.setImage(currentPhoto);
         gamePhoto.setTargetName(target.getString("name"));
-        gamePhoto.setLocationTaken(null);
+        gamePhoto.setLocationTaken(
+                ContactApplication.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         currentGamePhoto = gamePhoto;
 
         gamePhoto.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
+                Log.wtf(TAG, "save game photo callback");
                 if (e != null) {
                     Toast.makeText(getApplicationContext(),
                             "Could not upload image, try again", Toast.LENGTH_SHORT).show();
                 }else{
+                    Log.wtf(TAG, "fetch game photo");
                     try {
                         currentGamePhoto.fetch();
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("photoID", currentGamePhoto.getGameID());
+                    params.put("photoID", currentGamePhoto.getID());
                     params.put("gameID", gameID);
                     ParseCloud.callFunctionInBackground("addPhotoToGame", params, new FunctionCallback<JSONObject>() {
                         @Override
                         public void done(JSONObject jsonObject, ParseException e) {
                             //nothing needed
+                            Log.wtf(TAG, "photo added to game");
                         }
                     });
                 }
