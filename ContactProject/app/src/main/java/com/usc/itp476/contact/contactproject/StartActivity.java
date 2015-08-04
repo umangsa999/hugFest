@@ -30,6 +30,7 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
+import com.pnikosis.materialishprogress.ProgressWheel;
 import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 import org.json.JSONArray;
@@ -60,6 +61,7 @@ public class StartActivity extends Activity {
     private LoginButton buttonLoginFacebook = null;
     private CallbackManager callbackManager = null;
     private HashMap< String, ArrayList<ParseUser> > parseFriendIDs = null;
+    private ProgressWheel progressWheelLoad = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class StartActivity extends Activity {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_start);
         buttonLoginFacebook = (LoginButton) findViewById(R.id.login_button);
+        progressWheelLoad = (ProgressWheel) findViewById(R.id.progress_wheel);
         createFacebookCallback();
         profileTracker = new ProfileTracker() {
             @Override
@@ -126,6 +129,8 @@ public class StartActivity extends Activity {
         FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                buttonLoginFacebook.setEnabled(false);
+                progressWheelLoad.spin();
                 StartActivity.this.loginResult = loginResult;
                 //We have the accessToken, now we want to do a graphRequest to get the user data
                 findFacebookUserData();
@@ -274,6 +279,7 @@ public class StartActivity extends Activity {
                                             setLoggedIn(true);
                                             goToHome();
                                         } else {
+                                            buttonLoginFacebook.setEnabled(true);
                                             Log.wtf(TAG, e.getLocalizedMessage());
                                         }
                                     }
@@ -287,6 +293,7 @@ public class StartActivity extends Activity {
                 } else {
                     // Sign up didn't succeed. Look at the ParseException
                     // to figure out what went wrong
+                    buttonLoginFacebook.setEnabled(true);
                     Log.wtf(TAG, e.getLocalizedMessage());
                     Toast.makeText(getApplicationContext(),
                             "Could not sign you up", Toast.LENGTH_SHORT).show();
@@ -301,8 +308,9 @@ public class StartActivity extends Activity {
             pi.put("currentUser", ParseUser.getCurrentUser());
             pi.put("currentUserID", ParseUser.getCurrentUser().getObjectId());
             pi.saveInBackground();
-
         }
+        buttonLoginFacebook.setEnabled(true);
+        progressWheelLoad.stopSpinning();
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
         startActivityForResult(i, REQUEST_START_GAME);
     }

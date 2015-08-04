@@ -50,11 +50,8 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.0.0'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
-    compile('com.twitter.sdk.android:twitter:1.6.1@aar') {
-        transitive = true;
-    }
+    compile 'com.pnikosis:materialish-progress:1.5'
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
     }
-
 }
