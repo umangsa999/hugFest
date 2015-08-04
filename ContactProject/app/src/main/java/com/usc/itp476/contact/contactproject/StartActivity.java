@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -77,6 +78,19 @@ public class StartActivity extends Activity {
             }
         };
         profileTracker.startTracking();
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(
+                    AccessToken oldAccessToken,
+                    AccessToken currentAccessToken) {
+                if (currentAccessToken == null){
+                    //User logged out
+                    setLoggedIn(false);
+                }else{
+                    setLoggedIn(true);
+                }
+            }
+        };
         checkSharedPreferences();
     }
 
@@ -132,10 +146,15 @@ public class StartActivity extends Activity {
 
     private void checkSharedPreferences(){
 
-        SharedPreferences sharedPreferences = getSharedPreferences(
-                ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean(ContactApplication.IS_LOGGED_IN, false);
-        Log.wtf(TAG, "Check shared pref, isLoggedIn = "+ isLoggedIn );
+
+        //sharedPreferences = getSharedPreferences( ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
+        //sharedPreferencesEditor = sharedPreferences.edit();
+        SharedPreferences sharedPreferences = getSharedPreferences(ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean(
+                ContactApplication.IS_LOGGED_IN, false);
+        if( ParseUser.getCurrentUser() != null){
+            setLoggedIn(true);
+        }
         if (isLoggedIn){
             goToHome();
         }
@@ -207,8 +226,7 @@ public class StartActivity extends Activity {
                             try {
                                 //OLD USER
                                 user = ParseUser.become(tokenID);
-                                Log.wtf(TAG, "setLoggedIn for old user");
-                                ContactApplication.setLoggedIn(true);
+                                setLoggedIn(true);
                                 goToHome();
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -253,8 +271,7 @@ public class StartActivity extends Activity {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
-                                            Log.wtf(TAG, "setLoggedIn for new user");
-                                            ContactApplication.setLoggedIn(true);
+                                            setLoggedIn(true);
                                             goToHome();
                                         } else {
                                             Log.wtf(TAG, e.getLocalizedMessage());
@@ -280,10 +297,22 @@ public class StartActivity extends Activity {
 
     public void goToHome(){
         ParseInstallation pi = ParseInstallation.getCurrentInstallation();
-        pi.put("currentUser", ParseUser.getCurrentUser());
-        pi.put("currentUserID", ParseUser.getCurrentUser().getObjectId());
-        pi.saveInBackground();
+        if(pi != null){
+            pi.put("currentUser", ParseUser.getCurrentUser());
+            pi.put("currentUserID", ParseUser.getCurrentUser().getObjectId());
+            pi.saveInBackground();
+
+        }
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
         startActivityForResult(i, REQUEST_START_GAME);
+    }
+
+    private void setLoggedIn(boolean isLoggedIn){
+        SharedPreferences sharedPreferences =
+                getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        sharedPreferencesEditor.putBoolean(ContactApplication.IS_LOGGED_IN, isLoggedIn);
+        sharedPreferencesEditor.commit();
+        isLoggedIn = sharedPreferences.getBoolean(ContactApplication.IS_LOGGED_IN, true);
     }
 }
