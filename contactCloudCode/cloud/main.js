@@ -541,13 +541,27 @@ Parse.Cloud.define("deleteGameData", function(request, response){
 
 					console.log("deleted marker");
 
+					var allGamePictures = game.relation("pictures");
+					var picturesQuery = allGamePictures.query();
+					var picturesQueryPromise = picturesQuery.get();
+					picturesQueryPromise.then(
+						function(pictures){
+
+							Parse.Object.destroyAll(pictures);
+						},
+						function(error){
+
+							//don't really care
+						}
+					);
+
 					var players = game.relation("players");
 					var playerQuery = players.query();
 					var playerQueryPromise = playerQuery.find();
 					playerQueryPromise.then(
 						function(players){
 
-							destroyAll(players);
+							Parse.Object.destroyAll(players);
 							game.destroy({
 								success:function(gameAgain){
 
@@ -993,4 +1007,52 @@ Parse.Cloud.define("getParseFriendsFromFBID", function(request, response){
 			}
 		});
 	}
+});
+
+
+//Take in ObjectID of a game and a Picture
+//Adds the Picture as one of the pictures in the Game
+//Returns success/failure indicator
+Parse.Cloud.define("addPhotoToGame", function(request, response){
+	Parse.Cloud.useMasterKey();
+	var photoID = request.params.photoID;
+	var gameID = request.params.gameID;
+
+	var Game = Parse.Object.extend("Game");
+	var Picture = Parse.Object.extend("Picture");
+
+	var pictureQuery = new Parse.Query(Picture);
+	var pictureQueryPromise = pictureQuery.get(photoID);
+	pictureQueryPromise.then(
+		function(picture){
+
+			var gameQuery = new Parse.Query(Game);
+			var gameQueryPromise = gameQuery.get(gameID);
+			gameQueryPromise.then(
+				function(game){
+
+					var allGamePictures = game.relation("pictures");
+					allGamePictures.add(picture);
+					var gameSavePromise = game.save();
+					gameSavePromise.then(
+						function(gameAgain){
+
+							response.success();
+						},
+						function(error){
+							response.error(error.message);
+						}
+					);
+				},
+				function(error){
+
+					response.error(error.message);
+				}
+			);
+		},
+		function(error){
+
+			response.error(error.message);
+		}
+	);
 });
