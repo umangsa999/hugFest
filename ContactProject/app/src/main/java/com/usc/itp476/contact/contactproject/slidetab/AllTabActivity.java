@@ -72,7 +72,6 @@ public class AllTabActivity extends FragmentActivity {
         updateFriends();
     }
 
-    //TODO cloud code?
     public void updateFriends(){
         ParseRelation<ParseUser> friends = ParseUser.getCurrentUser().getRelation("friends");
         ParseQuery<ParseUser> getAllFriends = friends.getQuery();
@@ -110,7 +109,7 @@ public class AllTabActivity extends FragmentActivity {
     }
 
     private void signalUpdateFriends(){
-        friendFragment.updateFriends();
+        friendFragment.updateAdapter();
     }
 
     public void showFriendProfile(String id){

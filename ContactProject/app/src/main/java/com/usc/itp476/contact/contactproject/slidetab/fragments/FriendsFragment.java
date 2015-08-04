@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,7 @@ public class FriendsFragment extends Fragment {
     private GridView gridView = null;
     private String addFriendName = null;
     private AllTabActivity allTabActivity = null;
+    private SwipeRefreshLayout swipeRefreshLayout = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,7 +47,17 @@ public class FriendsFragment extends Fragment {
         activity = getActivity();
 
         imageButtonAddFriend = (ImageButton) rootView.findViewById(R.id.buttonAddFriend);
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         gridView = (GridView) rootView.findViewById(R.id.gridViewFriends);
+        swipeRefreshLayout.setColorScheme(
+                R.color.swipe_color_1, R.color.swipe_color_2,
+                R.color.swipe_color_3, R.color.swipe_color_4);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new RefreshBackgroundTask().execute();
+            }
+        });
 
         setAddListener();
         generateGridView();
@@ -53,6 +66,28 @@ public class FriendsFragment extends Fragment {
 
     public void setAllTabActivity(AllTabActivity allTabActivity) {
         this.allTabActivity = allTabActivity;
+    }
+
+    //This class runs an asynchronous (multithreaded) task that displays the update circle
+    private class RefreshBackgroundTask extends AsyncTask<Void, Void, Boolean> {
+        static final int TASK_DURATION = 5000; // run for 5 seconds
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // Sleep for a small amount of time to simulate a background-task
+            try {
+                allTabActivity.updateFriends();
+                Thread.sleep(TASK_DURATION);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+        @Override
+        protected void onPostExecute(Boolean result){
+            updateAdapter();
+            super.onPostExecute( result );
+            swipeRefreshLayout.setRefreshing(result);
+        }
     }
 
     private void setAddListener(){
@@ -111,7 +146,7 @@ public class FriendsFragment extends Fragment {
 
                     ContactApplication.getFriendsList()
                             .put(parseUser.getObjectId(), parseUser);
-                    updateFriends();
+                    updateAdapter();
                 }else {
                     Log.wtf(TAG, e.getLocalizedMessage());
                     Toast.makeText(getActivity().getApplicationContext(), "Could not add friend",
@@ -121,7 +156,7 @@ public class FriendsFragment extends Fragment {
         });
     }
 
-    public void updateFriends(){
+    public void updateAdapter(){
         //actually display new friends
         friendListAdapter.notifyDataSetChanged();
     }
