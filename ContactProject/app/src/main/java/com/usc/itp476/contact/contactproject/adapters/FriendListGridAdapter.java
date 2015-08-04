@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FriendListGridAdapter extends BaseAdapter {
+    /* You should always write a custom class that extends Base Adapter when using GUI that requires
+    an adapter. You will Override the BaseAdapter's methods and write your own custom code, aka
+    what do you want to happen when this method is called.
+     */
     private final String TAG = this.getClass().getSimpleName();
     private Context context;
     private HashMap<String, ParseUser> friendsList;
@@ -38,7 +42,15 @@ public class FriendListGridAdapter extends BaseAdapter {
         friendsList = ContactApplication.getFriendsList();
         displayCheckbox = displayCheckBox;
         parent = parentActivity;
+        /* The parameters or arguments that we have passed in are NEEDED. For example, to load an
+        image with Glide (see glide cass in helper folder), Glide needs to know the current context
+        that we are in. From fragments and activities we can get the current context, but not from
+        our adapter class. Hence, we need to pass it in and set what is the current context we are
+        working with in our constructor. Do not pass in variables you don't absolutely need, it is
+        a waste of memory and makes your code less readeable and more prone to bugs.
+        */
         friendsArrayForm = new ArrayList<>(friendsList.values());
+
         if (displayCheckbox) {
             selectedFriendIds = CreateGameActivity.getSelectedFriendParseIDs();
         }
@@ -46,6 +58,10 @@ public class FriendListGridAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+        /* Here is one example of method overriding. The original BaseAdapter does not know what is
+        the size of the collection we are keeping track of. We know that this adapter is for the
+        friendslist. Hence, it makes sense to return friendsList.size().
+         */
         if (friendsList == null) {
             return 0;
         }else{
@@ -79,12 +95,14 @@ public class FriendListGridAdapter extends BaseAdapter {
         TextView textViewObjectID;
         TextView textViewName;
         CheckBox checkBoxInvited;
+        /* Our public class Holder exists for organization. Each of the friends in friendslist "has"
+        a holder.*/
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Holder holder = new Holder();
 
+        Holder holder = new Holder();
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.grid_tile, null);
         }
@@ -99,6 +117,8 @@ public class FriendListGridAdapter extends BaseAdapter {
 
         String pictureURL = me.getString("pictureLink");
         String name = me.getString("name");
+
+        //Now, we do some appropriate name parsing to for First L. instead of First Last format
         if (name != null) {
             if (name.length() > 12){
                 int indexOfSpace = name.indexOf(' ');
@@ -119,15 +139,25 @@ public class FriendListGridAdapter extends BaseAdapter {
         String objectID = me.getObjectId();
 
         Glide.with(context).load(pictureURL).error(R.mipmap.medium).into(holder.imageViewPicture);
+        //This loads the image given a url Link with the glide API
 
         if (friendsList == null){
             holder.textViewObjectID.setText( "" );
             holder.textViewScore.setText("");
         }else{
             holder.textViewObjectID.setText(objectID);
+            /*This is Chris's unique way of "saving the ObjectID". The getView method call is unique
+            to the individual friend. How do we access the objectID later in the onClick? We could
+            save it as a pseudo textView.
+             */
+
             holder.textViewScore.setText(String.valueOf(me.getInt("totalHugs")));
         }
         if(displayCheckbox){
+            /*This if state checks if we are on viewing the friends or adding friends to a game.
+            If we are adding friends to a game (aka displayCheckBox), then we don't want to see their
+            score so we set holder.textViewScore as GONE.
+             */
             holder.textViewScore.setVisibility(View.GONE);
             holder.checkBoxInvited.setChecked(selectedFriendIds.contains(objectID));
             convertView.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +165,13 @@ public class FriendListGridAdapter extends BaseAdapter {
                 public void onClick(View view) {
                     TextView id = (TextView) view.findViewById(R.id.textViewObjectID);
                     CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkBoxInvite);
-                    //this is invite friends
+
+                    /*Here, we have the actual logic for adding friends to the selectedFriendIds
+                    collection. If the friend is checked already, then this means the user wants to
+                    remove him/her. If not added then we add the friend. Appropriately check/uncheck
+                    the boxes GUI.
+                     */
+
                     checkbox.setChecked( !checkbox.isChecked() );
                     if (checkbox.isChecked()) {
                         selectedFriendIds.add(id.getText().toString());
@@ -145,6 +181,9 @@ public class FriendListGridAdapter extends BaseAdapter {
                 }
             });
         }else{
+            /* This is when we are using the adapter class as viewing friends. Set the checkboxes as
+            gone instead of the score.
+             */
             holder.checkBoxInvited.setVisibility(View.GONE);
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override

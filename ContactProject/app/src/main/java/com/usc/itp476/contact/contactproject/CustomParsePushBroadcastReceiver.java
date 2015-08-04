@@ -16,6 +16,10 @@ import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
 import org.json.JSONObject;
 
 public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver {
+    /* This is like FriendListGridAdapter is that there is a base class that other code calls.
+    However, we extend that base class because we want our own custom class that does and fits
+    our needs.
+    */
     private final String TAG = this.getClass().getSimpleName();
     public static final String PARSE_EXTRA_DATA_KEY = "com.parse.Data";
     public static final String END = "END";

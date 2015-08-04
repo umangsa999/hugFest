@@ -60,6 +60,9 @@ public class CreateGameActivity extends Activity {
 
     private void setGridAdapter(){
         gridView.setAdapter(new FriendListGridAdapter(getApplicationContext(), true, this));
+        /*Here we create and set an Adapter for our grid. Note the second parameter is true, which
+        stands for yes, display the checkbox because this gridAdapter if for adding friends to a game.
+         */
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
     }
 
@@ -71,6 +74,9 @@ public class CreateGameActivity extends Activity {
                         (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+                /* Below, we have some checks for invalid selections. This way we don't send data to
+                the server until we are sure it is appropriate.
+                 */
                 if (location == null) {
                     Toast.makeText(getApplicationContext(),
                             "Cannot detect location to start game",
@@ -87,6 +93,7 @@ public class CreateGameActivity extends Activity {
                             Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
+                    //Here, everything is good and we proceed to create the game
                     myLocation = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
                     createGameMarker();
                 }
@@ -111,6 +118,9 @@ public class CreateGameActivity extends Activity {
     }
 
     private void createGameMarker(){
+        /* This method sends data to the server, data needed to display the marker when the user
+        looks on the map for created games.
+         */
         GameMarker marker = new GameMarker();
         marker.setLocation(myLocation);
         marker.setHostName();
@@ -133,6 +143,9 @@ public class CreateGameActivity extends Activity {
 
     private void createGame(){
 
+        /* CreateGame is a client heavy code that works extensively with the Parse database to send
+        all the information neccessary.
+         */
         GameData gameData = new GameData();
         gameData.setLocation(myLocation);
         gameData.setHostName();

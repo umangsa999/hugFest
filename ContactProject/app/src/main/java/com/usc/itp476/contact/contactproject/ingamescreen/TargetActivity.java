@@ -68,7 +68,6 @@ public class TargetActivity extends Activity {
 
         loaded = true;
         if (savedInstanceState == null) {
-
             Intent i = getIntent();
             max = i.getIntExtra(ContactApplication.MAXPOINTS, 10);
             joinedGame = i.getBooleanExtra(ContactApplication.JOINEDGAME, true);
@@ -78,7 +77,6 @@ public class TargetActivity extends Activity {
             target = null;
             getNewTarget();
         }else{
-
             max = savedInstanceState.getInt(ContactApplication.MAXPOINTS);
             joinedGame = savedInstanceState.getBoolean(ContactApplication.JOINEDGAME);
             gameID = savedInstanceState.getString(ContactApplication.GAMEID);
@@ -109,6 +107,10 @@ public class TargetActivity extends Activity {
 
     @Override
     public void onResume(){
+        /* When we resume, get check if the game is over. We are able to do this becuse the server
+        will push a notification to the saved preferences that persist. We check for the
+        prefererences and change accordingly.
+         */
         super.onResume();
         SharedPreferences prefs =
                 getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
@@ -142,8 +144,8 @@ public class TargetActivity extends Activity {
 
     @Override
     protected void onPause() {
+        //See onResume, it is for the same purpose
         super.onPause();
-
         Log.wtf(TAG, "onPause");
         if (!takingPicture) {
             SharedPreferences sharedPreferences =
@@ -162,7 +164,6 @@ public class TargetActivity extends Activity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.wtf(TAG, "onSaveInstanceState");
         outState.putBoolean(ContactApplication.JOINEDGAME, joinedGame);
         outState.putInt(ContactApplication.MAXPOINTS, max);
         outState.putString(ContactApplication.GAMEID, gameID);
@@ -185,6 +186,7 @@ public class TargetActivity extends Activity {
     }
 
     private void subscribeToGame(){
+        //Here, we subscribe to the unique game channel so we can receive push notification updates
         ParsePush.subscribeInBackground("game" + gameID, new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -250,7 +252,9 @@ public class TargetActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        /* When we take a picture, we start a new activity and say we want a result back.
+        When that activity ends we get a code that we can check.
+         */
         if (requestCode == ContactApplication.REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
             Bitmap imageBitmap = convertToBM();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
