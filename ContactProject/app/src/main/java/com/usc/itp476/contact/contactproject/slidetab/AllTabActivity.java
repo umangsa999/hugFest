@@ -86,7 +86,6 @@ public class AllTabActivity extends FragmentActivity {
                             "Could not find friends", Toast.LENGTH_SHORT).show();
                 } else {
                     grabRealFriends(list);
-                    signalUpdateFriends();
                 }
             }
         });
@@ -106,9 +105,6 @@ public class AllTabActivity extends FragmentActivity {
                 Log.wtf(TAG, e.getLocalizedMessage());
             }
         }
-    }
-
-    private void signalUpdateFriends(){
         friendFragment.updateAdapter();
     }
 

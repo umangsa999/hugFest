@@ -187,7 +187,6 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
     //change the text
     @Override
     protected Notification getNotification(Context context, Intent intent) {
-        Log.wtf(TAG, "getNotification");
         return super.getNotification(context, intent);
         //If either "alert" or "title" are specified in the push
         //then a Notification is constructed using getNotification

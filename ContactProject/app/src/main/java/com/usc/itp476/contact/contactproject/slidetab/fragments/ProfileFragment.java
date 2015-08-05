@@ -1,7 +1,5 @@
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.StartActivity;
 
@@ -29,7 +26,6 @@ public class ProfileFragment extends Fragment {
     private ImageView imageViewPhoto = null;
     public boolean mFriendProfile = false;
     private String friendID = null;
-    private SharedPreferences.Editor sharedPreferencesEditor = null;
 
     public void setName(String name){
         textViewTotal.setText(name);
@@ -46,10 +42,6 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(
                 R.layout.activity_profile, container, false);
 
-        //v1.0 do not allow for edits from user profile
-        SharedPreferences sharedPreferences = this.getActivity().getApplicationContext().
-                getSharedPreferences(ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
-        sharedPreferencesEditor = sharedPreferences.edit();
         imageViewPhoto = (ImageView) rootView.findViewById(R.id.imageViewProfileImage);
         textViewName = (TextView) rootView.findViewById(R.id.textViewNameProfile);
         textViewTotal = (TextView) rootView.findViewById(R.id.textViewTotal);
@@ -77,7 +69,6 @@ public class ProfileFragment extends Fragment {
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setLoggedIn(false);
                 ParseUser.logOut();
                 LoginManager.getInstance().logOut();
                 getActivity().setResult(StartActivity.RESULT_LOGOUT);
@@ -104,17 +95,5 @@ public class ProfileFragment extends Fragment {
                     "Could not find friend",
                     Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void setLoggedIn(boolean isLoggedIn){
-        SharedPreferences sharedPreferences =
-                this.getActivity().getApplicationContext().
-                        getSharedPreferences(ContactApplication.SHARED_PREF_FILE,
-                                this.getActivity().getApplicationContext().MODE_PRIVATE);
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        sharedPreferencesEditor.putBoolean(ContactApplication.IS_LOGGED_IN, isLoggedIn);
-        sharedPreferencesEditor.commit();
-
-        isLoggedIn = sharedPreferences.getBoolean(ContactApplication.IS_LOGGED_IN, true);
     }
 }

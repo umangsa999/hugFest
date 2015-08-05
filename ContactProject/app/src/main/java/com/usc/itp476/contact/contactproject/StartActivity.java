@@ -1,15 +1,13 @@
 package com.usc.itp476.contact.contactproject;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -74,27 +72,15 @@ public class StartActivity extends Activity {
         profileTracker = new ProfileTracker() {
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
-                if( newProfile != null){
+                if( newProfile != null) {
+                    //means that there is a current user logged in
                     Profile.setCurrentProfile(newProfile);
                 }
+                progressWheelLoad.stopSpinning();
                 profileTracker.stopTracking();
             }
         };
         profileTracker.startTracking();
-        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(
-                    AccessToken oldAccessToken,
-                    AccessToken currentAccessToken) {
-                if (currentAccessToken == null){
-                    //User logged out
-                    setLoggedIn(false);
-                }else{
-                    setLoggedIn(true);
-                }
-            }
-        };
-        checkSharedPreferences();
     }
 
     @Override
@@ -110,7 +96,7 @@ public class StartActivity extends Activity {
         super.onResume();
         // Logs 'install' and 'app activate' App Events
         AppEventsLogger.activateApp(StartActivity.this);
-        checkSharedPreferences();
+        checkExistingUser();
     }
 
     //Called when facebook is done
@@ -130,6 +116,10 @@ public class StartActivity extends Activity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 buttonLoginFacebook.setEnabled(false);
+                Log.wtf(TAG, "we think there is a login result success");
+                Log.wtf(TAG, "getparseUser is null: " + (ParseUser.getCurrentUser() == null
+                        ? "true" : "false"));
+                progressWheelLoad.setVisibility(View.VISIBLE);
                 progressWheelLoad.spin();
                 StartActivity.this.loginResult = loginResult;
                 //We have the accessToken, now we want to do a graphRequest to get the user data
@@ -149,18 +139,8 @@ public class StartActivity extends Activity {
         buttonLoginFacebook.registerCallback(callbackManager, callback);
     }
 
-    private void checkSharedPreferences(){
-
-
-        //sharedPreferences = getSharedPreferences( ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
-        //sharedPreferencesEditor = sharedPreferences.edit();
-        SharedPreferences sharedPreferences = getSharedPreferences(ContactApplication.SHARED_PREF_FILE, Context.MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean(
-                ContactApplication.IS_LOGGED_IN, false);
+    private void checkExistingUser(){
         if( ParseUser.getCurrentUser() != null){
-            setLoggedIn(true);
-        }
-        if (isLoggedIn){
             goToHome();
         }
     }
@@ -231,7 +211,6 @@ public class StartActivity extends Activity {
                             try {
                                 //OLD USER
                                 user = ParseUser.become(tokenID);
-                                setLoggedIn(true);
                                 goToHome();
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -276,7 +255,6 @@ public class StartActivity extends Activity {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
-                                            setLoggedIn(true);
                                             goToHome();
                                         } else {
                                             buttonLoginFacebook.setEnabled(true);
@@ -311,16 +289,8 @@ public class StartActivity extends Activity {
         }
         buttonLoginFacebook.setEnabled(true);
         progressWheelLoad.stopSpinning();
+        progressWheelLoad.setVisibility(View.GONE);
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
         startActivityForResult(i, REQUEST_START_GAME);
-    }
-
-    private void setLoggedIn(boolean isLoggedIn){
-        SharedPreferences sharedPreferences =
-                getSharedPreferences(ContactApplication.SHARED_PREF_FILE, MODE_PRIVATE);
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        sharedPreferencesEditor.putBoolean(ContactApplication.IS_LOGGED_IN, isLoggedIn);
-        sharedPreferencesEditor.commit();
-        isLoggedIn = sharedPreferences.getBoolean(ContactApplication.IS_LOGGED_IN, true);
     }
 }

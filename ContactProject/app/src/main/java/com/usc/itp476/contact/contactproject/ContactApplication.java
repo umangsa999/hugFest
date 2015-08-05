@@ -42,7 +42,6 @@ public class ContactApplication extends Application {
     public static final int COMPRESS_QUALITY = 100;
     public static final int DEFAULT_IMAGE_SIZE = 700;
 
-    public static final String IS_LOGGED_IN = "com.usc.itp476.contact.contactproject.IS_LOGGED_IN";
     public static final String MAXPOINTS = "com.usc.itp476.contact.contactproject.MAXPOINTS";
     public static final String JOINEDGAME = "com.usc.itp476.contact.contactproject.JOINEDGAME";
     public static final String GAMEID = "com.usc.itp476.contact.contactproject.GAMEID";
@@ -78,7 +77,6 @@ public class ContactApplication extends Application {
         Parse.initialize(this,
                 getResources().getString(R.string.application_id),
                 getResources().getString(R.string.client_key));
-        ParseInstallation.getCurrentInstallation().saveInBackground();
         ParseFacebookUtils.initialize(this); //For converting authenticated FB users to Parse users
         defaultACL = new ParseACL();
         defaultACL.setPublicReadAccess(true);

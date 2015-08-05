@@ -50,6 +50,9 @@ enum Messages{
 public class MapDisplayFragment extends Fragment
         implements GoogleMap.InfoWindowAdapter, OnMapReadyCallback {
     private final String TAG = this.getClass().getSimpleName();
+    private final int REQUEST_FREQUENCY = 10000;
+    private final int REQUEST_DISTANCE = 3;
+    private final int ZOOM_LEVEL = 15;
     private GoogleMap map = null;
     private ImageButton buttonNewGame = null;
     private LatLng myLatLng = null;
@@ -154,10 +157,6 @@ public class MapDisplayFragment extends Fragment
     public void onMapReady(GoogleMap googleMap) {
         Log.wtf(TAG, "called onMapReady");
         map = googleMap;
-        setupMap();
-    }
-
-    private void setupMap(){
         Log.wtf(TAG, "called setupMap");
         map.setInfoWindowAdapter(this);
         map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
@@ -170,20 +169,6 @@ public class MapDisplayFragment extends Fragment
         rootView.requestLayout();
         rootView.invalidate();
         setLocationListener();
-    }
-
-    //this may switch to taking in a LatLng depending on API
-    private void addPoint(ParseObject p){
-        GameMarker gm = (GameMarker) p;
-        LatLng markerPoint = new LatLng(gm.getLocation().getLatitude(),
-                gm.getLocation().getLongitude());
-        //only add if the start location is within our radius
-        markerToGame.put(map.addMarker(new MarkerOptions()
-                .position(markerPoint)
-                .draggable(false)
-                .icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)))
-                , gm);
     }
 
     private void assignButtonListeners(){
@@ -205,19 +190,17 @@ public class MapDisplayFragment extends Fragment
             }
 
             @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
+            public void onStatusChanged(String provider, int status, Bundle extras) { }
 
             @Override
-            public void onProviderEnabled(String provider) {
-            }
+            public void onProviderEnabled(String provider) { }
 
             @Override
-            public void onProviderDisabled(String provider) {
-            }
+            public void onProviderDisabled(String provider) { }
         };
+        //actually set the GPS to request update every REQUEST_FREQUENCY milliseconds or every REQUEST_DISTANCE meters
         ContactApplication.locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 5000, 3, locationListener);
+                LocationManager.GPS_PROVIDER, REQUEST_FREQUENCY, REQUEST_DISTANCE, locationListener);
         updateCurrentLocation(ContactApplication.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
     }
 
@@ -226,13 +209,26 @@ public class MapDisplayFragment extends Fragment
             myLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             //only when we have location access
             if (map != null) {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, ZOOM_LEVEL));
 
                 createRadius();
                 findPoints(); //do a server call for all games
             }
         }else{
             displayMessage(Messages.NoConnection);
+        }
+    }
+
+    private void createRadius(){
+        if (myLatLng != null){
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(myLatLng)
+                    .radius(maxDistanceDraw).fillColor(backgroundColor)
+                    .strokeWidth(5).strokeColor(backgroundColor);
+            if (radiusCircle != null){
+                map.clear();
+            }
+            radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
         }
     }
 
@@ -263,17 +259,18 @@ public class MapDisplayFragment extends Fragment
         });
     }
 
-    private void createRadius(){
-        if (myLatLng != null){
-            CircleOptions circleOptions = new CircleOptions()
-                    .center(myLatLng)
-                    .radius(maxDistanceDraw).fillColor(backgroundColor)
-                    .strokeWidth(5).strokeColor(backgroundColor);
-            if (radiusCircle != null){
-                map.clear();
-            }
-            radiusCircle = map.addCircle(circleOptions); //keep reference so we can move it
-        }
+    //this may switch to taking in a LatLng depending on API
+    private void addPoint(ParseObject p){
+        GameMarker gm = (GameMarker) p;
+        LatLng markerPoint = new LatLng(gm.getLocation().getLatitude(),
+                gm.getLocation().getLongitude());
+        //only add if the start location is within our radius
+        markerToGame.put(map.addMarker(new MarkerOptions()
+                .position(markerPoint)
+                .draggable(false)
+                .icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)))
+                , gm);
     }
 
     @Override
