@@ -41,6 +41,7 @@ import java.util.List;
 
 public class AllTabActivity extends FragmentActivity {
     private final String TAG = this.getClass().getSimpleName();
+    public static int currentTab = 0;
     private ViewPager viewPager = null;
     private PagerAdapter pagerAdapter = null;
     private ArrayList<Fragment> tabs = null;
@@ -172,9 +173,7 @@ public class AllTabActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 0){
-                ((MapDisplayFragment) mTabs.get(position)).generateMapFragment();
-            }
+            AllTabActivity.currentTab = viewPager.getCurrentItem();
             return mTabs.get(position);
         }
 

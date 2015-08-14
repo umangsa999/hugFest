@@ -48,6 +48,7 @@ import com.usc.itp476.contact.contactproject.POJO.GameMarker;
 import com.usc.itp476.contact.contactproject.R;
 import com.usc.itp476.contact.contactproject.ingamescreen.CreateGameActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
+import com.usc.itp476.contact.contactproject.slidetab.AllTabActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -78,6 +79,10 @@ public class MapDisplayFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         markerToGame = new HashMap<>();
+        //only when this tab is being shown, create the map
+        if (AllTabActivity.currentTab == 0){
+            generateMapFragment();
+        }
     }
 
     @Override
@@ -88,18 +93,21 @@ public class MapDisplayFragment extends Fragment
         rootView = inflater.inflate(R.layout.activity_map_display, container, false);
 
         buttonNewGame = (ImageButton) rootView.findViewById(R.id.buttonStartGameCreation);
-        assignButtonListeners();
+        //pressing the button will transition to creating a new game
+        buttonNewGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MapDisplayFragment.this.getActivity().getApplicationContext(),
+                        CreateGameActivity.class);
+                startActivity(i);
+            }
+        });
+
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.wtf(TAG, isMonitoringLocation + " isMonitoringLocation, Resume");
-    }
-
     public void generateMapFragment(){
-        Log.wtf(TAG, "generate a map fragment");
+        //only when the current activity exists, can we make a map
         if (getActivity() != null) {
             SupportMapFragment mapFragment = SupportMapFragment.newInstance();
             FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
@@ -112,8 +120,8 @@ public class MapDisplayFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
+        //we're going to stop checking for location and games
         isMonitoringLocation = false;
-        Log.wtf(TAG, isMonitoringLocation + " isMonitoringLocation, pause");
         if (locationListener != null) {
             ContactApplication.locationManager.removeUpdates(locationListener);
         }
@@ -122,10 +130,12 @@ public class MapDisplayFragment extends Fragment
     @Override
     public void onStop() {
         super.onStop();
+        //since we're destroying the map, lets clear out the data of all the games
         markerToGame.clear();
     }
 
     private void setMapListeners(){
+        //set up so clicking the info windows will join the game that matches the marker
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -135,10 +145,12 @@ public class MapDisplayFragment extends Fragment
                 ParseCloud.callFunctionInBackground("joinGame", params, new FunctionCallback<HashMap<String, Object>>() {
                     @Override
                     public void done(HashMap<String, Object> map, ParseException e) {
+                        //successfully joined game so transition to that screen
                         if (e == null) {
                             Intent i = new Intent(
                                     MapDisplayFragment.this.getActivity().getApplicationContext(),
                                     TargetActivity.class);
+                            //extras allow us to send data over to the new screen
                             i.putExtra(ContactApplication.JOINEDGAME, true);
                             i.putExtra(ContactApplication.MAXPOINTS, (Integer) map.get("points"));
                             i.putExtra(ContactApplication.GAMEID, (String) map.get("gameID"));
@@ -154,6 +166,9 @@ public class MapDisplayFragment extends Fragment
             }
         });
 
+        //set up so clicking on markers will show the info window
+        //                                   move map to center on marker
+        //                                   update the latest game marker for that info window
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -172,9 +187,9 @@ public class MapDisplayFragment extends Fragment
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.wtf(TAG, "called onMapReady");
+        //this is called when the map is done being generated. This is the first time we have
+        //access to the map, so we should set it up to the specifications we want
         map = googleMap;
-        Log.wtf(TAG, "called setupMap");
         map.setInfoWindowAdapter(this);
         map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         map.setMyLocationEnabled(true);
@@ -188,20 +203,9 @@ public class MapDisplayFragment extends Fragment
         setLocationListener();
     }
 
-    private void assignButtonListeners(){
-        buttonNewGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MapDisplayFragment.this.getActivity().getApplicationContext(),
-                        CreateGameActivity.class);
-                startActivity(i);
-            }
-        });
-    }
-
     private void setLocationListener() {
-        Log.wtf(TAG, isMonitoringLocation + " isMonitoringLocation, setLocationListener");
         isMonitoringLocation = true;
+        //create a new LocationListener with these simple specifications
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -217,23 +221,24 @@ public class MapDisplayFragment extends Fragment
             @Override
             public void onProviderDisabled(String provider) { }
         };
-        //actually set the GPS to request update every REQUEST_FREQUENCY milliseconds or every REQUEST_DISTANCE meters
+        //actually set the GPS to request update every REQUEST_FREQUENCY milliseconds
+        //                                    or every REQUEST_DISTANCE meters
         ContactApplication.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, REQUEST_FREQUENCY, REQUEST_DISTANCE, locationListener);
         updateCurrentLocation(ContactApplication.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
     }
 
     private void updateCurrentLocation(Location currentLocation){
-        Log.wtf(TAG, isMonitoringLocation + " isMonitoringLocation, update");
+        //we only want updates when we WANT to monitor, but even if we stop WANTING to monitor, we might
+        //have set out a request some time ago that responds after we stop
         if (isMonitoringLocation) {
+            //only when we have location access
             if (currentLocation != null) {
                 myLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                //only when we have location access
                 if (map != null) {
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, ZOOM_LEVEL));
-
                     createRadius();
-                    findPoints(); //do a server call for all games
+                    findPoints();
                 }
             } else {
                 displayMessage(Messages.NoConnection);
@@ -242,6 +247,7 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void createRadius(){
+        //this shows the radius of effect for finding games in the area
         if (myLatLng != null){
             CircleOptions circleOptions = new CircleOptions()
                     .center(myLatLng)
@@ -255,6 +261,9 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void findPoints() {
+        //find games that are within MAXDISTANCE range from my current location
+        //                have not ended
+        //                are not full
         ParseGeoPoint myLocParse = new ParseGeoPoint(myLatLng.latitude, myLatLng.longitude);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Marker");
         query.whereEqualTo("isOver", false);
@@ -270,7 +279,7 @@ public class MapDisplayFragment extends Fragment
                     //We found games but there is a parse error
                     Log.wtf(TAG, e.getLocalizedMessage());
                 } else {
-                    //There is no done parse error and we found games
+                    //we found games and no error
                     for (ParseObject p : list) {
                         addPoint(p);
                     }
@@ -279,7 +288,6 @@ public class MapDisplayFragment extends Fragment
         });
     }
 
-    //this may switch to taking in a LatLng depending on API
     private void addPoint(ParseObject p){
         GameMarker gm = (GameMarker) p;
         LatLng markerPoint = new LatLng(gm.getLocation().getLatitude(),
@@ -295,11 +303,13 @@ public class MapDisplayFragment extends Fragment
 
     @Override
     public View getInfoWindow(Marker marker) {
+        //this must be overridden. Modifying this will change the appearance of the info window on map
         return null;
     }
 
     @Override
     public View getInfoContents(Marker marker) {
+        //set the appearance of the info window and give it information
         LayoutInflater inflater = MapDisplayFragment.this.getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.infowindowlayout, null);
 
