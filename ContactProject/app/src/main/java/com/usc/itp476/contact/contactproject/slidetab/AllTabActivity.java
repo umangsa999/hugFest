@@ -114,7 +114,7 @@ public class AllTabActivity extends FragmentActivity {
                 Log.wtf(TAG, e.getLocalizedMessage());
             }
         }
-
+        friendFragment.updateAdapter();
     }
 
     public void showFriendProfile(String id){

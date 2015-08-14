@@ -55,6 +55,7 @@ public class FriendsFragment extends Fragment {
         context = getActivity().getApplicationContext();
         activity = getActivity();
 
+        //create and align all everything
         imageButtonAddFriend = (ImageButton) rootView.findViewById(R.id.buttonAddFriend);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         gridView = (GridView) rootView.findViewById(R.id.gridViewFriends);
@@ -69,7 +70,10 @@ public class FriendsFragment extends Fragment {
         });
 
         setAddListener();
-        generateGridView();
+        friendListAdapter = new FriendListGridAdapter(context, false, allTabActivity);
+        gridView.setAdapter(friendListAdapter);
+        gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+
         return rootView;
     }
 
@@ -80,6 +84,7 @@ public class FriendsFragment extends Fragment {
     //This class runs an asynchronous (multithreaded) task that displays the update circle
     private class RefreshBackgroundTask extends AsyncTask<Void, Void, Boolean> {
         static final int TASK_DURATION = 5000; // run for 5 seconds
+
         @Override
         protected Boolean doInBackground(Void... params) {
             // Sleep for a small amount of time to simulate a background-task
@@ -91,15 +96,16 @@ public class FriendsFragment extends Fragment {
             }
             return false;
         }
+
         @Override
-        protected void onPostExecute(Boolean result){
-            super.onPostExecute( result );
-            friendListAdapter.notifyDataSetChanged();
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            updateAdapter();
             swipeRefreshLayout.setRefreshing(result);
         }
     }
 
-    private void setAddListener(){
+    private void setAddListener() {
         imageButtonAddFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,13 +139,7 @@ public class FriendsFragment extends Fragment {
         });
     }
 
-    private void generateGridView(){
-        friendListAdapter = new FriendListGridAdapter(context, false, allTabActivity);
-        gridView.setAdapter(friendListAdapter);
-        gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
-    }
-
-    private void addFriend(String inputFriendUsername){
+    private void addFriend(String inputFriendUsername) {
         //do a mutual add for this friend
         HashMap<String, String> params = new HashMap<>();
         params.put("hostHelenID", ParseUser.getCurrentUser().getObjectId());
@@ -155,7 +155,6 @@ public class FriendsFragment extends Fragment {
 
                             //actually display new friends
                             ContactApplication.getFriendsList().put(parseUser.getObjectId(), parseUser);
-                            friendListAdapter.notifyDataSetChanged();
                         } else {
                             Log.wtf(TAG, e.getLocalizedMessage());
                             Toast.makeText(getActivity().getApplicationContext(), "Could not add friend",
@@ -165,5 +164,7 @@ public class FriendsFragment extends Fragment {
                 });
     }
 
-//    public void update
+    public void updateAdapter(){
+        friendListAdapter.notifyDataSetChanged();
+    }
 }
