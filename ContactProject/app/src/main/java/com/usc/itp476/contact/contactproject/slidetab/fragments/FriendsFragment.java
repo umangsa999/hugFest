@@ -1,3 +1,12 @@
+// THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+// KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// <author>Chris Lee and Ryan Zhou</author>
+// <email>wannabedev.ta@gmail.com</email>
+// <date>2015-08-14</date>
+
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.app.Activity;
@@ -130,39 +139,32 @@ public class FriendsFragment extends Fragment {
         gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
     }
 
-    //TODO make this code more server heavy
     private void addFriend(String inputFriendUsername){
         HashMap<String, String> params = new HashMap<>();
         params.put("hostHelenID", ParseUser.getCurrentUser().getObjectId());
         params.put("friendUN", inputFriendUsername);
         ParseCloud.callFunctionInBackground("addFriendUNMutual", params,
                 new FunctionCallback<ParseUser>() {
-            @Override
-            public void done(ParseUser parseUser, ParseException e) {
-                if (e == null){
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Added " + parseUser.get("username").toString(),
-                            Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void done(ParseUser parseUser, ParseException e) {
+                        if (e == null) {
+                            Toast.makeText(getActivity().getApplicationContext(),
+                                    "Added " + parseUser.get("username").toString(),
+                                    Toast.LENGTH_SHORT).show();
 
-                    ContactApplication.getFriendsList()
-                            .put(parseUser.getObjectId(), parseUser);
-                    updateAdapter();
-                }else {
-                    Log.wtf(TAG, e.getLocalizedMessage());
-                    Toast.makeText(getActivity().getApplicationContext(), "Could not add friend",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                            ContactApplication.getFriendsList().put(parseUser.getObjectId(), parseUser);
+                            updateAdapter();
+                        } else {
+                            Log.wtf(TAG, e.getLocalizedMessage());
+                            Toast.makeText(getActivity().getApplicationContext(), "Could not add friend",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     public void updateAdapter(){
         //actually display new friends
         friendListAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }

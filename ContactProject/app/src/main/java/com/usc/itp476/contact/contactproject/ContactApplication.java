@@ -1,13 +1,17 @@
+// THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+// KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// <author>Chris Lee and Ryan Zhou</author>
+// <email>wannabedev.ta@gmail.com</email>
+// <date>2015-08-14</date>
+
 package com.usc.itp476.contact.contactproject;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.location.LocationManager;
-import android.util.Base64;
 import android.util.Log;
 
 import com.parse.FunctionCallback;
@@ -27,7 +31,6 @@ import com.usc.itp476.contact.contactproject.POJO.GamePhoto;
 
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
 import java.util.HashMap;
 
 public class ContactApplication extends Application {
@@ -104,28 +107,28 @@ public class ContactApplication extends Application {
         });
     }
 
-    public static String printKeyHash(Activity context) {
-        PackageInfo packageInfo;
-        String key = null;
-        try {
-            //getting application package name, as defined in manifest
-            String packageName = context.getApplicationContext().getPackageName();
-            //Retriving package info
-            packageInfo = context.getPackageManager().getPackageInfo(packageName,
-                    PackageManager.GET_SIGNATURES);
-            Log.e("Package Name=", context.getApplicationContext().getPackageName());
-            for (Signature signature : packageInfo.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                key = new String(Base64.encode(md.digest(), 0));
-                // String key = new String(Base64.encodeBytes(md.digest()));
-                Log.e("Key Hash=", key);
-            }
-        } catch (Exception e1) {
-            Log.e("Name not found", e1.toString());
-        }
-        return key;
-    }
+//    public static String printKeyHash(Activity context) {
+//        PackageInfo packageInfo;
+//        String key = null;
+//        try {
+//            //getting application package name, as defined in manifest
+//            String packageName = context.getApplicationContext().getPackageName();
+//            //Retriving package info
+//            packageInfo = context.getPackageManager().getPackageInfo(packageName,
+//                    PackageManager.GET_SIGNATURES);
+//            Log.e("Package Name=", context.getApplicationContext().getPackageName());
+//            for (Signature signature : packageInfo.signatures) {
+//                MessageDigest md = MessageDigest.getInstance("SHA");
+//                md.update(signature.toByteArray());
+//                key = new String(Base64.encode(md.digest(), 0));
+//                // String key = new String(Base64.encodeBytes(md.digest()));
+//                Log.e("Key Hash=", key);
+//            }
+//        } catch (Exception e1) {
+//            Log.e("Name not found", e1.toString());
+//        }
+//        return key;
+//    }
 
     public static void callCloud(String playerID, boolean didFinishGame, final String gameID){
         HashMap<String, String> params = new HashMap<>();

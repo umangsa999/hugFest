@@ -1,3 +1,12 @@
+// THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+// KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// <author>Ryan Zhou and Chris Lee</author>
+// <email>wannabedev.ta@gmail.com</email>
+// <date>2015-08-14</date>
+
 package com.usc.itp476.contact.contactproject;
 
 import android.app.Activity;

@@ -1,3 +1,12 @@
+// THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+// KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// <author>Chris Lee and Ryan Zhou</author>
+// <email>wannabedev.ta@gmail.com</email>
+// <date>2015-08-14</date>
+
 package com.usc.itp476.contact.contactproject.slidetab.fragments;
 
 import android.content.Intent;
@@ -50,6 +59,9 @@ enum Messages{
 public class MapDisplayFragment extends Fragment
         implements GoogleMap.InfoWindowAdapter, OnMapReadyCallback {
     private final String TAG = this.getClass().getSimpleName();
+    private final int MAXDISTANCEDRAW = 700;
+    private final double MAXDISTANCE = 0.0075;
+    private final int BACKGROUNDCOLOR = Color.argb(128, 0, 128, 128);
     private final int REQUEST_FREQUENCY = 10000;
     private final int REQUEST_DISTANCE = 3;
     private final int ZOOM_LEVEL = 15;
@@ -58,11 +70,9 @@ public class MapDisplayFragment extends Fragment
     private LatLng myLatLng = null;
     private View rootView = null;
     private Circle radiusCircle = null;
-    private final int maxDistanceDraw = 700;
-    private final double maxDistance = 0.0075;
-    private final int backgroundColor = Color.argb(128, 0, 128, 128);
     private HashMap<Marker, GameMarker> markerToGame = null;
     private LocationListener locationListener = null;
+    private boolean isMonitoringLocation = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,22 +95,29 @@ public class MapDisplayFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        generateMapFragment();
+        Log.wtf(TAG, isMonitoringLocation + " isMonitoringLocation, Resume");
     }
 
-    private void generateMapFragment(){
+    public void generateMapFragment(){
         Log.wtf(TAG, "generate a map fragment");
-        SupportMapFragment mapFragment = SupportMapFragment.newInstance();
-        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.mapHolder, mapFragment);
-        fragmentTransaction.commit();
-        mapFragment.getMapAsync(this);
+        if (getActivity() != null) {
+            SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.mapHolder, mapFragment);
+            fragmentTransaction.commit();
+            mapFragment.getMapAsync(this);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        ContactApplication.locationManager.removeUpdates(locationListener);}
+        isMonitoringLocation = false;
+        Log.wtf(TAG, isMonitoringLocation + " isMonitoringLocation, pause");
+        if (locationListener != null) {
+            ContactApplication.locationManager.removeUpdates(locationListener);
+        }
+    }
 
     @Override
     public void onStop() {
@@ -183,6 +200,8 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void setLocationListener() {
+        Log.wtf(TAG, isMonitoringLocation + " isMonitoringLocation, setLocationListener");
+        isMonitoringLocation = true;
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -205,17 +224,20 @@ public class MapDisplayFragment extends Fragment
     }
 
     private void updateCurrentLocation(Location currentLocation){
-        if (currentLocation != null) {
-            myLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-            //only when we have location access
-            if (map != null) {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, ZOOM_LEVEL));
+        Log.wtf(TAG, isMonitoringLocation + " isMonitoringLocation, update");
+        if (isMonitoringLocation) {
+            if (currentLocation != null) {
+                myLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                //only when we have location access
+                if (map != null) {
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, ZOOM_LEVEL));
 
-                createRadius();
-                findPoints(); //do a server call for all games
+                    createRadius();
+                    findPoints(); //do a server call for all games
+                }
+            } else {
+                displayMessage(Messages.NoConnection);
             }
-        }else{
-            displayMessage(Messages.NoConnection);
         }
     }
 
@@ -223,8 +245,8 @@ public class MapDisplayFragment extends Fragment
         if (myLatLng != null){
             CircleOptions circleOptions = new CircleOptions()
                     .center(myLatLng)
-                    .radius(maxDistanceDraw).fillColor(backgroundColor)
-                    .strokeWidth(5).strokeColor(backgroundColor);
+                    .radius(MAXDISTANCEDRAW).fillColor(BACKGROUNDCOLOR)
+                    .strokeWidth(5).strokeColor(BACKGROUNDCOLOR);
             if (radiusCircle != null){
                 map.clear();
             }
@@ -232,14 +254,12 @@ public class MapDisplayFragment extends Fragment
         }
     }
 
-    //TODO see if this can be pushed to parse
-    //this method is suppose to do server call to find games
     private void findPoints() {
         ParseGeoPoint myLocParse = new ParseGeoPoint(myLatLng.latitude, myLatLng.longitude);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Marker");
         query.whereEqualTo("isOver", false);
         query.whereLessThan("numberPlayers", ContactApplication.MAX_PLAYERS);
-        query.whereWithinRadians("start", myLocParse, maxDistance);
+        query.whereWithinRadians("start", myLocParse, MAXDISTANCE);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
