@@ -37,7 +37,9 @@ public class ContactApplication extends Application {
 	// Note: Your consumer key and secret should be obfuscated in your source code before shipping.
 
     public static final int MAX_PLAYERS = 20;
-
+    public static final int REQUEST_START_GAME = 104;
+    public static final int RESULT_ALLTABS_QUIT_STAY_LOGIN = 105;
+    public static final int RESULT_LOGOUT = 200;
     public static final int REQUEST_CODE_CREATE_GAME = -499;
     public static final int RETURN_FROM_RESULT = 80085;
     public static final int RETURN_FROM_QUIT_GAME = 58008;

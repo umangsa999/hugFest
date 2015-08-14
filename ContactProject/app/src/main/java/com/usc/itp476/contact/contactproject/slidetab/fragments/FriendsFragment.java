@@ -93,8 +93,8 @@ public class FriendsFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(Boolean result){
-            updateAdapter();
             super.onPostExecute( result );
+            friendListAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(result);
         }
     }
@@ -140,6 +140,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void addFriend(String inputFriendUsername){
+        //do a mutual add for this friend
         HashMap<String, String> params = new HashMap<>();
         params.put("hostHelenID", ParseUser.getCurrentUser().getObjectId());
         params.put("friendUN", inputFriendUsername);
@@ -152,8 +153,9 @@ public class FriendsFragment extends Fragment {
                                     "Added " + parseUser.get("username").toString(),
                                     Toast.LENGTH_SHORT).show();
 
+                            //actually display new friends
                             ContactApplication.getFriendsList().put(parseUser.getObjectId(), parseUser);
-                            updateAdapter();
+                            friendListAdapter.notifyDataSetChanged();
                         } else {
                             Log.wtf(TAG, e.getLocalizedMessage());
                             Toast.makeText(getActivity().getApplicationContext(), "Could not add friend",
@@ -163,8 +165,5 @@ public class FriendsFragment extends Fragment {
                 });
     }
 
-    public void updateAdapter(){
-        //actually display new friends
-        friendListAdapter.notifyDataSetChanged();
-    }
+//    public void update
 }

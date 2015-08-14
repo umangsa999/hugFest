@@ -28,7 +28,6 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
-import com.usc.itp476.contact.contactproject.StartActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.ResultActivity;
 import com.usc.itp476.contact.contactproject.ingamescreen.TargetActivity;
 import com.usc.itp476.contact.contactproject.slidetab.fragments.FriendsFragment;
@@ -115,7 +114,7 @@ public class AllTabActivity extends FragmentActivity {
                 Log.wtf(TAG, e.getLocalizedMessage());
             }
         }
-        friendFragment.updateAdapter();
+
     }
 
     public void showFriendProfile(String id){
@@ -143,7 +142,7 @@ public class AllTabActivity extends FragmentActivity {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             Intent i = new Intent();
-            setResult(StartActivity.RESULT_ALLTABS_QUIT_STAY_LOGIN, i);
+            setResult(ContactApplication.RESULT_ALLTABS_QUIT_STAY_LOGIN, i);
             finish();
         } else if( viewPager.getCurrentItem() == 1 && (profileFragment != null) ){
             //if the user has clicked to view one of his friend's profile in friendsfragment then we want to

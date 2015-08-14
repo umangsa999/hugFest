@@ -24,8 +24,8 @@ import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.usc.itp476.contact.contactproject.ContactApplication;
 import com.usc.itp476.contact.contactproject.R;
-import com.usc.itp476.contact.contactproject.StartActivity;
 
 public class ProfileFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
@@ -75,12 +75,13 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setListeners(){
+        //log out of the game and return to the start screen
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ParseUser.logOut();
                 LoginManager.getInstance().logOut();
-                getActivity().setResult(StartActivity.RESULT_LOGOUT);
+                getActivity().setResult(ContactApplication.RESULT_LOGOUT);
                 getActivity().finish();
             }
         });
@@ -88,8 +89,10 @@ public class ProfileFragment extends Fragment {
 
     private void loadFriendSaveData(){
         try {
+            //immediately get the latest version of this friend
             ParseUser friend = ParseUser.getQuery().get(friendID);
             if (friend != null){
+                //set their information
                 textViewTotal.setText(String.valueOf(friend.getInt("totalHugs")));
                 textViewName.setText(friend.getString("name"));
                 Glide.with(this).load(friend.getString("pictureLink")).error(R.mipmap.large).into(imageViewPhoto);

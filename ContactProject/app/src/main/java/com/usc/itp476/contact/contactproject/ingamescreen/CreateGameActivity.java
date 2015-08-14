@@ -161,7 +161,6 @@ public class CreateGameActivity extends Activity {
         gameData.setGameOver(false);
         gameBeingMade = gameData;
 
-        //TODO move to the cloud
         gameData.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

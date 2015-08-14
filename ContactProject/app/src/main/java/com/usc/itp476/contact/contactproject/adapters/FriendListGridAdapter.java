@@ -34,7 +34,6 @@ public class FriendListGridAdapter extends BaseAdapter {
     an adapter. You will Override the BaseAdapter's methods and write your own custom code, aka
     what do you want to happen when this method is called.
      */
-    private final String TAG = this.getClass().getSimpleName();
     private Context context;
     private HashMap<String, ParseUser> friendsList;
     private boolean displayCheckbox = false;

@@ -52,9 +52,6 @@ import java.util.List;
 public class StartActivity extends Activity {
     private final String TAG = this.getClass().getSimpleName();
     public static ParseUser user = null;
-    public static final int REQUEST_START_GAME = 104;
-    public static final int RESULT_ALLTABS_QUIT_STAY_LOGIN = 105;
-    public static final int RESULT_LOGOUT = 200;
     public static final List<String> permissions =
             Arrays.asList("public_profile", "user_friends", "email");
 
@@ -112,7 +109,7 @@ public class StartActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_ALLTABS_QUIT_STAY_LOGIN){
+        if (resultCode == ContactApplication.RESULT_ALLTABS_QUIT_STAY_LOGIN){
             finish();
         }else{
             callbackManager.onActivityResult( requestCode, resultCode, data);
@@ -300,6 +297,6 @@ public class StartActivity extends Activity {
         progressWheelLoad.stopSpinning();
         progressWheelLoad.setVisibility(View.GONE);
         Intent i = new Intent(getApplicationContext(), AllTabActivity.class);
-        startActivityForResult(i, REQUEST_START_GAME);
+        startActivityForResult(i, ContactApplication.REQUEST_START_GAME);
     }
 }
