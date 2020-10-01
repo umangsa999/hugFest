@@ -1,1 +1,1 @@
-# hugFest
+# HugFest
